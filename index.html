@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Queens Game</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+background: radial-gradient(circle at 20% 20%, #2b1055, #0f0c29 70%);
+color: #f5f5f5;
+}
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.app-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #3a1c71, #d76d77);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+}
+
+.app-icon svg {
+  width: 60%;
+  height: 60%;
+  color: #ffd700;
+}
+
+.app-info h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.app-info span {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+#playerInfo {
+  margin-top: 15px;
+  text-align: center;
+  padding: 0 10px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+
+.game-btn {
+  margin-top: 15px;
+  padding: 12px 24px;
+  border-radius: 14px;
+  border: none;
+
+  background: linear-gradient(135deg, #3a1c71, #d76d77);
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  box-shadow: 0 12px 25px rgba(0,0,0,0.6);
+}
+
+.game-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.9);
+}
+
+.game-btn:active {
+  transform: scale(0.97);
+}
+
+.game-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+#grid {
+  display: grid;
+  opacity: 0;
+  visibility: hidden;
+transition: opacity 0.4s ease;
+
+  width: min(94vw, 94vh);
+  height: min(94vw, 94vh);
+
+  max-width: 650px;
+  max-height: 650px;
+
+
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+
+  gap: 1.5%;
+  margin-top: 30px;
+  padding: 2.5%;
+
+background: rgba(255,255,255,0.05);
+backdrop-filter: blur(18px);
+border: 1px solid rgba(255,255,255,0.1);
+
+  border-radius: 28px;
+
+box-shadow:
+  0 40px 80px rgba(0,0,0,0.7);
+
+  animation: boardEntrance 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes boardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.cell {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: clamp(24px, 5vw, 40px);
+  font-weight: bold;
+  cursor: pointer;
+position: relative;
+aspect-ratio: 1 / 1;   /* forza quadrato perfetto */
+  overflow: hidden;      /* impedisce espansioni interne */
+  border: 1px solid rgba(255,255,255,0.08);
+-webkit-tap-highlight-color: transparent;
+
+ box-shadow:
+  0 8px 20px rgba(0,0,0,0.6);
+
+transition:
+  transform 0.25s cubic-bezier(.4,0,.2,1),
+  box-shadow 0.3s ease,
+  background-color 0.3s ease;
+will-change: transform;
+transform-style: preserve-3d;
+
+  position: relative;
+}
+.cell:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.8),
+    0 0 20px rgba(255,215,0,0.15);
+}
+.cell:active {
+  transform: scale(0.95);
+  box-shadow:
+    inset 0 6px 12px rgba(0,0,0,0.25);
+}
+.cell:focus,
+.cell:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.queen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+
+  animation:
+    queenAppear 0.25s cubic-bezier(.4,0,.2,1),
+    floatQueen 2s ease-in-out infinite alternate;
+
+  filter: drop-shadow(0 0 14px rgba(255,215,0,0.9));
+}
+
+.queen svg {
+  width: 65%;
+  height: 65%;
+  color: #ffd700;
+}
+
+@keyframes queenAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes floatQueen {
+  from { transform: translateY(0px); }
+  to   { transform: translateY(-4px); }
+}
+
+  .x::before,
+  .x::after {
+    content: "";
+    position: absolute;
+    width: 60%;
+    height: 2px;
+    background: rgba(255,255,255,0.35);
+  }
+
+  .x::before { transform: rotate(45deg); }
+  .x::after { transform: rotate(-45deg); }
+
+.error {
+  animation: pulseError 0.9s infinite ease-in-out;
+}
+
+@keyframes pulseError {
+  0% {
+    box-shadow:
+      0 0 0 2px rgba(57, 255, 20, 0.9) inset,
+      0 0 12px rgba(57, 255, 20, 0.8);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px rgba(57, 255, 20, 0.4) inset,
+      0 0 25px rgba(57, 255, 20, 1);
+  }
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(57, 255, 20, 0.9) inset,
+      0 0 12px rgba(57, 255, 20, 0.8);
+  }
+}
+@media (max-width: 480px) {
+  .app-info h1 {
+    font-size: 20px;
+  }
+
+  .app-header {
+    gap: 12px;
+  }
+
+  .app-icon {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* ===== ANIMAZIONE VITTORIA ===== */
+
+@keyframes winPulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.win-effect {
+  animation: winPulse 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cell:focus {
+  outline: none !important;
+}
+
+.cell:focus-visible {
+  outline: none !important;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: rgba(25,25,35,0.98);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 40px;
+  border-radius: 28px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  animation: scaleIn 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #1565c0;
+  color: white;
+  cursor: pointer;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes penaltyFlash {
+  0%   { color: #ff5252; transform: scale(1); }
+  40%  { color: #ff1744; transform: scale(1.15); }
+  70%  { color: #ff5252; transform: scale(1.08); }
+100% { color: rgba(255,255,255,0.8); transform: scale(1); }
+}
+
+.timer-penalty {
+  animation: penaltyFlash 1.4s ease;
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-icon">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
+    </svg>
+  </div>
+  <div class="app-info">
+    <h1>Queens</h1>
+    <span>Daily Strategy Puzzle</span>
+  </div>
+</div>
+
+<div id="playerInfo">
+  <div><strong>Giocatore:</strong> <span id="displayName"></span></div>
+  <div><strong>Email:</strong> <span id="displayEmail"></span></div>
+  <div style="margin-top:10px;">⏱ Tempo: <span id="timer">0s</span></div>
+<button id="startBtn" class="game-btn">▶ Gioca</button>
+<button id="hintBtn" class="game-btn" disabled>
+  💡 Suggerimento (3)
+</button>
+</div>
+
+<div id="grid"></div>
+
+<script>
+
+const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZWF4enRrZmRydWZnbmlteGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjA0MTksImV4cCI6MjA4NzY5NjQxOX0.nylDg56BcUzcq6Ag35N8zBDe5zXDCHC-iGwPcZ-ERYk";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+  { auth: { persistSession: false } }
+);
+
+const size = 10;
+const gridElement = document.getElementById("grid");
+const startBtn = document.getElementById("startBtn");
+const hintBtn = document.getElementById("hintBtn");
+let hintsUsed = 0;
+const maxHints = 3;
+let isDragging = false;
+let dragMode = null; // "mark" oppure null
+
+
+let solution = [];
+let regionMap = [];
+let startTime = null;
+let timerInterval = null;
+
+let queryString = window.location.search;
+
+// Se search è vuoto ma i parametri sono nella hash
+if (!queryString && window.location.hash.includes("?")) {
+  queryString = window.location.hash.substring(
+    window.location.hash.indexOf("?")
+  );
+}
+
+const urlParams = new URLSearchParams(queryString);
+
+const playerEmail = urlParams.get("email");
+const playerName = urlParams.get("name");
+
+if (!playerEmail || !playerName) {
+
+  document.getElementById("displayName").textContent = "Non valido";
+  document.getElementById("displayEmail").textContent = "Non valido";
+
+  startBtn.disabled = true;
+  startBtn.innerText = "Link non valido";
+  // Rimuove eventuali messaggi/classifiche precedenti
+  const oldElements = document.querySelectorAll(".post-game");
+  oldElements.forEach(el => el.remove());
+const message = document.createElement("div");
+message.classList.add("post-game");
+  message.style.marginTop = "15px";
+  message.style.fontWeight = "600";
+  message.style.color = "red";
+  message.innerText = "Accesso non autorizzato. Usa il link personale.";
+
+  document.getElementById("playerInfo").appendChild(message);
+
+} else {
+
+  document.getElementById("displayName").textContent =
+    decodeURIComponent(playerName);
+
+  document.getElementById("displayEmail").textContent =
+    decodeURIComponent(playerEmail);
+}
+
+const colors = [
+  "rgba(220, 53, 69, 0.75)",
+  "rgba(255, 140, 0, 0.75)",
+  "rgba(255, 235, 59, 0.75)",
+  "rgba(139, 195, 74, 0.75)",
+  "rgba(0, 150, 136, 0.75)",
+   "rgba(173, 216, 230, 0.75)",
+  "rgba(156, 39, 176, 0.75)",
+  "rgba(121, 85, 72, 0.75)",
+  "rgba(200, 200, 200, 0.75)",
+  "rgba(255, 105, 180, 0.75)"
+];
+async function loadDailyPuzzle() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data, error } = await supabaseClient
+    .from("queens_puzzles")
+    .select("*")
+    .eq("date", today)
+    .single();
+
+if (error || !data) {
+
+  // Disabilita il bottone Gioca
+  startBtn.disabled = true;
+  startBtn.innerText = "Non disponibile";
+
+  showCustomModal(
+    "Puzzle non disponibile",
+    "Il puzzle di oggi non è ancora stato pubblicato. Torna più tardi 👑"
+  );
+
+  return false;
+}
+
+  solution = data.solution;
+  regionMap = data.region_map;
+  return true;
+}
+
+async function getTodayResult() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data } = await supabaseClient
+    .from("queens_results")
+    .select("*")
+    .eq("email", playerEmail)
+    .eq("date", today)
+    .maybeSingle();
+
+  return data;
+}
+async function loadTodayLeaderboard() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data, error } = await supabaseClient
+ .from("queens_results")
+.select("name, email, time_seconds")
+.eq("date", today)
+.order("time_seconds", { ascending: true })
+.limit(10);
+
+  if (error) {
+    console.error("Errore classifica:", error);
+    return [];
+  }
+
+  return data;
+}
+async function getPlayerPosition() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data, error } = await supabaseClient
+    .from("queens_results")
+    .select("name, email, time_seconds")
+    .eq("date", today)
+    .order("time_seconds", { ascending: true });
+
+  if (error || !data) return null;
+
+  const position = data.findIndex(p => p.email === playerEmail);
+
+  if (position === -1) return null;
+
+  return {
+    rank: position + 1,
+    time: data[position].time_seconds,
+    totalPlayers: data.length
+  };
+}
+
+async function initializePage() {
+
+  if (!playerEmail || !playerName) return;
+
+  const puzzleLoaded = await loadDailyPuzzle();
+  if (!puzzleLoaded) return;
+
+  const todayResult = await getTodayResult();
+
+  if (!todayResult) return;
+
+  // ✅ Caso completato
+  if (todayResult.completed) {
+
+    hintBtn.disabled = true;
+    startBtn.disabled = true;
+    startBtn.innerText = "Già giocato";
+
+    document.getElementById("timer").textContent =
+      todayResult.time_seconds + "s";
+
+    const message = document.createElement("div");
+    message.style.marginTop = "15px";
+    message.style.fontWeight = "600";
+    message.innerText = "Hai già completato il puzzle di oggi 👑";
+
+    document.getElementById("playerInfo").appendChild(message);
+    await showLeaderboardOnly();
+    return;
+  }
+
+  // ✅ Caso iniziato ma non completato
+  if (!todayResult.completed) {
+hintsUsed = todayResult.hints_used || 0;
+
+hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+
+if (hintsUsed >= maxHints) {
+  hintBtn.disabled = true;
+}
+startBtn.disabled = true;
+
+if (hintsUsed < maxHints) {
+  hintBtn.disabled = false;
+} else {
+  hintBtn.disabled = true;
+}
+
+    const startedAt = new Date(todayResult.started_at).getTime();
+const penalty = todayResult.penalty_seconds || 0;
+
+startTime = startedAt - (penalty * 1000);
+
+    timerInterval = setInterval(() => {
+      const seconds = Math.floor((Date.now() - startTime) / 1000);
+      document.getElementById("timer").textContent = seconds + "s";
+    }, 1000);
+
+    gridElement.style.visibility = "visible";
+    gridElement.style.opacity = "1";
+
+    initializeGame();
+  }
+}
+
+function initializeGame() {
+
+  gridElement.innerHTML = "";
+
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.style.backgroundColor = colors[regionMap[row][col]];
+      cell.dataset.state = "empty";
+
+cell.addEventListener("click", async () => {
+
+  if (document.querySelector(".error")) {
+    const isErrorQueen =
+      cell.dataset.state === "queen" &&
+      cell.classList.contains("error");
+
+    if (!isErrorQueen) return;
+  }
+
+  const state = cell.dataset.state;
+
+  if (state === "empty") {
+
+    cell.classList.add("x");
+    cell.dataset.state = "x";
+
+  } else if (state === "x") {
+
+    cell.classList.remove("x");
+    cell.innerHTML = `
+      <span class="queen">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
+        </svg>
+      </span>
+    `;
+    cell.dataset.state = "queen";
+    recomputeAutoX();
+
+  } else if (state === "queen") {
+
+    cell.innerHTML = "";
+    cell.dataset.state = "empty";
+    document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
+    recomputeAutoX();
+  }
+
+  const hasConflict = checkConflicts();
+if (!hasConflict && checkIncompleteBoard()) {
+  showBoardErrorMessage();
+  return;
+}
+
+  if (!hasConflict && checkWin()) {
+
+    clearInterval(timerInterval);
+    const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+    await supabaseClient
+      .from("queens_results")
+      .update({
+        completed: true,
+        time_seconds: totalSeconds
+      })
+      .eq("email", playerEmail)
+      .eq("date", new Date().toISOString().split("T")[0]);
+
+    startBtn.disabled = true;
+    hintBtn.disabled = true;
+
+    document.querySelectorAll(".queen").forEach(q => {
+      q.classList.add("win-effect");
+    });
+
+    launchConfetti();
+
+    setTimeout(() => {
+      showModal(totalSeconds);
+    }, 1200);
+  }
+
+});
+      gridElement.appendChild(cell);
+    }
+  }
+}
+
+function checkConflicts() {
+  const cells = document.querySelectorAll(".cell");
+  cells.forEach(cell => cell.classList.remove("error"));
+
+  const queens = [];
+  cells.forEach((cell, index) => {
+    if (cell.dataset.state === "queen") {
+      const row = Math.floor(index / size);
+      const col = index % size;
+      const region = regionMap[row][col];
+      queens.push({ cell, row, col, region });
+    }
+  });
+
+  let hasError = false;
+
+  for (let i = 0; i < queens.length; i++) {
+    for (let j = i + 1; j < queens.length; j++) {
+
+      const q1 = queens[i];
+      const q2 = queens[j];
+
+      const rowDiff = Math.abs(q1.row - q2.row);
+      const colDiff = Math.abs(q1.col - q2.col);
+
+      // STESSA REGIONE (COLORE)
+      if (q1.region === q2.region) {
+        highlightRegion(q1.region);
+        hasError = true;
+      }
+
+      // STESSA RIGA
+      if (q1.row === q2.row) {
+        highlightRow(q1.row);
+        hasError = true;
+      }
+
+      // STESSA COLONNA
+      if (q1.col === q2.col) {
+        highlightColumn(q1.col);
+        hasError = true;
+      }
+
+      // ADIACENTI (anche diagonale)
+      if ((rowDiff <= 1 && colDiff <= 1) && !(rowDiff === 0 && colDiff === 0)) {
+        q1.cell.classList.add("error");
+        q2.cell.classList.add("error");
+        hasError = true;
+      }
+    }
+  }
+
+if (hasError && navigator.vibrate) {
+  navigator.vibrate(120);
+}
+
+return hasError;
+}
+
+function checkWin() {
+  const cells = document.querySelectorAll(".cell");
+  let queenCount = 0;
+  cells.forEach(cell => {
+    if (cell.dataset.state === "queen") queenCount++;
+  });
+  return queenCount === size;
+}
+
+function checkIncompleteBoard() {
+
+  const cells = document.querySelectorAll(".cell");
+
+  let queenCount = 0;
+  let hasEmpty = false;
+
+  cells.forEach(cell => {
+    if (cell.dataset.state === "queen") queenCount++;
+    if (cell.dataset.state === "empty") hasEmpty = true;
+  });
+
+  // Tabellone pieno ma meno di 10 regine
+  if (!hasEmpty && queenCount < size) {
+    return true;
+  }
+
+  return false;
+}
+
+function showBoardErrorMessage() {
+
+  const oldMsg = document.getElementById("boardErrorMessage");
+  if (oldMsg) oldMsg.remove();
+
+  const msg = document.createElement("div");
+  msg.id = "boardErrorMessage";
+  msg.style.marginTop = "20px";
+  msg.style.fontWeight = "700";
+  msg.style.color = "#ff6b6b";
+
+  msg.textContent =
+    "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 regine. Hai fatto qualche errore.";
+
+  gridElement.parentElement.appendChild(msg);
+
+  setTimeout(() => {
+    msg.remove();
+  }, 4000);
+}
+function highlightRow(row) {
+  const cells = document.querySelectorAll(".cell");
+  cells.forEach((cell, index) => {
+    const r = Math.floor(index / size);
+    if (r === row) cell.classList.add("error");
+  });
+}
+
+function highlightColumn(col) {
+  const cells = document.querySelectorAll(".cell");
+  cells.forEach((cell, index) => {
+    const c = index % size;
+    if (c === col) cell.classList.add("error");
+  });
+}
+
+function highlightRegion(region) {
+  const cells = document.querySelectorAll(".cell");
+  cells.forEach((cell, index) => {
+    const row = Math.floor(index / size);
+    const col = index % size;
+    if (regionMap[row][col] === region) {
+      cell.classList.add("error");
+    }
+  });
+}
+function recomputeAutoX() {
+
+  const cells = document.querySelectorAll(".cell");
+
+  // 1️⃣ Pulisce tutte le X automatiche
+  cells.forEach(cell => {
+    if (cell.dataset.state === "x") {
+      cell.classList.remove("x");
+      cell.dataset.state = "empty";
+    }
+  });
+
+  // 2️⃣ Per ogni regina presente, rimette le X corrette
+  cells.forEach((cell, index) => {
+
+    if (cell.dataset.state !== "queen") return;
+
+    const row = Math.floor(index / size);
+    const col = index % size;
+    const region = regionMap[row][col];
+
+    cells.forEach((target, i) => {
+
+      if (target.dataset.state !== "empty") return;
+
+      const r = Math.floor(i / size);
+      const c = i % size;
+      const targetRegion = regionMap[r][c];
+
+      const rowDiff = Math.abs(r - row);
+      const colDiff = Math.abs(c - col);
+
+      const sameRow = r === row;
+      const sameCol = c === col;
+      const sameRegion = targetRegion === region;
+      const adjacent = rowDiff <= 1 && colDiff <= 1;
+
+      if (sameRow || sameCol || sameRegion || adjacent) {
+        target.classList.add("x");
+        target.dataset.state = "x";
+      }
+
+    });
+
+  });
+}
+function markCell(cell) {
+
+  const state = cell.dataset.state;
+
+  // Vuota → X
+  if (state === "empty") {
+    cell.classList.add("x");
+    cell.dataset.state = "x";
+    return;
+  }
+
+  // X → vuota
+  if (state === "x") {
+    cell.classList.remove("x");
+    cell.dataset.state = "empty";
+    return;
+  }
+
+  // Regina → vuota
+  if (state === "queen") {
+    cell.innerHTML = "";
+    cell.dataset.state = "empty";
+    recomputeAutoX();
+    return;
+  }
+}
+function giveHint() {
+
+  if (!startTime) return;
+  if (hintsUsed >= maxHints) return;
+  if (document.querySelector(".error")) return;
+
+  const cells = document.querySelectorAll(".cell");
+
+  for (let row = 0; row < size; row++) {
+
+    let queenFound = false;
+    let queenCol = null;
+    let queenCell = null;
+
+    for (let col = 0; col < size; col++) {
+      const index = row * size + col;
+      const cell = cells[index];
+
+      if (cell.dataset.state === "queen") {
+        queenFound = true;
+        queenCol = col;
+        queenCell = cell;
+        break;
+      }
+    }
+
+    // 🟥 Regina sbagliata → rimuove
+    if (queenFound && queenCol !== solution[row]) {
+
+      queenCell.innerHTML = "";
+      queenCell.dataset.state = "empty";
+
+      queenCell.classList.add("error");
+
+      setTimeout(() => {
+        queenCell.classList.remove("error");
+      }, 800);
+
+      recomputeAutoX();
+
+      showHintMessage(
+  `❌ Ho rimosso una regina errata nella riga ${row + 1}. (-30s)`,
+  "error"
+);
+
+      applyHintPenalty("remove");
+      return;
+    }
+
+// 🟩 Riga vuota → inserisce corretta (con pulizia colonna)
+if (!queenFound) {
+
+  const correctCol = solution[row];
+  let removedRow = null;
+
+  // 🔴 1️⃣ Controlla se nella stessa colonna c'è una regina sbagliata
+  for (let r = 0; r < size; r++) {
+    if (r === row) continue;
+
+    const indexCheck = r * size + correctCol;
+    const cellCheck = cells[indexCheck];
+
+    if (cellCheck.dataset.state === "queen" && solution[r] !== correctCol) {
+      cellCheck.innerHTML = "";
+      cellCheck.dataset.state = "empty";
+      removedRow = r;
+    }
+  }
+
+  // 🔴 2️⃣ Inserisce la regina corretta
+  const index = row * size + correctCol;
+  const targetCell = cells[index];
+
+  targetCell.classList.remove("x");
+  targetCell.innerHTML = `
+    <span class="queen">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
+      </svg>
+    </span>
+  `;
+  targetCell.dataset.state = "queen";
+
+  recomputeAutoX();
+
+  // 🔵 3️⃣ Messaggio intelligente
+if (removedRow !== null) {
+
+showHintMessage(
+  `👑 Ho inserito la regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (-60s)`,
+  "success"
+);
+
+  applyHintPenalty("insert_remove");
+
+} else {
+
+showHintMessage(
+  `👑 Ho inserito la regina corretta nella riga ${row + 1}. (-45s)`,
+  "success"
+);
+
+  applyHintPenalty("insert");
+
+}
+
+return;
+}
+  }
+}
+
+async function applyHintPenalty(type) {
+
+  let penalty = 45;
+  if (type === "remove") penalty = 30;
+  else if (type === "insert") penalty = 45;
+  else if (type === "insert_remove") penalty = 60;
+
+  startTime -= penalty * 1000;
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data } = await supabaseClient
+    .from("queens_results")
+    .select("penalty_seconds, hints_used")
+    .eq("email", playerEmail)
+    .eq("date", today)
+    .maybeSingle();
+
+  const currentPenalty = data?.penalty_seconds || 0;
+  const currentHints = data?.hints_used || 0;
+
+  const newHints = currentHints + 1;
+
+  const { error } = await supabaseClient
+    .from("queens_results")
+    .update({
+      penalty_seconds: currentPenalty + penalty,
+      hints_used: newHints
+    })
+    .eq("email", playerEmail)
+    .eq("date", today);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  // 🔵 Sincronizza variabile locale con DB
+  hintsUsed = newHints;
+
+  const timerEl = document.getElementById("timer");
+  timerEl.classList.remove("timer-penalty");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-penalty");
+
+  hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+
+  if (hintsUsed >= maxHints) {
+    hintBtn.disabled = true;
+  }
+}
+function showHintMessage(text, type = "info") {
+
+  // Rimuove eventuale messaggio precedente
+  const oldMsg = document.getElementById("hintMessage");
+  if (oldMsg) oldMsg.remove();
+
+  const msg = document.createElement("div");
+  msg.id = "hintMessage";
+  msg.style.marginTop = "12px";
+  msg.style.fontWeight = "600";
+  msg.style.transition = "opacity 0.4s ease";
+
+  if (type === "error") {
+    msg.style.color = "#ff6b6b";
+  } else if (type === "success") {
+    msg.style.color = "#69f0ae";
+  } else {
+    msg.style.color = "#ffffff";
+  }
+
+  msg.textContent = text;
+
+  document.getElementById("playerInfo").appendChild(msg);
+
+  // Fade out dopo 3 secondi
+  setTimeout(() => {
+    msg.style.opacity = "0";
+    setTimeout(() => msg.remove(), 400);
+  }, 3000);
+}
+function showCustomModal(title, message) {
+  const modal = document.getElementById("winModal");
+  const titleElement = modal.querySelector("h2");
+  const messageElement = document.getElementById("finalTime");
+  const button = document.getElementById("modalBtn");
+
+  titleElement.textContent = title;
+  messageElement.textContent = message;
+
+  button.textContent = "OK";
+  button.onclick = () => {
+    modal.style.display = "none";
+  };
+
+  modal.style.display = "flex";
+}
+function showModal(time) {
+  const modal = document.getElementById("winModal");
+  const button = document.getElementById("modalBtn");
+
+  document.getElementById("finalTime").textContent =
+    "Tempo: " + time + " secondi";
+
+  button.textContent = "Chiudi";
+  button.onclick = closeModal;
+
+  modal.style.display = "flex";
+}
+
+async function closeModal() {
+
+  // Chiude il modal
+  document.getElementById("winModal").style.display = "none";
+
+  // Nasconde la griglia
+  gridElement.style.visibility = "hidden";
+  gridElement.style.opacity = "0";
+  gridElement.innerHTML = "";
+
+  // Disabilita pulsanti
+  startBtn.disabled = true;
+  hintBtn.disabled = true;
+  startBtn.innerText = "Già giocato";
+
+  // Mostra messaggio finale
+  const message = document.createElement("div");
+message.classList.add("post-game");
+  message.style.marginTop = "15px";
+  message.style.fontWeight = "600";
+  message.innerText = "Hai già completato il puzzle di oggi 👑";
+
+  document.getElementById("playerInfo").appendChild(message);
+
+  // 🔽 CARICA CLASSIFICA
+  const leaderboard = await loadTodayLeaderboard();
+
+  const leaderboardDiv = document.createElement("div");
+leaderboardDiv.classList.add("post-game");
+  leaderboardDiv.style.marginTop = "20px";
+  leaderboardDiv.style.padding = "15px";
+leaderboardDiv.style.background = "rgba(25,25,35,0.9)";
+leaderboardDiv.style.border = "1px solid rgba(255,255,255,0.08)";
+leaderboardDiv.style.backdropFilter = "blur(12px)";
+  leaderboardDiv.style.borderRadius = "15px";
+  leaderboardDiv.style.maxWidth = "350px";
+  leaderboardDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
+
+  const title = document.createElement("h3");
+  title.innerText = "🏆 Classifica di oggi";
+  title.style.marginBottom = "10px";
+
+  leaderboardDiv.appendChild(title);
+
+leaderboard.forEach((player, index) => {
+
+  const row = document.createElement("div");
+  row.style.display = "flex";
+  row.style.justifyContent = "space-between";
+  row.style.padding = "6px 0";
+
+  let medal = "";
+  if (index === 0) medal = "👑";
+  else if (index === 1) medal = "🥈";
+  else if (index === 2) medal = "🥉";
+
+// 🎨 Colorazione premium classifica
+if (index === 0) {
+  row.style.color = "#ffd700"; // Oro
+} else if (index === 1) {
+  row.style.color = "#cfd8dc"; // Argento
+} else if (index === 2) {
+  row.style.color = "#ffb74d"; // Bronzo
+} else if (index < 10) {
+  row.style.color = "#69f0ae"; // Verde premium
+} else {
+  row.style.color = "#b0bec5"; // Grigio elegante
+}
+
+// Evidenzia il giocatore corrente con glow leggero
+if (player.email === playerEmail) {
+  row.style.fontWeight = "700";
+  row.style.textShadow = "0 0 8px rgba(255,255,255,0.4)";
+}
+
+  row.innerHTML = `
+    <span>${medal} ${index + 1}. ${player.name}</span>
+    <strong>${player.time_seconds}s</strong>
+  `;
+
+  leaderboardDiv.appendChild(row);
+});
+const positionData = await getPlayerPosition();
+
+if (positionData) {
+
+  const positionBox = document.createElement("div");
+  positionBox.style.marginTop = "14px";
+  positionBox.style.fontWeight = "700";
+
+if (positionData.rank === 1) {
+  positionBox.style.color = "#ffd700"; // Oro
+} else if (positionData.rank === 2) {
+  positionBox.style.color = "#cfd8dc"; // Argento
+} else if (positionData.rank === 3) {
+  positionBox.style.color = "#ffb74d"; // Bronzo
+} else if (positionData.rank <= 10) {
+  positionBox.style.color = "#69f0ae"; // Verde premium
+} else {
+  positionBox.style.color = "#b0bec5"; // Grigio elegante
+}
+
+  positionBox.innerText =
+    `Sei ${positionData.rank}° su ${positionData.totalPlayers} giocatori · ${positionData.time}s`;
+
+  leaderboardDiv.appendChild(positionBox);
+}
+
+  document.getElementById("playerInfo").appendChild(leaderboardDiv);
+}
+async function showLeaderboardOnly() {
+
+  const leaderboard = await loadTodayLeaderboard();
+
+  const leaderboardDiv = document.createElement("div");
+  leaderboardDiv.classList.add("post-game");
+  leaderboardDiv.style.marginTop = "20px";
+  leaderboardDiv.style.padding = "15px";
+leaderboardDiv.style.background = "rgba(25,25,35,0.9)";
+leaderboardDiv.style.border = "1px solid rgba(255,255,255,0.08)";
+leaderboardDiv.style.backdropFilter = "blur(12px)";
+  leaderboardDiv.style.borderRadius = "15px";
+  leaderboardDiv.style.maxWidth = "350px";
+  leaderboardDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
+
+  const title = document.createElement("h3");
+  title.innerText = "🏆 Classifica di oggi";
+  title.style.marginBottom = "10px";
+  leaderboardDiv.appendChild(title);
+
+  leaderboard.forEach((player, index) => {
+
+    const row = document.createElement("div");
+    row.style.display = "flex";
+    row.style.justifyContent = "space-between";
+    row.style.padding = "6px 0";
+
+    let medal = "";
+    if (index === 0) medal = "👑";
+    else if (index === 1) medal = "🥈";
+    else if (index === 2) medal = "🥉";
+
+  // 🎨 Colorazione premium classifica
+if (index === 0) {
+  row.style.color = "#ffd700"; // Oro
+} else if (index === 1) {
+  row.style.color = "#cfd8dc"; // Argento
+} else if (index === 2) {
+  row.style.color = "#ffb74d"; // Bronzo
+} else if (index < 10) {
+  row.style.color = "#69f0ae"; // Verde premium
+} else {
+  row.style.color = "#b0bec5"; // Grigio elegante
+}
+
+// Evidenzia il giocatore corrente con glow leggero
+if (player.email === playerEmail) {
+  row.style.fontWeight = "700";
+  row.style.textShadow = "0 0 8px rgba(255,255,255,0.4)";
+}
+
+    row.innerHTML = `
+      <span>${medal} ${index + 1}. ${player.name}</span>
+      <strong>${player.time_seconds}s</strong>
+    `;
+
+    leaderboardDiv.appendChild(row);
+  });
+
+  const positionData = await getPlayerPosition();
+
+  if (positionData) {
+
+    const positionBox = document.createElement("div");
+    positionBox.style.marginTop = "14px";
+    positionBox.style.fontWeight = "700";
+
+ if (positionData.rank === 1) {
+  positionBox.style.color = "#ffd700"; // Oro
+} else if (positionData.rank === 2) {
+  positionBox.style.color = "#cfd8dc"; // Argento
+} else if (positionData.rank === 3) {
+  positionBox.style.color = "#ffb74d"; // Bronzo
+} else if (positionData.rank <= 10) {
+  positionBox.style.color = "#69f0ae"; // Verde premium
+} else {
+  positionBox.style.color = "#b0bec5"; // Grigio elegante
+}
+
+    positionBox.innerText =
+      `Sei ${positionData.rank}° su ${positionData.totalPlayers} giocatori · ${positionData.time}s`;
+
+    leaderboardDiv.appendChild(positionBox);
+  }
+
+  document.getElementById("playerInfo").appendChild(leaderboardDiv);
+}
+startBtn.addEventListener("click", async () => {
+
+  hintsUsed = 0;
+  hintBtn.textContent = "💡 Suggerimento (3)";
+
+  const today = new Date().toISOString().split("T")[0];
+
+  // 🔍 Controlla se esiste già record
+  const { data: existing } = await supabaseClient
+    .from("queens_results")
+    .select("*")
+    .eq("email", playerEmail)
+    .eq("date", today)
+    .maybeSingle();
+
+if (existing) {
+
+  if (existing.completed) {
+    startBtn.disabled = true;
+    return;
+  }
+
+  startBtn.disabled = true;
+
+  // 🔵 RIPRISTINA HINT DAL DATABASE
+  hintsUsed = existing.hints_used || 0;
+
+  hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+
+  if (hintsUsed < maxHints) {
+    hintBtn.disabled = false;
+  } else {
+    hintBtn.disabled = true;
+  }
+
+  const startedAt = new Date(existing.started_at).getTime();
+  const penalty = existing.penalty_seconds || 0;
+
+  startTime = startedAt - (penalty * 1000);
+
+  if (timerInterval) clearInterval(timerInterval);
+
+  timerInterval = setInterval(() => {
+    const seconds = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById("timer").textContent = seconds + "s";
+  }, 1000);
+
+  gridElement.style.visibility = "visible";
+  gridElement.style.opacity = "1";
+
+  initializeGame();
+  return;
+}
+  // 📝 Inserisce record di inizio
+  const { data, error } = await supabaseClient
+    .from("queens_results")
+.insert({
+  date: today,
+  name: playerName,
+  email: playerEmail,
+  completed: false,
+  hints_used: 0,
+  penalty_seconds: 0
+})
+    .select()
+    .single();
+
+  if (error) {
+    console.log(JSON.stringify(error, null, 2));
+    return;
+  }
+
+  startTime = new Date(data.started_at).getTime();
+
+  timerInterval = setInterval(() => {
+    const seconds = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById("timer").textContent = seconds + "s";
+  }, 1000);
+
+  gridElement.style.visibility = "visible";
+  gridElement.style.opacity = "1";
+
+  startBtn.disabled = true;
+  hintBtn.disabled = false;
+
+  initializeGame();
+});
+
+function launchConfetti() {
+  const duration = 1000;
+  const end = Date.now() + duration;
+
+  const colors = ['#ffd700', '#ff4081', '#40c4ff', '#69f0ae'];
+
+  (function frame() {
+    confetti({
+      particleCount: 6,
+      angle: 60,
+      spread: 70,
+      origin: { x: 0 },
+      colors: colors
+    });
+
+    confetti({
+      particleCount: 6,
+      angle: 120,
+      spread: 70,
+      origin: { x: 1 },
+      colors: colors
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
+hintBtn.addEventListener("click", giveHint);
+initializePage();
+
+
+</script>
+<div id="winModal" class="modal">
+  <div class="modal-content">
+    <h2>👑 Partita conclusa</h2>
+    <p id="finalTime"></p>
+    <button id="modalBtn">Chiudi</button>
+  </div>
+</div>
+</body>
+</html>
