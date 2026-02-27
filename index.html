@@ -382,13 +382,27 @@ const startBtn = document.getElementById("startBtn");
 const hintBtn = document.getElementById("hintBtn");
 let hintsUsed = 0;
 const maxHints = 3;
+let isDragging = false;
+let dragMode = null; // "mark" oppure null
+let lastTapTime = 0;
+const doubleTapDelay = 300; // millisecondi
 
 let solution = [];
 let regionMap = [];
 let startTime = null;
 let timerInterval = null;
 
-const urlParams = new URLSearchParams(window.location.search);
+let queryString = window.location.search;
+
+// Se search è vuoto ma i parametri sono nella hash
+if (!queryString && window.location.hash.includes("?")) {
+  queryString = window.location.hash.substring(
+    window.location.hash.indexOf("?")
+  );
+}
+
+const urlParams = new URLSearchParams(queryString);
+
 const playerEmail = urlParams.get("email");
 const playerName = urlParams.get("name");
 
@@ -544,9 +558,20 @@ async function initializePage() {
 
   // ✅ Caso iniziato ma non completato
   if (!todayResult.completed) {
+hintsUsed = todayResult.hints_used || 0;
 
-    startBtn.disabled = true;
-    hintBtn.disabled = false;
+hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+
+if (hintsUsed >= maxHints) {
+  hintBtn.disabled = true;
+}
+startBtn.disabled = true;
+
+if (hintsUsed < maxHints) {
+  hintBtn.disabled = false;
+} else {
+  hintBtn.disabled = true;
+}
 
     const startedAt = new Date(todayResult.started_at).getTime();
 const penalty = todayResult.penalty_seconds || 0;
@@ -576,15 +601,69 @@ function initializeGame() {
       cell.classList.add("cell");
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
+// 🔵 TOUCH START
+cell.addEventListener("touchstart", (e) => {
 
-     cell.addEventListener("click", async () => {
-if (document.querySelector(".error")) {
-  const isErrorQueen =
-    cell.dataset.state === "queen" &&
-    cell.classList.contains("error");
+  const now = Date.now();
+  const timeSinceLastTap = now - lastTapTime;
 
-  if (!isErrorQueen) return;
-}
+  // 🔥 DOUBLE TAP → mette corona
+  if (timeSinceLastTap < doubleTapDelay) {
+
+    if (cell.dataset.state === "queen") return;
+
+    cell.classList.remove("x");
+    cell.innerHTML = `
+      <span class="queen">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
+        </svg>
+      </span>
+    `;
+    cell.dataset.state = "queen";
+    recomputeAutoX();
+
+    lastTapTime = 0;
+    return;
+  }
+
+  lastTapTime = now;
+
+isDragging = true;
+dragMode = "mark";
+markCell(cell);
+  
+
+});
+
+// 🔵 TOUCH MOVE
+cell.addEventListener("touchmove", (e) => {
+  if (!isDragging || dragMode !== "mark") return;
+
+  e.preventDefault(); // 🔥 blocca scroll durante drag
+
+  const touch = e.touches[0];
+  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  if (element && element.classList.contains("cell")) {
+    markCell(element);
+  }
+}, { passive: false });
+// 🔵 TOUCH END
+cell.addEventListener("touchend", () => {
+  isDragging = false;
+  dragMode = null;
+});
+cell.addEventListener("click", async () => {
+
+  if (document.querySelector(".error")) {
+    const isErrorQueen =
+      cell.dataset.state === "queen" &&
+      cell.classList.contains("error");
+
+    if (!isErrorQueen) return;
+  }
+
   const state = cell.dataset.state;
 
   if (state === "empty") {
@@ -596,25 +675,22 @@ if (document.querySelector(".error")) {
 
     cell.classList.remove("x");
     cell.innerHTML = `
-  <span class="queen">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
-    </svg>
-  </span>
-`;
+      <span class="queen">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
+        </svg>
+      </span>
+    `;
     cell.dataset.state = "queen";
     recomputeAutoX();
 
-} else {
+  } else if (state === "queen") {
 
-  cell.innerHTML = "";
-  cell.dataset.state = "empty";
-
-  document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
-
-  recomputeAutoX();
-
-}
+    cell.innerHTML = "";
+    cell.dataset.state = "empty";
+    document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
+    recomputeAutoX();
+  }
 
   const hasConflict = checkConflicts();
 
@@ -623,15 +699,14 @@ if (document.querySelector(".error")) {
     clearInterval(timerInterval);
     const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
 
-
-await supabaseClient
-  .from("queens_results")
-  .update({
-    completed: true,
-    time_seconds: totalSeconds
-  })
-  .eq("email", playerEmail)
-  .eq("date", new Date().toISOString().split("T")[0]);
+    await supabaseClient
+      .from("queens_results")
+      .update({
+        completed: true,
+        time_seconds: totalSeconds
+      })
+      .eq("email", playerEmail)
+      .eq("date", new Date().toISOString().split("T")[0]);
 
     startBtn.disabled = true;
     hintBtn.disabled = true;
@@ -640,15 +715,14 @@ await supabaseClient
       q.classList.add("win-effect");
     });
 
-launchConfetti();
+    launchConfetti();
 
-setTimeout(() => {
-  showModal(totalSeconds);
-}, 1200);
-}
+    setTimeout(() => {
+      showModal(totalSeconds);
+    }, 1200);
+  }
 
 });
-
       gridElement.appendChild(cell);
     }
   }
@@ -796,7 +870,32 @@ function recomputeAutoX() {
 
   });
 }
+function markCell(cell) {
 
+  const state = cell.dataset.state;
+
+  // Vuota → X
+  if (state === "empty") {
+    cell.classList.add("x");
+    cell.dataset.state = "x";
+    return;
+  }
+
+  // X → vuota
+  if (state === "x") {
+    cell.classList.remove("x");
+    cell.dataset.state = "empty";
+    return;
+  }
+
+  // Regina → vuota
+  if (state === "queen") {
+    cell.innerHTML = "";
+    cell.dataset.state = "empty";
+    recomputeAutoX();
+    return;
+  }
+}
 function giveHint() {
 
   if (!startTime) return;
@@ -910,8 +1009,6 @@ return;
 
 async function applyHintPenalty(type) {
 
-  hintsUsed++;
-
   let penalty = 45;
   if (type === "remove") penalty = 30;
   else if (type === "insert") penalty = 45;
@@ -921,26 +1018,35 @@ async function applyHintPenalty(type) {
 
   const today = new Date().toISOString().split("T")[0];
 
-  // 🔵 Legge penalità attuale
   const { data } = await supabaseClient
     .from("queens_results")
-    .select("penalty_seconds")
+    .select("penalty_seconds, hints_used")
     .eq("email", playerEmail)
     .eq("date", today)
     .maybeSingle();
 
   const currentPenalty = data?.penalty_seconds || 0;
+  const currentHints = data?.hints_used || 0;
 
-  // 🔵 Aggiorna penalità server
-  await supabaseClient
+  const newHints = currentHints + 1;
+
+  const { error } = await supabaseClient
     .from("queens_results")
     .update({
-      penalty_seconds: currentPenalty + penalty
+      penalty_seconds: currentPenalty + penalty,
+      hints_used: newHints
     })
     .eq("email", playerEmail)
     .eq("date", today);
 
-  // 🔴 Animazione timer
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  // 🔵 Sincronizza variabile locale con DB
+  hintsUsed = newHints;
+
   const timerEl = document.getElementById("timer");
   timerEl.classList.remove("timer-penalty");
   void timerEl.offsetWidth;
@@ -1231,7 +1337,17 @@ if (existing) {
   }
 
   startBtn.disabled = true;
-  hintBtn.disabled = false;
+
+  // 🔵 RIPRISTINA HINT DAL DATABASE
+  hintsUsed = existing.hints_used || 0;
+
+  hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+
+  if (hintsUsed < maxHints) {
+    hintBtn.disabled = false;
+  } else {
+    hintBtn.disabled = true;
+  }
 
   const startedAt = new Date(existing.started_at).getTime();
   const penalty = existing.penalty_seconds || 0;
@@ -1251,16 +1367,17 @@ if (existing) {
   initializeGame();
   return;
 }
-
   // 📝 Inserisce record di inizio
   const { data, error } = await supabaseClient
     .from("queens_results")
-    .insert({
-      date: today,
-      name: playerName,
-      email: playerEmail,
-      completed: false
-    })
+.insert({
+  date: today,
+  name: playerName,
+  email: playerEmail,
+  completed: false,
+  hints_used: 0,
+  penalty_seconds: 0
+})
     .select()
     .single();
 
@@ -1315,6 +1432,10 @@ function launchConfetti() {
 }
 hintBtn.addEventListener("click", giveHint);
 initializePage();
+document.addEventListener("touchend", () => {
+  isDragging = false;
+  dragMode = null;
+});
 
 </script>
 <div id="winModal" class="modal">
