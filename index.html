@@ -644,15 +644,16 @@ cell.addEventListener("touchend", () => {
   isDragging = false;
   dragMode = null;
 });
+cell.addEventListener("click", async () => {
 
-     cell.addEventListener("click", async () => {
-if (document.querySelector(".error")) {
-  const isErrorQueen =
-    cell.dataset.state === "queen" &&
-    cell.classList.contains("error");
+  if (document.querySelector(".error")) {
+    const isErrorQueen =
+      cell.dataset.state === "queen" &&
+      cell.classList.contains("error");
 
-  if (!isErrorQueen) return;
-}
+    if (!isErrorQueen) return;
+  }
+
   const state = cell.dataset.state;
 
   if (state === "empty") {
@@ -662,53 +663,24 @@ if (document.querySelector(".error")) {
 
   } else if (state === "x") {
 
-const state = cell.dataset.state;
+    cell.classList.remove("x");
+    cell.innerHTML = `
+      <span class="queen">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
+        </svg>
+      </span>
+    `;
+    cell.dataset.state = "queen";
+    recomputeAutoX();
 
-if (state === "empty") {
+  } else if (state === "queen") {
 
-  cell.classList.add("x");
-  cell.dataset.state = "x";
-
-} else if (state === "x") {
-
-  cell.classList.remove("x");
-  cell.dataset.state = "empty";
-
-} else if (state === "queen") {
-
-  cell.innerHTML = "";
-  cell.dataset.state = "empty";
-  recomputeAutoX();
-}
-
-  cell.classList.add("x");
-  cell.dataset.state = "x";
-
-} else if (state === "x") {
-
-  cell.classList.remove("x");
-  cell.dataset.state = "empty";
-
-} else if (state === "queen") {
-
-  cell.innerHTML = "";
-  cell.dataset.state = "empty";
-
-  document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
-
-  recomputeAutoX();
-}
-
-} else {
-
-  cell.innerHTML = "";
-  cell.dataset.state = "empty";
-
-  document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
-
-  recomputeAutoX();
-
-}
+    cell.innerHTML = "";
+    cell.dataset.state = "empty";
+    document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
+    recomputeAutoX();
+  }
 
   const hasConflict = checkConflicts();
 
@@ -717,15 +689,14 @@ if (state === "empty") {
     clearInterval(timerInterval);
     const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
 
-
-await supabaseClient
-  .from("queens_results")
-  .update({
-    completed: true,
-    time_seconds: totalSeconds
-  })
-  .eq("email", playerEmail)
-  .eq("date", new Date().toISOString().split("T")[0]);
+    await supabaseClient
+      .from("queens_results")
+      .update({
+        completed: true,
+        time_seconds: totalSeconds
+      })
+      .eq("email", playerEmail)
+      .eq("date", new Date().toISOString().split("T")[0]);
 
     startBtn.disabled = true;
     hintBtn.disabled = true;
@@ -734,15 +705,14 @@ await supabaseClient
       q.classList.add("win-effect");
     });
 
-launchConfetti();
+    launchConfetti();
 
-setTimeout(() => {
-  showModal(totalSeconds);
-}, 1200);
-}
+    setTimeout(() => {
+      showModal(totalSeconds);
+    }, 1200);
+  }
 
 });
-
       gridElement.appendChild(cell);
     }
   }
