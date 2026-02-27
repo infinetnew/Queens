@@ -544,9 +544,20 @@ async function initializePage() {
 
   // ✅ Caso iniziato ma non completato
   if (!todayResult.completed) {
+hintsUsed = todayResult.hints_used || 0;
 
-    startBtn.disabled = true;
-    hintBtn.disabled = false;
+hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+
+if (hintsUsed >= maxHints) {
+  hintBtn.disabled = true;
+}
+startBtn.disabled = true;
+
+if (hintsUsed < maxHints) {
+  hintBtn.disabled = false;
+} else {
+  hintBtn.disabled = true;
+}
 
     const startedAt = new Date(todayResult.started_at).getTime();
 const penalty = todayResult.penalty_seconds || 0;
@@ -932,13 +943,14 @@ async function applyHintPenalty(type) {
   const currentPenalty = data?.penalty_seconds || 0;
 
   // 🔵 Aggiorna penalità server
-  await supabaseClient
-    .from("queens_results")
-    .update({
-      penalty_seconds: currentPenalty + penalty
-    })
-    .eq("email", playerEmail)
-    .eq("date", today);
+await supabaseClient
+  .from("queens_results")
+  .update({
+    penalty_seconds: currentPenalty + penalty,
+    hints_used: hintsUsed
+  })
+  .eq("email", playerEmail)
+  .eq("date", today);
 
   // 🔴 Animazione timer
   const timerEl = document.getElementById("timer");
@@ -1231,7 +1243,17 @@ if (existing) {
   }
 
   startBtn.disabled = true;
-  hintBtn.disabled = false;
+
+  // 🔵 RIPRISTINA HINT DAL DATABASE
+  hintsUsed = existing.hints_used || 0;
+
+  hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+
+  if (hintsUsed < maxHints) {
+    hintBtn.disabled = false;
+  } else {
+    hintBtn.disabled = true;
+  }
 
   const startedAt = new Date(existing.started_at).getTime();
   const penalty = existing.penalty_seconds || 0;
@@ -1251,7 +1273,6 @@ if (existing) {
   initializeGame();
   return;
 }
-
   // 📝 Inserisce record di inizio
   const { data, error } = await supabaseClient
     .from("queens_results")
