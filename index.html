@@ -382,6 +382,8 @@ const startBtn = document.getElementById("startBtn");
 const hintBtn = document.getElementById("hintBtn");
 let hintsUsed = 0;
 const maxHints = 3;
+let isDragging = false;
+let dragMode = null; // "mark" oppure null
 
 let solution = [];
 let regionMap = [];
@@ -587,6 +589,33 @@ function initializeGame() {
       cell.classList.add("cell");
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
+// 🔵 TOUCH START
+cell.addEventListener("touchstart", (e) => {
+  if (cell.dataset.state === "empty") {
+    isDragging = true;
+    dragMode = "mark";
+    markCell(cell);
+  }
+});
+
+// 🔵 TOUCH MOVE
+cell.addEventListener("touchmove", (e) => {
+  if (!isDragging || dragMode !== "mark") return;
+
+  e.preventDefault(); // 🔥 blocca scroll durante drag
+
+  const touch = e.touches[0];
+  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  if (element && element.classList.contains("cell")) {
+    markCell(element);
+  }
+}, { passive: false });
+// 🔵 TOUCH END
+cell.addEventListener("touchend", () => {
+  isDragging = false;
+  dragMode = null;
+});
 
      cell.addEventListener("click", async () => {
 if (document.querySelector(".error")) {
@@ -807,7 +836,12 @@ function recomputeAutoX() {
 
   });
 }
-
+function markCell(cell) {
+  if (cell.dataset.state === "empty") {
+    cell.classList.add("x");
+    cell.dataset.state = "x";
+  }
+}
 function giveHint() {
 
   if (!startTime) return;
@@ -1344,6 +1378,10 @@ function launchConfetti() {
 }
 hintBtn.addEventListener("click", giveHint);
 initializePage();
+document.addEventListener("touchend", () => {
+  isDragging = false;
+  dragMode = null;
+});
 
 </script>
 <div id="winModal" class="modal">
