@@ -676,22 +676,6 @@ transform-style: preserve-3d;
 
 }
 
-@keyframes missingRowFlash {
-
-  0%   { box-shadow: 0 0 0 2px rgba(255, 82, 82, 0.9) inset; }
-
-  50%  { box-shadow: 0 0 0 4px rgba(255, 23, 68, 1) inset; }
-
-  100% { box-shadow: 0 0 0 2px rgba(255, 82, 82, 0.9) inset; } }
-
- 
-
-.missing-row {
-
-  animation: missingRowFlash 1s ease-in-out 3; }
-
- 
-
 </style>
 
 </head>
@@ -1106,22 +1090,6 @@ async function initializePage() {
 
   if (!todayResult.completed) {
 
-hintsUsed = todayResult.hints_used || 0;
-
- 
-
-hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
-
- 
-
-if (hintsUsed >= maxHints) {
-
-  hintBtn.disabled = true;
-
-}
-
- 
-
  
 
     startBtn.disabled = true;
@@ -1267,10 +1235,6 @@ if (document.querySelector(".error")) {
  
 
   const hasConflict = checkConflicts();
-
-checkBoardCompletionState(hasConflict);
-
- 
 
  
 
@@ -1482,101 +1446,7 @@ function checkWin() {
 
  
 
-function checkBoardCompletionState(hasConflict) {
-
- 
-
-  if (hasConflict) return;
-
- 
-
-  const cells = document.querySelectorAll(".cell");
-
- 
-
-  let queenCount = 0;
-
-  let emptyCount = 0;
-
- 
-
-  cells.forEach(cell => {
-
-    if (cell.dataset.state === "queen") queenCount++;
-
-    if (cell.dataset.state === "empty") emptyCount++;
-
-  });
-
- 
-
-  // Tabellone pieno ma regine insufficienti
-
-  if (emptyCount === 0 && queenCount < size) {
-
- 
-
-    showHintMessage(
-
-      "⚠️ Il tabellone è completo ma non hai inserito tutte le 10 regine.",
-
-      "error"
-
-    );
-
- 
-
-    // Evidenzia righe senza regina
-
-    for (let row = 0; row < size; row++) {
-
- 
-
-      let hasQueenInRow = false;
-
- 
-
-      for (let col = 0; col < size; col++) {
-
-        const index = row * size + col;
-
-        if (cells[index].dataset.state === "queen") {
-
-          hasQueenInRow = true;
-
-          break;
-
-        }
-
-      }
-
- 
-
-      if (!hasQueenInRow) {
-
-        for (let col = 0; col < size; col++) {
-
-          const index = row * size + col;
-
-          cells[index].classList.add("missing-row");
-
- 
-
-          setTimeout(() => {
-
-            cells[index].classList.remove("missing-row");
-
-          }, 3000);
-
-        }
-
-      }
-
-    }
-
-  }
-
-}
+/* 👇 INCOLLA QUI SOTTO 👇 */
 
  
 
@@ -1996,17 +1866,15 @@ async function applyHintPenalty(type) {
 
   // 🔵 Aggiorna penalità server
 
-await supabaseClient
+  await supabaseClient
 
-  .from("queens_results")
+    .from("queens_results")
 
-  .update({
+    .update({
 
-    penalty_seconds: currentPenalty + penalty,
+      penalty_seconds: currentPenalty + penalty
 
-    hints_used: hintsUsed
-
-  })
+    })
 
     .eq("email", playerEmail)
 
@@ -2581,22 +2449,6 @@ startBtn.addEventListener("click", async () => {
  
 
 if (existing) {
-
-hintsUsed = existing.hints_used || 0;
-
- 
-
-hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
-
- 
-
-if (hintsUsed >= maxHints) {
-
-  hintBtn.disabled = true;
-
-}
-
- 
 
  
 
