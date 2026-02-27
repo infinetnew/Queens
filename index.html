@@ -434,16 +434,16 @@ message.classList.add("post-game");
 }
 
 const colors = [
-  "rgba(220, 53, 69, 0.55)",    // rosso
-  "rgba(255, 140, 0, 0.55)",    // arancione
-  "rgba(255, 235, 59, 0.50)",   // giallo (nuovo, non oro scuro)
-  "rgba(139, 195, 74, 0.55)",   // verde lime
-  "rgba(0, 150, 136, 0.55)",    // verde petrolio
-  "rgba(33, 150, 243, 0.55)",   // blu puro
-  "rgba(156, 39, 176, 0.55)",   // viola
-  "rgba(121, 85, 72, 0.55)",    // marrone
-  "rgba(200, 200, 200, 0.55)",  // grigio chiaro (più chiaro come richiesto)
-  "rgba(255, 105, 180, 0.55)"
+  "rgba(220, 53, 69, 0.75)",
+  "rgba(255, 140, 0, 0.75)",
+  "rgba(255, 235, 59, 0.75)",
+  "rgba(139, 195, 74, 0.75)",
+  "rgba(0, 150, 136, 0.75)",
+"rgba(173, 216, 230, 0.75)"
+  "rgba(156, 39, 176, 0.75)",
+  "rgba(121, 85, 72, 0.75)",
+  "rgba(200, 200, 200, 0.75)",
+  "rgba(255, 105, 180, 0.75)"
 ];
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
@@ -640,6 +640,10 @@ cell.addEventListener("click", async () => {
   }
 
   const hasConflict = checkConflicts();
+if (!hasConflict && checkIncompleteBoard()) {
+  showBoardErrorMessage();
+  return;
+}
 
   if (!hasConflict && checkWin()) {
 
@@ -743,8 +747,46 @@ function checkWin() {
   return queenCount === size;
 }
 
-/* 👇 INCOLLA QUI SOTTO 👇 */
+function checkIncompleteBoard() {
 
+  const cells = document.querySelectorAll(".cell");
+
+  let queenCount = 0;
+  let hasEmpty = false;
+
+  cells.forEach(cell => {
+    if (cell.dataset.state === "queen") queenCount++;
+    if (cell.dataset.state === "empty") hasEmpty = true;
+  });
+
+  // Tabellone pieno ma meno di 10 regine
+  if (!hasEmpty && queenCount < size) {
+    return true;
+  }
+
+  return false;
+}
+
+function showBoardErrorMessage() {
+
+  const oldMsg = document.getElementById("boardErrorMessage");
+  if (oldMsg) oldMsg.remove();
+
+  const msg = document.createElement("div");
+  msg.id = "boardErrorMessage";
+  msg.style.marginTop = "20px";
+  msg.style.fontWeight = "700";
+  msg.style.color = "#ff6b6b";
+
+  msg.textContent =
+    "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 regine. Hai fatto qualche errore.";
+
+  gridElement.parentElement.appendChild(msg);
+
+  setTimeout(() => {
+    msg.remove();
+  }, 4000);
+}
 function highlightRow(row) {
   const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
