@@ -384,6 +384,8 @@ let hintsUsed = 0;
 const maxHints = 3;
 let isDragging = false;
 let dragMode = null; // "mark" oppure null
+let lastTapTime = 0;
+const doubleTapDelay = 300; // millisecondi
 
 let solution = [];
 let regionMap = [];
@@ -591,11 +593,37 @@ function initializeGame() {
       cell.dataset.state = "empty";
 // 🔵 TOUCH START
 cell.addEventListener("touchstart", (e) => {
-  if (cell.dataset.state === "empty") {
-    isDragging = true;
-    dragMode = "mark";
-    markCell(cell);
+
+  const now = Date.now();
+  const timeSinceLastTap = now - lastTapTime;
+
+  // 🔥 DOUBLE TAP → mette corona
+  if (timeSinceLastTap < doubleTapDelay) {
+
+    if (cell.dataset.state === "queen") return;
+
+    cell.classList.remove("x");
+    cell.innerHTML = `
+      <span class="queen">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
+        </svg>
+      </span>
+    `;
+    cell.dataset.state = "queen";
+    recomputeAutoX();
+
+    lastTapTime = 0;
+    return;
   }
+
+  lastTapTime = now;
+
+isDragging = true;
+dragMode = "mark";
+markCell(cell);
+  
+
 });
 
 // 🔵 TOUCH MOVE
@@ -634,16 +662,42 @@ if (document.querySelector(".error")) {
 
   } else if (state === "x") {
 
-    cell.classList.remove("x");
-    cell.innerHTML = `
-  <span class="queen">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M5 16L3 7l5 4 4-6 4 6 5-4-2 9H5zm0 2h14v2H5z"/>
-    </svg>
-  </span>
-`;
-    cell.dataset.state = "queen";
-    recomputeAutoX();
+const state = cell.dataset.state;
+
+if (state === "empty") {
+
+  cell.classList.add("x");
+  cell.dataset.state = "x";
+
+} else if (state === "x") {
+
+  cell.classList.remove("x");
+  cell.dataset.state = "empty";
+
+} else if (state === "queen") {
+
+  cell.innerHTML = "";
+  cell.dataset.state = "empty";
+  recomputeAutoX();
+}
+
+  cell.classList.add("x");
+  cell.dataset.state = "x";
+
+} else if (state === "x") {
+
+  cell.classList.remove("x");
+  cell.dataset.state = "empty";
+
+} else if (state === "queen") {
+
+  cell.innerHTML = "";
+  cell.dataset.state = "empty";
+
+  document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
+
+  recomputeAutoX();
+}
 
 } else {
 
@@ -837,9 +891,29 @@ function recomputeAutoX() {
   });
 }
 function markCell(cell) {
-  if (cell.dataset.state === "empty") {
+
+  const state = cell.dataset.state;
+
+  // Vuota → X
+  if (state === "empty") {
     cell.classList.add("x");
     cell.dataset.state = "x";
+    return;
+  }
+
+  // X → vuota
+  if (state === "x") {
+    cell.classList.remove("x");
+    cell.dataset.state = "empty";
+    return;
+  }
+
+  // Regina → vuota
+  if (state === "queen") {
+    cell.innerHTML = "";
+    cell.dataset.state = "empty";
+    recomputeAutoX();
+    return;
   }
 }
 function giveHint() {
