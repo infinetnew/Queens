@@ -943,7 +943,7 @@ async function applyHintPenalty(type) {
   const currentPenalty = data?.penalty_seconds || 0;
 
   // 🔵 Aggiorna penalità server
-await supabaseClient
+const { error: updateError } = await supabaseClient
   .from("queens_results")
   .update({
     penalty_seconds: currentPenalty + penalty,
@@ -951,6 +951,10 @@ await supabaseClient
   })
   .eq("email", playerEmail)
   .eq("date", today);
+
+if (updateError) {
+  console.error("Errore update hints:", updateError);
+}
 
   // 🔴 Animazione timer
   const timerEl = document.getElementById("timer");
