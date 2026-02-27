@@ -392,7 +392,17 @@ let regionMap = [];
 let startTime = null;
 let timerInterval = null;
 
-const urlParams = new URLSearchParams(window.location.search);
+let queryString = window.location.search;
+
+// Se search è vuoto ma i parametri sono nella hash
+if (!queryString && window.location.hash.includes("?")) {
+  queryString = window.location.hash.substring(
+    window.location.hash.indexOf("?")
+  );
+}
+
+const urlParams = new URLSearchParams(queryString);
+
 const playerEmail = urlParams.get("email");
 const playerName = urlParams.get("name");
 
