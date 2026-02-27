@@ -921,8 +921,6 @@ return;
 
 async function applyHintPenalty(type) {
 
-  hintsUsed++;
-
   let penalty = 45;
   if (type === "remove") penalty = 30;
   else if (type === "insert") penalty = 45;
@@ -932,31 +930,35 @@ async function applyHintPenalty(type) {
 
   const today = new Date().toISOString().split("T")[0];
 
-  // 🔵 Legge penalità attuale
   const { data } = await supabaseClient
     .from("queens_results")
-    .select("penalty_seconds")
+    .select("penalty_seconds, hints_used")
     .eq("email", playerEmail)
     .eq("date", today)
     .maybeSingle();
 
   const currentPenalty = data?.penalty_seconds || 0;
+  const currentHints = data?.hints_used || 0;
 
-  // 🔵 Aggiorna penalità server
-const { error: updateError } = await supabaseClient
-  .from("queens_results")
-  .update({
-    penalty_seconds: currentPenalty + penalty,
-    hints_used: hintsUsed
-  })
-  .eq("email", playerEmail)
-  .eq("date", today);
+  const newHints = currentHints + 1;
 
-if (updateError) {
-  console.error("Errore update hints:", updateError);
-}
+  const { error } = await supabaseClient
+    .from("queens_results")
+    .update({
+      penalty_seconds: currentPenalty + penalty,
+      hints_used: newHints
+    })
+    .eq("email", playerEmail)
+    .eq("date", today);
 
-  // 🔴 Animazione timer
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  // 🔵 Sincronizza variabile locale con DB
+  hintsUsed = newHints;
+
   const timerEl = document.getElementById("timer");
   timerEl.classList.remove("timer-penalty");
   void timerEl.offsetWidth;
@@ -1280,12 +1282,14 @@ if (existing) {
   // 📝 Inserisce record di inizio
   const { data, error } = await supabaseClient
     .from("queens_results")
-    .insert({
-      date: today,
-      name: playerName,
-      email: playerEmail,
-      completed: false
-    })
+.insert({
+  date: today,
+  name: playerName,
+  email: playerEmail,
+  completed: false,
+  hints_used: 0,
+  penalty_seconds: 0
+})
     .select()
     .single();
 
