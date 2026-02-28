@@ -381,6 +381,36 @@ color: #f5f5f5;
   transform: scale(1.12);
   background: rgba(255,255,255,0.15);
 }
+.leaderboard-wrapper {
+  overflow: hidden;
+  width: 320px;
+  max-width: 90vw;
+  margin: 20px auto 0 auto;
+}
+.leaderboard-slider {
+  display: flex;
+  width: 200%;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+}
+.leaderboard-page {
+  width: 50%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.leaderboard-title {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.leaderboard-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+.swipe-indicator {
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.6;
+}
 </style>
 </head>
 <body>
@@ -528,6 +558,54 @@ async function loadTodayLeaderboard() {
   }
   return data;
 }
+async function loadMonthlyLeaderboard() {
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
+  const { data, error } = await supabaseClient
+    .from("queens_monthly_scores")
+    .select("name, email, points")
+    .eq("month", currentMonth)
+    .order("points", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Errore classifica mensile:", error);
+    return [];
+  }
+
+  return data;
+}
+
+function renderDailyLeaderboard(data) {
+  const container = document.getElementById("dailyLeaderboard");
+  container.innerHTML = "";
+
+  data.forEach((player, index) => {
+    const row = document.createElement("div");
+    row.className = "leaderboard-row";
+    row.innerHTML = `
+      <span>${index + 1}. ${player.name}</span>
+      <strong>${player.time_seconds}s</strong>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function renderMonthlyLeaderboard(data) {
+  const container = document.getElementById("monthlyLeaderboard");
+  container.innerHTML = "";
+
+  data.forEach((player, index) => {
+    const row = document.createElement("div");
+    row.className = "leaderboard-row";
+    row.innerHTML = `
+      <span>${index + 1}. ${player.name}</span>
+      <strong>${player.points} pt</strong>
+    `;
+    container.appendChild(row);
+  });
+}
+
 async function getPlayerPosition() {
   const today = new Date().toISOString().split("T")[0];
   const { data, error } = await supabaseClient
@@ -1056,6 +1134,56 @@ if (positionData.rank === 1) {
   leaderboardDiv.appendChild(positionBox);
 }
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
+// --- CLASSIFICA MENSILE ---
+const monthly = await loadMonthlyLeaderboard();
+
+const monthlyDiv = document.createElement("div");
+monthlyDiv.classList.add("post-game");
+monthlyDiv.style.marginTop = "20px";
+monthlyDiv.style.padding = "15px";
+monthlyDiv.style.background = "rgba(25,25,35,0.9)";
+monthlyDiv.style.border = "1px solid rgba(255,255,255,0.08)";
+monthlyDiv.style.backdropFilter = "blur(12px)";
+monthlyDiv.style.borderRadius = "15px";
+monthlyDiv.style.maxWidth = "350px";
+monthlyDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
+
+const monthlyTitle = document.createElement("h3");
+monthlyTitle.innerText = "👑 Classifica Mensile";
+monthlyTitle.style.marginBottom = "10px";
+monthlyDiv.appendChild(monthlyTitle);
+
+monthly.forEach((player, index) => {
+  const row = document.createElement("div");
+  row.style.display = "flex";
+  row.style.justifyContent = "space-between";
+  row.style.padding = "6px 0";
+
+  let medal = "";
+  if (index === 0) medal = "👑";
+  else if (index === 1) medal = "🥈";
+  else if (index === 2) medal = "🥉";
+
+  if (index === 0) row.style.color = "#ffd700";
+  else if (index === 1) row.style.color = "#cfd8dc";
+  else if (index === 2) row.style.color = "#ffb74d";
+  else if (index < 10) row.style.color = "#69f0ae";
+  else row.style.color = "#b0bec5";
+
+  if (player.email === playerEmail) {
+    row.style.fontWeight = "700";
+    row.style.textShadow = "0 0 8px rgba(255,255,255,0.4)";
+  }
+
+  row.innerHTML = `
+    <span>${medal} ${index + 1}. ${player.name}</span>
+    <strong>${player.points} pt</strong>
+  `;
+
+  monthlyDiv.appendChild(row);
+});
+
+document.getElementById("playerInfo").appendChild(monthlyDiv);
 }
 async function showLeaderboardOnly() {
   const leaderboard = await loadTodayLeaderboard();
@@ -1256,6 +1384,25 @@ initializePage();
     <h2>📜 Queens Regole</h2>
     <p id="rulesContent"></p>
     <button id="rulesModalBtn">Chiudi</button>
+  </div>
+</div>
+<div id="leaderboardModal" class="modal">
+  <div class="modal-content">
+    <h2>🏆 Classifiche</h2>
+    <div class="leaderboard-wrapper" id="leaderboardWrapper">
+      <div class="leaderboard-slider" id="leaderboardSlider">
+        <div class="leaderboard-page">
+          <div class="leaderboard-title">🏆 Giornaliera</div>
+          <div id="dailyLeaderboard"></div>
+        </div>
+        <div class="leaderboard-page">
+          <div class="leaderboard-title">👑 Mensile</div>
+          <div id="monthlyLeaderboard"></div>
+        </div>
+      </div>
+    </div>
+    <div class="swipe-indicator">⬅️ Swipe ➡️</div>
+    <button onclick="closeLeaderboardModal()">Chiudi</button>
   </div>
 </div>
 </body>
