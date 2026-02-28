@@ -195,10 +195,13 @@ box-shadow:
     inset 0 -8px 14px rgba(0,0,0,0.45);
 }
 .cell:active {
-  transform: scale(0.94);
+  transform: scale(0.96);
+
   box-shadow:
-    inset 0 8px 16px rgba(0,0,0,0.5),
-    inset 0 -2px 6px rgba(255,255,255,0.2);
+    inset 0 3px 8px rgba(0,0,0,0.25),
+    inset 0 -1px 4px rgba(255,255,255,0.25);
+
+  filter: brightness(1.08);
 }
 .cell.premium-flash {
   animation: premiumPulse 0.4s ease;
@@ -213,10 +216,6 @@ box-shadow:
   0% { filter: brightness(1); }
   50% { filter: brightness(1.15); }
   100% { filter: brightness(1); }
-}
-
-.cell.premium-flash {
-  animation: premiumPulse 0.4s ease;
 }
 
 .queen {
@@ -275,20 +274,26 @@ box-shadow:
 .x::after {
   content: "";
   position: absolute;
-  width: 45%;         /* più piccola */
+
+  top: 50%;
+  left: 50%;
+
+  width: 45%;
   height: 2px;
-  background: rgba(0,0,0,0.75);  /* nera elegante */
+
+  background: rgba(0,0,0,0.75);
   border-radius: 2px;
 
-  box-shadow:
-    0 0 4px rgba(0,0,0,0.5);
+  box-shadow: 0 0 4px rgba(0,0,0,0.5);
 }
 
-.x::before { transform: rotate(45deg); }
-.x::after  { transform: rotate(-45deg); }
+.x::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
 
-  .x::before { transform: rotate(45deg); }
-  .x::after { transform: rotate(-45deg); }
+.x::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
 
 .error {
   animation: pulseError 0.9s infinite ease-in-out;
