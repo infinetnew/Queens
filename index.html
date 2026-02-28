@@ -441,6 +441,10 @@ overflow-y: auto;
   flex: 1;
   margin-bottom: 20px;
 }
+.leaderboard-row.first-place {
+  text-shadow: 0 0 10px rgba(255,215,0,0.7);
+  font-weight: 700;
+}
 </style>
 </head>
 <body>
@@ -644,10 +648,40 @@ function renderDailyLeaderboard(data) {
   data.forEach((player, index) => {
     const row = document.createElement("div");
     row.className = "leaderboard-row";
-    row.innerHTML = `
-      <span>${index + 1}. ${player.name}</span>
-      <strong>${player.time_seconds}s</strong>
-    `;
+
+    let medal = "";
+    let color = "#ffffff";
+
+    if (index === 0) {
+row.classList.add("first-place");
+      medal = "👑";
+      color = "#ffd700";
+    } else if (index === 1) {
+      medal = "🥈";
+      color = "#cfd8dc";
+    } else if (index === 2) {
+      medal = "🥉";
+      color = "#ffb74d";
+    } else if (index < 10) {
+      color = "#69f0ae";
+    }
+
+row.innerHTML = `
+  <span style="color:${color}; font-weight:600;">
+    ${medal} ${index + 1}. ${player.name}
+  </span>
+  <strong style="color:#ffffff;">
+    ${player.time_seconds}s
+  </strong>
+`;
+
+if (player.email === playerEmail) {
+  row.style.fontWeight = "700";
+  row.style.background = "rgba(255,255,255,0.05)";
+  row.style.borderRadius = "8px";
+  row.style.padding = "6px 8px";
+}
+
     container.appendChild(row);
   });
 }
@@ -659,10 +693,40 @@ function renderMonthlyLeaderboard(data) {
   data.forEach((player, index) => {
     const row = document.createElement("div");
     row.className = "leaderboard-row";
-    row.innerHTML = `
-      <span>${index + 1}. ${player.name}</span>
-      <strong>${player.points} pt</strong>
-    `;
+
+    let medal = "";
+    let color = "#ffffff";
+
+    if (index === 0) {
+row.classList.add("first-place");
+      medal = "👑";
+      color = "#ffd700";
+    } else if (index === 1) {
+      medal = "🥈";
+      color = "#cfd8dc";
+    } else if (index === 2) {
+      medal = "🥉";
+      color = "#ffb74d";
+    } else if (index < 10) {
+      color = "#69f0ae";
+    }
+
+row.innerHTML = `
+  <span style="color:${color}; font-weight:600;">
+    ${medal} ${index + 1}. ${player.name}
+  </span>
+  <strong style="color:#ffffff;">
+    ${player.points} pt
+  </strong>
+`;
+
+if (player.email === playerEmail) {
+  row.style.fontWeight = "700";
+  row.style.background = "rgba(255,255,255,0.05)";
+  row.style.borderRadius = "8px";
+  row.style.padding = "6px 8px";
+}
+
     container.appendChild(row);
   });
 }
