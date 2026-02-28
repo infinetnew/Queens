@@ -5,8 +5,6 @@
   <title>Queens Game</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-
 <style>
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -25,7 +23,6 @@ color: #f5f5f5;
   gap: 18px;
   margin-top: 40px;
 }
-
 .app-icon {
   width: 64px;
   height: 64px;
@@ -36,25 +33,21 @@ color: #f5f5f5;
   justify-content: center;
   box-shadow: 0 20px 40px rgba(0,0,0,0.7);
 }
-
 .app-icon svg {
   width: 60%;
   height: 60%;
   color: #ffd700;
 }
-
 .app-info h1 {
   margin: 0;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: 1px;
 }
-
 .app-info span {
   font-size: 14px;
   opacity: 0.6;
 }
-
 #playerInfo {
   margin-top: 15px;
   text-align: center;
@@ -62,72 +55,54 @@ color: #f5f5f5;
   color: rgba(255,255,255,0.8);
   font-weight: 600;
 }
-
 .game-btn {
   margin-top: 15px;
   padding: 12px 24px;
   border-radius: 14px;
   border: none;
-
   background: linear-gradient(135deg, #3a1c71, #d76d77);
   color: white;
   font-weight: 600;
   font-size: 15px;
-
   cursor: pointer;
   transition: all 0.25s ease;
-
   box-shadow: 0 12px 25px rgba(0,0,0,0.6);
 }
-
 .game-btn:hover:not(:disabled) {
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 18px 40px rgba(0,0,0,0.9);
 }
-
 .game-btn:active {
   transform: scale(0.97);
 }
-
 .game-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
-
 #grid {
   display: grid;
   opacity: 0;
   visibility: hidden;
-transition: opacity 0.4s ease;
-
+  transition: opacity 0.4s ease;
   width: min(94vw, 94vh);
   height: min(94vw, 94vh);
-
   max-width: 650px;
   max-height: 650px;
-
-
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-
   gap: 1.5%;
   margin-top: 30px;
   padding: 2.5%;
-
-background: rgba(255,255,255,0.05);
-backdrop-filter: blur(18px);
-border: 1px solid rgba(255,255,255,0.1);
-
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 28px;
-
-box-shadow:
+  box-shadow:
   0 40px 80px rgba(0,0,0,0.7);
-
   animation: boardEntrance 0.6s cubic-bezier(.4,0,.2,1);
 }
-
 @keyframes boardEntrance {
   from {
     opacity: 0;
@@ -146,21 +121,16 @@ box-shadow:
   overflow: hidden;
   cursor: pointer;
   aspect-ratio: 1 / 1;
-
   border: 1px solid rgba(255,255,255,0.15);
-
   backdrop-filter: blur(6px);
-
   box-shadow:
     0 10px 25px rgba(0,0,0,0.6),
     inset 0 1px 1px rgba(255,255,255,0.4),
     inset 0 -6px 12px rgba(0,0,0,0.4);
-
   transition:
     transform 0.25s cubic-bezier(.4,0,.2,1),
     box-shadow 0.25s ease,
     filter 0.25s ease;
-
   transform-style: preserve-3d;
   will-change: transform;
 }
@@ -182,7 +152,6 @@ box-shadow:
   position: absolute;
   inset: 0;
   pointer-events: none;
-
   box-shadow:
     inset 0 0 20px rgba(255,255,255,0.15),
     0 0 20px rgba(255,255,255,0.08);
@@ -211,7 +180,6 @@ box-shadow:
   50% { transform: scale(1.04); }
   100% { transform: scale(1); }
 }
-
 .queen {
   position: absolute;
   inset: 0;
@@ -219,30 +187,23 @@ box-shadow:
   align-items: center;
   justify-content: center;
   pointer-events: none;
-
   animation:
     queenAppear 0.25s cubic-bezier(.4,0,.2,1),
     floatQueen 2s ease-in-out infinite alternate,
     queenGlow 2.5s ease-in-out infinite;
-
   filter: drop-shadow(0 0 14px rgba(255,215,0,0.9));
 }
-
 .queen svg {
   width: 75%;
   height: 75%;
   color: #ffd700;
-
-  /* bordo luminoso elegante */
   stroke: #ffffff;
   stroke-width: 1.2;
-
   filter:
     drop-shadow(0 0 6px rgba(255,255,255,0.9))
     drop-shadow(0 0 18px rgba(255,215,0,0.8))
     drop-shadow(0 0 30px rgba(255,215,0,0.6));
 }
-
 @keyframes queenAppear {
   from {
     opacity: 0;
@@ -253,7 +214,6 @@ box-shadow:
     transform: scale(1);
   }
 }
-
 @keyframes floatQueen {
   from { transform: translateY(0px); }
   to   { transform: translateY(-4px); }
@@ -263,35 +223,26 @@ box-shadow:
   50% { filter: brightness(1.2); }
   100% { filter: brightness(1); }
 }
-
 .x::before,
 .x::after {
   content: "";
   position: absolute;
-
   top: 50%;
   left: 50%;
-
   width: 42%;
   height: 2px;
-
   background: #111;  
   border-radius: 2px;
-
 }
-
 .x::before {
   transform: translate(-50%, -50%) rotate(45deg);
 }
-
 .x::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
-
 .error {
   animation: pulseError 0.9s infinite ease-in-out;
 }
-
 @keyframes pulseError {
   0% {
     box-shadow:
@@ -313,37 +264,28 @@ box-shadow:
   .app-info h1 {
     font-size: 20px;
   }
-
   .app-header {
     gap: 12px;
   }
-
   .app-icon {
     width: 52px;
     height: 52px;
   }
 }
-
-/* ===== ANIMAZIONE VITTORIA ===== */
-
 @keyframes winPulse {
   0% { transform: scale(1); }
   40% { transform: scale(1.25); }
   100% { transform: scale(1); }
 }
-
 .win-effect {
   animation: winPulse 0.6s cubic-bezier(.4,0,.2,1);
 }
-
 * {
   -webkit-tap-highlight-color: transparent;
 }
-
 .cell:focus {
   outline: none !important;
 }
-
 .cell:focus-visible {
   outline: none !important;
 }
@@ -356,7 +298,6 @@ box-shadow:
   justify-content: center;
   z-index: 9999;
 }
-
 .modal-content {
   background: rgba(25,25,35,0.98);
   color: white;
@@ -367,7 +308,6 @@ box-shadow:
   box-shadow: 0 30px 80px rgba(0,0,0,0.8);
   animation: scaleIn 0.35s cubic-bezier(.4,0,.2,1);
 }
-
 .modal-content button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -377,7 +317,6 @@ box-shadow:
   color: white;
   cursor: pointer;
 }
-
 @keyframes scaleIn {
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
@@ -388,48 +327,36 @@ box-shadow:
   70%  { color: #ff5252; transform: scale(1.08); }
 100% { color: rgba(255,255,255,0.8); transform: scale(1); }
 }
-
 .timer-penalty {
   animation: penaltyFlash 1.4s ease;
 }
-/* ===== RULES BOX INITIAL ===== */
-
 .rules-box {
   margin-top: 20px;
   padding: 18px;
   border-radius: 20px;
-
   background: rgba(25,25,35,0.85);
   border: 1px solid rgba(255,255,255,0.08);
   backdrop-filter: blur(12px);
-
   max-width: 420px;
   text-align: left;
-
   box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   animation: fadeInRules 0.4s ease;
 }
-
 .rules-box h3 {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 16px;
 }
-
 .rules-box ul {
   padding-left: 18px;
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
 }
-
 @keyframes fadeInRules {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-/* ===== FLOATING RULE BUTTON ===== */
-
 .rules-floating {
   position: fixed;
   top: 20px;
@@ -438,23 +365,18 @@ box-shadow:
   height: 38px;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.15);
-
   background: rgba(255,255,255,0.08);
   backdrop-filter: blur(14px);
-
   color: white;
   font-weight: 700;
   font-size: 16px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
   transition: all 0.25s ease;
   z-index: 10000;
 }
-
 .rules-floating:hover {
   transform: scale(1.12);
   background: rgba(255,255,255,0.15);
@@ -463,7 +385,6 @@ box-shadow:
 </head>
 <body>
 <div id="rulesFloating" class="rules-floating" style="display:none;">?</div>
-
 <div class="app-header">
   <div class="app-icon">
     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -475,7 +396,6 @@ box-shadow:
     <span>Daily Strategy Puzzle</span>
   </div>
 </div>
-
 <div id="playerInfo">
   <div><strong>Giocatore:</strong> <span id="displayName"></span></div>
   <div><strong>Email:</strong> <span id="displayEmail"></span></div>
@@ -486,38 +406,30 @@ box-shadow:
 </button>
 </div>
 <div id="rulesBox" class="rules-box">
-  <h3>👑 Queens — Regole ufficiali</h3>
-
+  <h3>👑 Queens — Regole Ufficiali</h3>
   <p><strong>🎯 Obiettivo</strong><br>
   Posiziona 10 Regine sulla griglia 10×10.</p>
-
   <p><strong>♟️ Vincoli</strong><br>
-  • 1 per riga<br>
-  • 1 per colonna<br>
-  • 1 per regione colorata<br>
+  • 1 Regina per riga<br>
+  • 1 Regina per colonna<br>
+  • 1 Regina per regione colorata<br>
   • Nessun contatto, nemmeno diagonale</p>
-
   <p><strong>💡 Suggerimenti</strong> (max 3)<br>
   −30s Rimozione Regina <br>
   −45s Inserimento Regina<br>
   −60s Correzione completa</p>
-
   <p><strong>🏆</strong> Un solo tentativo al giorno.<br>
   Vince il tempo più basso.</p>
 </div>
 <div id="grid"></div>
-
 <script>
-
 const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZWF4enRrZmRydWZnbmlteGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjA0MTksImV4cCI6MjA4NzY5NjQxOX0.nylDg56BcUzcq6Ag35N8zBDe5zXDCHC-iGwPcZ-ERYk";
-
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   { auth: { persistSession: false } }
 );
-
 const size = 10;
 const gridElement = document.getElementById("grid");
 const startBtn = document.getElementById("startBtn");
@@ -525,37 +437,26 @@ const hintBtn = document.getElementById("hintBtn");
 let hintsUsed = 0;
 const maxHints = 3;
 let isDragging = false;
-let dragMode = null; // "mark" oppure null
-
-
+let dragMode = null; 
 let solution = [];
 let regionMap = [];
 let startTime = null;
 let timerInterval = null;
 let boardErrorTimeout = null;
-
 let queryString = window.location.search;
-
-// Se search è vuoto ma i parametri sono nella hash
 if (!queryString && window.location.hash.includes("?")) {
   queryString = window.location.hash.substring(
     window.location.hash.indexOf("?")
   );
 }
-
 const urlParams = new URLSearchParams(queryString);
-
 const playerEmail = urlParams.get("email");
 const playerName = urlParams.get("name");
-
 if (!playerEmail || !playerName) {
-
   document.getElementById("displayName").textContent = "Non valido";
   document.getElementById("displayEmail").textContent = "Non valido";
-
   startBtn.disabled = true;
   startBtn.innerText = "Link non valido";
-  // Rimuove eventuali messaggi/classifiche precedenti
   const oldElements = document.querySelectorAll(".post-game");
   oldElements.forEach(el => el.remove());
 const message = document.createElement("div");
@@ -563,19 +464,14 @@ message.classList.add("post-game");
   message.style.marginTop = "15px";
   message.style.fontWeight = "600";
   message.style.color = "red";
-  message.innerText = "Accesso non autorizzato. Usa il link personale.";
-
+  message.innerText = "Accesso non consentito. Usa il link personale.";
   document.getElementById("playerInfo").appendChild(message);
-
 } else {
-
   document.getElementById("displayName").textContent =
     decodeURIComponent(playerName);
-
   document.getElementById("displayEmail").textContent =
     decodeURIComponent(playerEmail);
 }
-
 const colors = [
   "rgba(220, 38, 38, 0.9)",   // Rosso rubino
   "rgba(234, 88, 12, 0.9)",   // Arancione bruciato
@@ -590,182 +486,130 @@ const colors = [
 ];
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
-
   const { data, error } = await supabaseClient
     .from("queens_puzzles")
     .select("*")
     .eq("date", today)
     .single();
-
 if (error || !data) {
-
-  // Disabilita il bottone Gioca
   startBtn.disabled = true;
   startBtn.innerText = "Non disponibile";
-
 showRulesModal(
 `Il puzzle di oggi non è ancora stato pubblicato.
-
 Torna più tardi 👑`
 );
-
   return false;
 }
-
   solution = data.solution;
   regionMap = data.region_map;
   return true;
 }
-
 async function getTodayResult() {
   const today = new Date().toISOString().split("T")[0];
-
   const { data } = await supabaseClient
     .from("queens_results")
     .select("*")
     .eq("email", playerEmail)
     .eq("date", today)
     .maybeSingle();
-
   return data;
 }
 async function loadTodayLeaderboard() {
   const today = new Date().toISOString().split("T")[0];
-
   const { data, error } = await supabaseClient
  .from("queens_results")
 .select("name, email, time_seconds")
 .eq("date", today)
 .order("time_seconds", { ascending: true })
 .limit(10);
-
   if (error) {
     console.error("Errore classifica:", error);
     return [];
   }
-
   return data;
 }
 async function getPlayerPosition() {
   const today = new Date().toISOString().split("T")[0];
-
   const { data, error } = await supabaseClient
     .from("queens_results")
     .select("name, email, time_seconds")
     .eq("date", today)
     .order("time_seconds", { ascending: true });
-
   if (error || !data) return null;
-
   const position = data.findIndex(p => p.email === playerEmail);
-
   if (position === -1) return null;
-
   return {
     rank: position + 1,
     time: data[position].time_seconds,
     totalPlayers: data.length
   };
 }
-
 async function initializePage() {
-
   if (!playerEmail || !playerName) return;
-
   const puzzleLoaded = await loadDailyPuzzle();
   if (!puzzleLoaded) return;
-
   const todayResult = await getTodayResult();
-
   if (!todayResult) return;
-
-  // ✅ Caso completato
   if (todayResult.completed) {
-
     hintBtn.disabled = true;
     startBtn.disabled = true;
     startBtn.innerText = "Già giocato";
-
     document.getElementById("timer").textContent =
       todayResult.time_seconds + "s";
-
     const message = document.createElement("div");
     message.style.marginTop = "15px";
     message.style.fontWeight = "600";
     message.innerText = "Hai già completato il puzzle di oggi 👑";
-
     document.getElementById("playerInfo").appendChild(message);
     await showLeaderboardOnly();
     return;
   }
-
-  // ✅ Caso iniziato ma non completato
   if (!todayResult.completed) {
 hintsUsed = todayResult.hints_used || 0;
-
 hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
-
 if (hintsUsed >= maxHints) {
   hintBtn.disabled = true;
 }
 startBtn.disabled = true;
-
 if (hintsUsed < maxHints) {
   hintBtn.disabled = false;
 } else {
   hintBtn.disabled = true;
 }
-
     const startedAt = new Date(todayResult.started_at).getTime();
 const penalty = todayResult.penalty_seconds || 0;
-
 startTime = startedAt - (penalty * 1000);
-
     timerInterval = setInterval(() => {
       const seconds = Math.floor((Date.now() - startTime) / 1000);
       document.getElementById("timer").textContent = seconds + "s";
     }, 1000);
-
     gridElement.style.visibility = "visible";
     gridElement.style.opacity = "1";
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
-
     initializeGame();
   }
 }
-
 function initializeGame() {
-
   gridElement.innerHTML = "";
-
   for (let row = 0; row < size; row++) {
     for (let col = 0; col < size; col++) {
-
       const cell = document.createElement("div");
       cell.classList.add("cell");
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
-
 cell.addEventListener("click", async () => {
-
   if (document.querySelector(".error")) {
     const isErrorQueen =
       cell.dataset.state === "queen" &&
       cell.classList.contains("error");
-
     if (!isErrorQueen) return;
   }
-
   const state = cell.dataset.state;
-
   if (state === "empty") {
-
     cell.classList.add("x");
     cell.dataset.state = "x";
-
   } else if (state === "x") {
-
     cell.classList.remove("x");
     cell.innerHTML = `
       <span class="queen">
@@ -776,21 +620,16 @@ cell.addEventListener("click", async () => {
     `;
     cell.dataset.state = "queen";
     recomputeAutoX();
-
   } else if (state === "queen") {
-
     cell.innerHTML = "";
     cell.dataset.state = "empty";
     document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
     recomputeAutoX();
   }
-// ✨ Micro animazione premium
 cell.classList.remove("premium-flash");
 void cell.offsetWidth;
 cell.classList.add("premium-flash");
 const hasConflict = checkConflicts();
-
-// 🔵 Se la situazione è stata corretta, cancella timeout e messaggio
 if (checkWin() || !checkIncompleteBoard()) {
   if (boardErrorTimeout) {
     clearTimeout(boardErrorTimeout);
@@ -798,33 +637,21 @@ if (checkWin() || !checkIncompleteBoard()) {
   }
   clearHintMessage();
 }
-
 if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
-
   if (boardErrorTimeout) clearTimeout(boardErrorTimeout);
-
   boardErrorTimeout = setTimeout(() => {
-
-    // Ricontrollo prima di mostrare il messaggio
     if (!checkWin() && checkIncompleteBoard()) {
-
       showHintMessage(
         "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 Regine. Hai fatto qualche errore.",
         "error"
       );
-
     }
-
   }, 600);
-
   return;
 }
-
 if (!hasConflict && checkWin()) {
-
     clearInterval(timerInterval);
     const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
-
     await supabaseClient
       .from("queens_results")
       .update({
@@ -833,31 +660,24 @@ if (!hasConflict && checkWin()) {
       })
       .eq("email", playerEmail)
       .eq("date", new Date().toISOString().split("T")[0]);
-
     startBtn.disabled = true;
     hintBtn.disabled = true;
-
     document.querySelectorAll(".queen").forEach(q => {
       q.classList.add("win-effect");
     });
-
     launchConfetti();
-
     setTimeout(() => {
       showModal(totalSeconds);
     }, 1200);
   }
-
 });
       gridElement.appendChild(cell);
     }
   }
 }
-
 function checkConflicts() {
   const cells = document.querySelectorAll(".cell");
   cells.forEach(cell => cell.classList.remove("error"));
-
   const queens = [];
   cells.forEach((cell, index) => {
     if (cell.dataset.state === "queen") {
@@ -867,37 +687,25 @@ function checkConflicts() {
       queens.push({ cell, row, col, region });
     }
   });
-
   let hasError = false;
-
   for (let i = 0; i < queens.length; i++) {
     for (let j = i + 1; j < queens.length; j++) {
-
       const q1 = queens[i];
       const q2 = queens[j];
-
       const rowDiff = Math.abs(q1.row - q2.row);
       const colDiff = Math.abs(q1.col - q2.col);
-
-      // STESSA REGIONE (COLORE)
       if (q1.region === q2.region) {
         highlightRegion(q1.region);
         hasError = true;
       }
-
-      // STESSA RIGA
       if (q1.row === q2.row) {
         highlightRow(q1.row);
         hasError = true;
       }
-
-      // STESSA COLONNA
       if (q1.col === q2.col) {
         highlightColumn(q1.col);
         hasError = true;
       }
-
-      // ADIACENTI (anche diagonale)
       if ((rowDiff <= 1 && colDiff <= 1) && !(rowDiff === 0 && colDiff === 0)) {
         q1.cell.classList.add("error");
         q2.cell.classList.add("error");
@@ -905,14 +713,11 @@ function checkConflicts() {
       }
     }
   }
-
 if (hasError && navigator.vibrate) {
   navigator.vibrate(120);
 }
-
 return hasError;
 }
-
 function checkWin() {
   const cells = document.querySelectorAll(".cell");
   let queenCount = 0;
@@ -921,32 +726,21 @@ function checkWin() {
   });
   return queenCount === size;
 }
-
 function checkIncompleteBoard() {
-
   const cells = document.querySelectorAll(".cell");
-
   let queenCount = 0;
   let filledCount = 0;
-
   cells.forEach(cell => {
-
     if (cell.dataset.state === "queen") queenCount++;
-
     if (cell.dataset.state === "queen" || cell.dataset.state === "x") {
       filledCount++;
     }
-
   });
-
-
   if (filledCount === size * size && queenCount < size) {
     return true;
   }
-
   return false;
 }
-
 function highlightRow(row) {
   const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
@@ -954,7 +748,6 @@ function highlightRow(row) {
     if (r === row) cell.classList.add("error");
   });
 }
-
 function highlightColumn(col) {
   const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
@@ -962,7 +755,6 @@ function highlightColumn(col) {
     if (c === col) cell.classList.add("error");
   });
 }
-
 function highlightRegion(region) {
   const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
@@ -974,70 +766,48 @@ function highlightRegion(region) {
   });
 }
 function recomputeAutoX() {
-
   const cells = document.querySelectorAll(".cell");
-
-  // 1️⃣ Pulisce tutte le X automatiche
   cells.forEach(cell => {
     if (cell.dataset.state === "x") {
       cell.classList.remove("x");
       cell.dataset.state = "empty";
     }
   });
-
-
   cells.forEach((cell, index) => {
-
     if (cell.dataset.state !== "queen") return;
-
     const row = Math.floor(index / size);
     const col = index % size;
     const region = regionMap[row][col];
-
     cells.forEach((target, i) => {
-
       if (target.dataset.state !== "empty") return;
-
       const r = Math.floor(i / size);
       const c = i % size;
       const targetRegion = regionMap[r][c];
-
       const rowDiff = Math.abs(r - row);
       const colDiff = Math.abs(c - col);
-
       const sameRow = r === row;
       const sameCol = c === col;
       const sameRegion = targetRegion === region;
       const adjacent = rowDiff <= 1 && colDiff <= 1;
-
       if (sameRow || sameCol || sameRegion || adjacent) {
         target.classList.add("x");
         target.dataset.state = "x";
       }
-
     });
-
   });
 }
 function markCell(cell) {
-
   const state = cell.dataset.state;
-
-  // Vuota → X
   if (state === "empty") {
     cell.classList.add("x");
     cell.dataset.state = "x";
     return;
   }
-
-  // X → vuota
   if (state === "x") {
     cell.classList.remove("x");
     cell.dataset.state = "empty";
     return;
   }
-
-
   if (state === "queen") {
     cell.innerHTML = "";
     cell.dataset.state = "empty";
@@ -1046,23 +816,17 @@ function markCell(cell) {
   }
 }
 function giveHint() {
-
   if (!startTime) return;
   if (hintsUsed >= maxHints) return;
   if (document.querySelector(".error")) return;
-
   const cells = document.querySelectorAll(".cell");
-
   for (let row = 0; row < size; row++) {
-
     let queenFound = false;
     let queenCol = null;
     let queenCell = null;
-
     for (let col = 0; col < size; col++) {
       const index = row * size + col;
       const cell = cells[index];
-
       if (cell.dataset.state === "queen") {
         queenFound = true;
         queenCol = col;
@@ -1070,54 +834,36 @@ function giveHint() {
         break;
       }
     }
-
-
     if (queenFound && queenCol !== solution[row]) {
-
       queenCell.innerHTML = "";
       queenCell.dataset.state = "empty";
-
       queenCell.classList.add("error");
-
       setTimeout(() => {
         queenCell.classList.remove("error");
       }, 800);
-
       recomputeAutoX();
-
       showHintMessage(
   `❌ Ho rimosso una Regina errata nella riga ${row + 1}. (-30s)`,
   "error"
 );
-
       applyHintPenalty("remove");
       return;
     }
-
-// 🟩 Riga vuota → inserisce corretta (con pulizia colonna)
 if (!queenFound) {
-
   const correctCol = solution[row];
   let removedRow = null;
-
-
   for (let r = 0; r < size; r++) {
     if (r === row) continue;
-
     const indexCheck = r * size + correctCol;
     const cellCheck = cells[indexCheck];
-
     if (cellCheck.dataset.state === "queen" && solution[r] !== correctCol) {
       cellCheck.innerHTML = "";
       cellCheck.dataset.state = "empty";
       removedRow = r;
     }
   }
-
-
   const index = row * size + correctCol;
   const targetCell = cells[index];
-
   targetCell.classList.remove("x");
   targetCell.innerHTML = `
     <span class="queen">
@@ -1127,58 +873,40 @@ if (!queenFound) {
     </span>
   `;
   targetCell.dataset.state = "queen";
-
   recomputeAutoX();
-
-  // 🔵 3️⃣ Messaggio intelligente
 if (removedRow !== null) {
-
 showHintMessage(
   `👑 Ho inserito la Regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (-60s)`,
   "success"
 );
-
   applyHintPenalty("insert_remove");
-
 } else {
-
 showHintMessage(
   `👑 Ho inserito la Regina corretta nella riga ${row + 1}. (-45s)`,
   "success"
 );
-
   applyHintPenalty("insert");
-
 }
-
 return;
 }
   }
 }
-
 async function applyHintPenalty(type) {
-
   let penalty = 45;
   if (type === "remove") penalty = 30;
   else if (type === "insert") penalty = 45;
   else if (type === "insert_remove") penalty = 60;
-
   startTime -= penalty * 1000;
-
   const today = new Date().toISOString().split("T")[0];
-
   const { data } = await supabaseClient
     .from("queens_results")
     .select("penalty_seconds, hints_used")
     .eq("email", playerEmail)
     .eq("date", today)
     .maybeSingle();
-
   const currentPenalty = data?.penalty_seconds || 0;
   const currentHints = data?.hints_used || 0;
-
   const newHints = currentHints + 1;
-
   const { error } = await supabaseClient
     .from("queens_results")
     .update({
@@ -1187,38 +915,28 @@ async function applyHintPenalty(type) {
     })
     .eq("email", playerEmail)
     .eq("date", today);
-
   if (error) {
     console.error(error);
     return;
   }
-
-  // 🔵 Sincronizza variabile locale con DB
   hintsUsed = newHints;
-
   const timerEl = document.getElementById("timer");
   timerEl.classList.remove("timer-penalty");
   void timerEl.offsetWidth;
   timerEl.classList.add("timer-penalty");
-
   hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
-
   if (hintsUsed >= maxHints) {
     hintBtn.disabled = true;
   }
 }
 function showHintMessage(text, type = "info") {
-
-  // Rimuove eventuale messaggio precedente
   const oldMsg = document.getElementById("hintMessage");
   if (oldMsg) oldMsg.remove();
-
   const msg = document.createElement("div");
   msg.id = "hintMessage";
   msg.style.marginTop = "12px";
   msg.style.fontWeight = "600";
   msg.style.transition = "opacity 0.4s ease";
-
   if (type === "error") {
     msg.style.color = "#ff6b6b";
   } else if (type === "success") {
@@ -1226,12 +944,8 @@ function showHintMessage(text, type = "info") {
   } else {
     msg.style.color = "#ffffff";
   }
-
   msg.textContent = text;
-
   document.getElementById("playerInfo").appendChild(msg);
-
-  // Fade out dopo 3 secondi
   setTimeout(() => {
     msg.style.opacity = "0";
     setTimeout(() => msg.remove(), 400);
@@ -1241,93 +955,64 @@ function clearHintMessage() {
   const msg = document.getElementById("hintMessage");
   if (msg) msg.remove();
 }
-
 function showRulesModal(message) {
-
   const modal = document.getElementById("rulesModal");
   const messageElement = document.getElementById("rulesContent");
   const button = document.getElementById("rulesModalBtn");
-
   messageElement.innerHTML = message.replace(/\n/g, "<br>");
-
   button.onclick = () => {
     modal.style.display = "none";
   };
-
   modal.style.display = "flex";
 }
 function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
-
-  // ✅ Ripristina titolo corretto
-  modal.querySelector("h2").textContent = "👑 Partita conclusa";
-
+  modal.querySelector("h2").textContent = "👑 Partita Conclusa";
   document.getElementById("finalTime").textContent =
     "Tempo: " + time + " secondi";
-
   button.textContent = "Chiudi";
   button.onclick = closeModal;
-
   modal.style.display = "flex";
 }
 async function closeModal() {
-
-  // Chiude il modal
   document.getElementById("winModal").style.display = "none";
-
-  // Nasconde la griglia
   gridElement.style.visibility = "hidden";
   gridElement.style.opacity = "0";
   gridElement.innerHTML = "";
-
-  // Disabilita pulsanti
   startBtn.disabled = true;
   hintBtn.disabled = true;
-  startBtn.innerText = "Già giocato";
-
-  // Mostra messaggio finale
-  const message = document.createElement("div");
-message.classList.add("post-game");
-  message.style.marginTop = "15px";
-  message.style.fontWeight = "600";
-  message.innerText = "Hai già completato il puzzle di oggi 👑";
-
-  document.getElementById("playerInfo").appendChild(message);
-
-  // 🔽 CARICA CLASSIFICA
-  const leaderboard = await loadTodayLeaderboard();
-
-  const leaderboardDiv = document.createElement("div");
-leaderboardDiv.classList.add("post-game");
-  leaderboardDiv.style.marginTop = "20px";
-  leaderboardDiv.style.padding = "15px";
-leaderboardDiv.style.background = "rgba(25,25,35,0.9)";
-leaderboardDiv.style.border = "1px solid rgba(255,255,255,0.08)";
-leaderboardDiv.style.backdropFilter = "blur(12px)";
-  leaderboardDiv.style.borderRadius = "15px";
-  leaderboardDiv.style.maxWidth = "350px";
-  leaderboardDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
-
+ 	startBtn.innerText = "Già giocato";
+  	const message = document.createElement("div");
+  	message.classList.add("post-game");
+  	message.style.marginTop = "15px";
+  	message.style.fontWeight = "600";
+  	message.innerText = "Hai già completato il puzzle di oggi 👑";
+  	document.getElementById("playerInfo").appendChild(message);
+  	const leaderboard = await loadTodayLeaderboard();
+  	const leaderboardDiv = document.createElement("div");
+	leaderboardDiv.classList.add("post-game");
+  	leaderboardDiv.style.marginTop = "20px";
+  	leaderboardDiv.style.padding = "15px";
+	leaderboardDiv.style.background = "rgba(25,25,35,0.9)";
+	leaderboardDiv.style.border = "1px solid rgba(255,255,255,0.08)";
+	leaderboardDiv.style.backdropFilter = "blur(12px)";
+  	leaderboardDiv.style.borderRadius = "15px";
+  	leaderboardDiv.style.maxWidth = "350px";
+  	leaderboardDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
   const title = document.createElement("h3");
   title.innerText = "🏆 Classifica di oggi";
   title.style.marginBottom = "10px";
-
   leaderboardDiv.appendChild(title);
-
 leaderboard.forEach((player, index) => {
-
   const row = document.createElement("div");
   row.style.display = "flex";
   row.style.justifyContent = "space-between";
   row.style.padding = "6px 0";
-
   let medal = "";
   if (index === 0) medal = "👑";
   else if (index === 1) medal = "🥈";
   else if (index === 2) medal = "🥉";
-
-// 🎨 Colorazione premium classifica
 if (index === 0) {
   row.style.color = "#ffd700"; // Oro
 } else if (index === 1) {
@@ -1335,28 +1020,22 @@ if (index === 0) {
 } else if (index === 2) {
   row.style.color = "#ffb74d"; // Bronzo
 } else if (index < 10) {
-  row.style.color = "#69f0ae"; // Verde premium
+  row.style.color = "#69f0ae"; 
 } else {
-  row.style.color = "#b0bec5"; // Grigio elegante
+  row.style.color = "#b0bec5"; 
 }
-
-// Evidenzia il giocatore corrente con glow leggero
 if (player.email === playerEmail) {
   row.style.fontWeight = "700";
   row.style.textShadow = "0 0 8px rgba(255,255,255,0.4)";
 }
-
   row.innerHTML = `
     <span>${medal} ${index + 1}. ${player.name}</span>
     <strong>${player.time_seconds}s</strong>
   `;
-
   leaderboardDiv.appendChild(row);
 });
 const positionData = await getPlayerPosition();
-
 if (positionData) {
-
   const positionBox = document.createElement("div");
   positionBox.style.marginTop = "14px";
   positionBox.style.fontWeight = "700";
@@ -1372,19 +1051,14 @@ if (positionData.rank === 1) {
 } else {
   positionBox.style.color = "#b0bec5"; // Grigio elegante
 }
-
   positionBox.innerText =
     `Sei ${positionData.rank}° su ${positionData.totalPlayers} giocatori · ${positionData.time}s`;
-
   leaderboardDiv.appendChild(positionBox);
 }
-
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 async function showLeaderboardOnly() {
-
   const leaderboard = await loadTodayLeaderboard();
-
   const leaderboardDiv = document.createElement("div");
   leaderboardDiv.classList.add("post-game");
   leaderboardDiv.style.marginTop = "20px";
@@ -1395,25 +1069,19 @@ leaderboardDiv.style.backdropFilter = "blur(12px)";
   leaderboardDiv.style.borderRadius = "15px";
   leaderboardDiv.style.maxWidth = "350px";
   leaderboardDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
-
   const title = document.createElement("h3");
   title.innerText = "🏆 Classifica di oggi";
   title.style.marginBottom = "10px";
   leaderboardDiv.appendChild(title);
-
   leaderboard.forEach((player, index) => {
-
     const row = document.createElement("div");
     row.style.display = "flex";
     row.style.justifyContent = "space-between";
     row.style.padding = "6px 0";
-
     let medal = "";
     if (index === 0) medal = "👑";
     else if (index === 1) medal = "🥈";
     else if (index === 2) medal = "🥉";
-
-  // 🎨 Colorazione premium classifica
 if (index === 0) {
   row.style.color = "#ffd700"; // Oro
 } else if (index === 1) {
@@ -1421,33 +1089,25 @@ if (index === 0) {
 } else if (index === 2) {
   row.style.color = "#ffb74d"; // Bronzo
 } else if (index < 10) {
-  row.style.color = "#69f0ae"; // Verde premium
+  row.style.color = "#69f0ae"; 
 } else {
-  row.style.color = "#b0bec5"; // Grigio elegante
+  row.style.color = "#b0bec5"; 
 }
-
-// Evidenzia il giocatore corrente con glow leggero
 if (player.email === playerEmail) {
   row.style.fontWeight = "700";
   row.style.textShadow = "0 0 8px rgba(255,255,255,0.4)";
 }
-
     row.innerHTML = `
       <span>${medal} ${index + 1}. ${player.name}</span>
       <strong>${player.time_seconds}s</strong>
     `;
-
     leaderboardDiv.appendChild(row);
   });
-
   const positionData = await getPlayerPosition();
-
   if (positionData) {
-
     const positionBox = document.createElement("div");
     positionBox.style.marginTop = "14px";
     positionBox.style.fontWeight = "700";
-
  if (positionData.rank === 1) {
   positionBox.style.color = "#ffd700"; // Oro
 } else if (positionData.rank === 2) {
@@ -1459,62 +1119,43 @@ if (player.email === playerEmail) {
 } else {
   positionBox.style.color = "#b0bec5"; // Grigio elegante
 }
-
     positionBox.innerText =
       `Sei ${positionData.rank}° su ${positionData.totalPlayers} giocatori · ${positionData.time}s`;
-
     leaderboardDiv.appendChild(positionBox);
   }
-
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 startBtn.addEventListener("click", async () => {
-
   hintsUsed = 0;
   hintBtn.textContent = "💡 Suggerimento (3)";
-
   const today = new Date().toISOString().split("T")[0];
-
-  // 🔍 Controlla se esiste già record
   const { data: existing } = await supabaseClient
     .from("queens_results")
     .select("*")
     .eq("email", playerEmail)
     .eq("date", today)
     .maybeSingle();
-
 if (existing) {
-
   if (existing.completed) {
     startBtn.disabled = true;
     return;
   }
-
   startBtn.disabled = true;
-
-  // 🔵 RIPRISTINA HINT DAL DATABASE
   hintsUsed = existing.hints_used || 0;
-
   hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
-
   if (hintsUsed < maxHints) {
     hintBtn.disabled = false;
   } else {
     hintBtn.disabled = true;
   }
-
   const startedAt = new Date(existing.started_at).getTime();
   const penalty = existing.penalty_seconds || 0;
-
   startTime = startedAt - (penalty * 1000);
-
   if (timerInterval) clearInterval(timerInterval);
-
   timerInterval = setInterval(() => {
     const seconds = Math.floor((Date.now() - startTime) / 1000);
     document.getElementById("timer").textContent = seconds + "s";
   }, 1000);
-
   gridElement.style.visibility = "visible";
   gridElement.style.opacity = "1";
 document.getElementById("rulesBox").style.display = "none";
@@ -1522,7 +1163,6 @@ document.getElementById("rulesFloating").style.display = "flex";
   initializeGame();
   return;
 }
-  // 📝 Inserisce record di inizio
   const { data, error } = await supabaseClient
     .from("queens_results")
 .insert({
@@ -1535,35 +1175,27 @@ document.getElementById("rulesFloating").style.display = "flex";
 })
     .select()
     .single();
-
   if (error) {
     console.log(JSON.stringify(error, null, 2));
     return;
   }
-
   startTime = new Date(data.started_at).getTime();
-
   timerInterval = setInterval(() => {
     const seconds = Math.floor((Date.now() - startTime) / 1000);
     document.getElementById("timer").textContent = seconds + "s";
   }, 1000);
-
   gridElement.style.visibility = "visible";
   gridElement.style.opacity = "1";
-
   startBtn.disabled = true;
   hintBtn.disabled = false;
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
   initializeGame();
 });
-
 function launchConfetti() {
   const duration = 1000;
   const end = Date.now() + duration;
-
   const colors = ['#ffd700', '#ff4081', '#40c4ff', '#69f0ae'];
-
   (function frame() {
     confetti({
       particleCount: 6,
@@ -1572,7 +1204,6 @@ function launchConfetti() {
       origin: { x: 0 },
       colors: colors
     });
-
     confetti({
       particleCount: 6,
       angle: 120,
@@ -1580,19 +1211,16 @@ function launchConfetti() {
       origin: { x: 1 },
       colors: colors
     });
-
     if (Date.now() < end) {
       requestAnimationFrame(frame);
     }
   })();
 }
 hintBtn.addEventListener("click", giveHint);
-
 document.getElementById("rulesFloating").addEventListener("click", () => {
   showRulesModal(
 `🎯 Obiettivo  
 Posiziona 10 Regine sulla griglia 10×10.
-
 ♟️ Vincoli fondamentali  
 • 1 Regina per riga  
 • 1 Regina per colonna  
@@ -1614,11 +1242,7 @@ Vinci solo con 10 Regine valide e zero conflitti.
 La classifica premia il tempo più basso.`
   );
 });
-
-
 initializePage();
-
-
 </script>
 <div id="winModal" class="modal">
   <div class="modal-content">
@@ -1629,7 +1253,7 @@ initializePage();
 </div>
 <div id="rulesModal" class="modal">
   <div class="modal-content">
-    <h2>📜 Quiz Regole</h2>
+    <h2>📜 Queens Regole</h2>
     <p id="rulesContent"></p>
     <button id="rulesModalBtn">Chiudi</button>
   </div>
