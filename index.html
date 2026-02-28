@@ -603,10 +603,11 @@ if (error || !data) {
   startBtn.disabled = true;
   startBtn.innerText = "Non disponibile";
 
-  showCustomModal(
-    "Puzzle non disponibile",
-    "Il puzzle di oggi non è ancora stato pubblicato. Torna più tardi 👑"
-  );
+showRulesModal(
+`Il puzzle di oggi non è ancora stato pubblicato.
+
+Torna più tardi 👑`
+);
 
   return false;
 }
@@ -1241,16 +1242,14 @@ function clearHintMessage() {
   if (msg) msg.remove();
 }
 
-function showCustomModal(title, message) {
-  const modal = document.getElementById("winModal");
-  const titleElement = modal.querySelector("h2");
-  const messageElement = document.getElementById("finalTime");
-  const button = document.getElementById("modalBtn");
+function showRulesModal(message) {
 
-  titleElement.textContent = title;
+  const modal = document.getElementById("rulesModal");
+  const messageElement = document.getElementById("rulesContent");
+  const button = document.getElementById("rulesModalBtn");
+
   messageElement.innerHTML = message.replace(/\n/g, "<br>");
 
-  button.textContent = "OK";
   button.onclick = () => {
     modal.style.display = "none";
   };
@@ -1590,8 +1589,7 @@ function launchConfetti() {
 hintBtn.addEventListener("click", giveHint);
 
 document.getElementById("rulesFloating").addEventListener("click", () => {
-  showCustomModal(
-    "👑 Queens — Regole ufficiali",
+  showRulesModal(
 `🎯 Obiettivo  
 Posiziona 10 Regine sulla griglia 10×10.
 
@@ -1627,6 +1625,13 @@ initializePage();
     <h2>👑 Partita conclusa</h2>
     <p id="finalTime"></p>
     <button id="modalBtn">Chiudi</button>
+  </div>
+</div>
+<div id="rulesModal" class="modal">
+  <div class="modal-content">
+    <h2>📜 Quiz Regole</h2>
+    <p id="rulesContent"></p>
+    <button id="rulesModalBtn">Chiudi</button>
   </div>
 </div>
 </body>
