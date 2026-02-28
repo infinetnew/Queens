@@ -1261,6 +1261,9 @@ function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
 
+  // ✅ Ripristina titolo corretto
+  modal.querySelector("h2").textContent = "👑 Partita conclusa";
+
   document.getElementById("finalTime").textContent =
     "Tempo: " + time + " secondi";
 
@@ -1269,7 +1272,6 @@ function showModal(time) {
 
   modal.style.display = "flex";
 }
-
 async function closeModal() {
 
   // Chiude il modal
