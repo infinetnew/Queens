@@ -433,7 +433,7 @@ color: #f5f5f5;
 </style>
 </head>
 <body>
-<div id="rulesFloating" class="rules-floating" style="display:none;">?</div>
+<div id="rulesFloating" class="rules-floating">?</div>
 <div class="app-header">
   <div class="app-icon">
     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -672,6 +672,33 @@ async function getPlayerPosition() {
     totalPlayers: data.length
   };
 }
+async function getMonthlyPlayerPosition() {
+  const now = new Date();
+  const currentMonth =
+    now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+
+  const { data, error } = await supabaseClient
+    .from("queens_monthly_scores")
+    .select("name, email, points")
+    .eq("month", currentMonth)
+    .order("points", { ascending: false });
+
+  if (error || !data) return null;
+
+  const position = data.findIndex(p => p.email === playerEmail);
+  if (position === -1) return null;
+
+  const totalPlayers = data.length;
+  const rank = position + 1;
+  const percent = Math.round((rank / totalPlayers) * 100);
+
+  return {
+    rank,
+    totalPlayers,
+    percent,
+    points: data[position].points
+  };
+}
 async function initializePage() {
   if (!playerEmail || !playerName) return;
   const puzzleLoaded = await loadDailyPuzzle();
@@ -700,6 +727,30 @@ document.getElementById("rulesFloating").style.display = "flex";
 
   renderDailyLeaderboard(daily);
   renderMonthlyLeaderboard(monthly);
+const monthlyPosition = await getMonthlyPlayerPosition();
+
+if (monthlyPosition) {
+  const positionBox = document.createElement("div");
+  positionBox.style.marginTop = "14px";
+  positionBox.style.fontWeight = "700";
+
+  if (monthlyPosition.rank === 1) {
+    positionBox.style.color = "#ffd700"; // Oro
+  } else if (monthlyPosition.rank === 2) {
+    positionBox.style.color = "#cfd8dc"; // Argento
+  } else if (monthlyPosition.rank === 3) {
+    positionBox.style.color = "#ffb74d"; // Bronzo
+  } else if (monthlyPosition.rank <= 10) {
+    positionBox.style.color = "#69f0ae"; // Verde premium
+  } else {
+    positionBox.style.color = "#ffffff"; // Bianco
+  }
+
+  positionBox.innerText =
+    `Sei ${monthlyPosition.rank}° su ${monthlyPosition.totalPlayers} giocatori · Top ${monthlyPosition.percent}% del mese`;
+
+  document.getElementById("monthlyLeaderboard").appendChild(positionBox);
+}
 
   document.getElementById("leaderboardModal").style.display = "block";
 
@@ -1143,6 +1194,30 @@ gridElement.innerHTML = "";
 
   renderDailyLeaderboard(daily);
   renderMonthlyLeaderboard(monthly);
+const monthlyPosition = await getMonthlyPlayerPosition();
+
+if (monthlyPosition) {
+  const positionBox = document.createElement("div");
+  positionBox.style.marginTop = "14px";
+  positionBox.style.fontWeight = "700";
+
+  if (monthlyPosition.rank === 1) {
+    positionBox.style.color = "#ffd700"; // Oro
+  } else if (monthlyPosition.rank === 2) {
+    positionBox.style.color = "#cfd8dc"; // Argento
+  } else if (monthlyPosition.rank === 3) {
+    positionBox.style.color = "#ffb74d"; // Bronzo
+  } else if (monthlyPosition.rank <= 10) {
+    positionBox.style.color = "#69f0ae"; // Verde premium
+  } else {
+    positionBox.style.color = "#ffffff"; // Bianco
+  }
+
+  positionBox.innerText =
+    `Sei ${monthlyPosition.rank}° su ${monthlyPosition.totalPlayers} giocatori · Top ${monthlyPosition.percent}% del mese`;
+
+  document.getElementById("monthlyLeaderboard").appendChild(positionBox);
+}
 
   // Reset slider posizione
   const slider = document.getElementById("leaderboardSlider");
@@ -1379,13 +1454,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-}); // ← QUESTA CHIUSURA È OBBLIGATORIA
+}); 
 
 initializePage();
 </script>
 <div id="winModal" class="modal">
   <div class="modal-content">
-    <h2>👑 Partita conclusa</h2>
+    <h2>👑 Partita Conclusa</h2>
     <p id="finalTime"></p>
     <button id="modalBtn">Chiudi</button>
   </div>
