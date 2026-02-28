@@ -486,15 +486,24 @@ box-shadow:
 </button>
 </div>
 <div id="rulesBox" class="rules-box">
-  <h3>📜 Regole</h3>
-  <ul>
-    <li>Inserisci 10 regine sulla griglia</li>
-    <li>Una sola regina per riga</li>
-    <li>Una sola regina per colonna</li>
-    <li>Una sola regina per regione colorata</li>
-    <li>Le regine non possono toccarsi (anche in diagonale)</li>
-    <li>Massimo 3 suggerimenti (con penalità tempo)</li>
-  </ul>
+  <h3>👑 Queens — Regole ufficiali</h3>
+
+  <p><strong>🎯 Obiettivo</strong><br>
+  Posiziona 10 Regine sulla griglia 10×10.</p>
+
+  <p><strong>♟️ Vincoli</strong><br>
+  • 1 per riga<br>
+  • 1 per colonna<br>
+  • 1 per regione colorata<br>
+  • Nessun contatto, nemmeno diagonale</p>
+
+  <p><strong>💡 Suggerimenti</strong> (max 3)<br>
+  −30s Rimozione Regina <br>
+  −45s Inserimento Regina<br>
+  −60s Correzione completa</p>
+
+  <p><strong>🏆</strong> Un solo tentativo al giorno.<br>
+  Vince il tempo più basso.</p>
 </div>
 <div id="grid"></div>
 
@@ -797,7 +806,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
     if (!checkWin() && checkIncompleteBoard()) {
 
       showHintMessage(
-        "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 regine. Hai fatto qualche errore.",
+        "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 Regine. Hai fatto qualche errore.",
         "error"
       );
 
@@ -927,7 +936,7 @@ function checkIncompleteBoard() {
 
   });
 
-  // Se tutte le 100 celle sono occupate (X o regina)
+
   if (filledCount === size * size && queenCount < size) {
     return true;
   }
@@ -973,7 +982,7 @@ function recomputeAutoX() {
     }
   });
 
-  // 2️⃣ Per ogni regina presente, rimette le X corrette
+
   cells.forEach((cell, index) => {
 
     if (cell.dataset.state !== "queen") return;
@@ -1025,7 +1034,7 @@ function markCell(cell) {
     return;
   }
 
-  // Regina → vuota
+
   if (state === "queen") {
     cell.innerHTML = "";
     cell.dataset.state = "empty";
@@ -1059,7 +1068,7 @@ function giveHint() {
       }
     }
 
-    // 🟥 Regina sbagliata → rimuove
+
     if (queenFound && queenCol !== solution[row]) {
 
       queenCell.innerHTML = "";
@@ -1074,7 +1083,7 @@ function giveHint() {
       recomputeAutoX();
 
       showHintMessage(
-  `❌ Ho rimosso una regina errata nella riga ${row + 1}. (-30s)`,
+  `❌ Ho rimosso una Regina errata nella riga ${row + 1}. (-30s)`,
   "error"
 );
 
@@ -1088,7 +1097,7 @@ if (!queenFound) {
   const correctCol = solution[row];
   let removedRow = null;
 
-  // 🔴 1️⃣ Controlla se nella stessa colonna c'è una regina sbagliata
+
   for (let r = 0; r < size; r++) {
     if (r === row) continue;
 
@@ -1102,7 +1111,7 @@ if (!queenFound) {
     }
   }
 
-  // 🔴 2️⃣ Inserisce la regina corretta
+
   const index = row * size + correctCol;
   const targetCell = cells[index];
 
@@ -1122,7 +1131,7 @@ if (!queenFound) {
 if (removedRow !== null) {
 
 showHintMessage(
-  `👑 Ho inserito la regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (-60s)`,
+  `👑 Ho inserito la Regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (-60s)`,
   "success"
 );
 
@@ -1131,7 +1140,7 @@ showHintMessage(
 } else {
 
 showHintMessage(
-  `👑 Ho inserito la regina corretta nella riga ${row + 1}. (-45s)`,
+  `👑 Ho inserito la Regina corretta nella riga ${row + 1}. (-45s)`,
   "success"
 );
 
@@ -1575,17 +1584,36 @@ function launchConfetti() {
   })();
 }
 hintBtn.addEventListener("click", giveHint);
+
 document.getElementById("rulesFloating").addEventListener("click", () => {
   showCustomModal(
-    "📜 Regole del gioco",
-`• Inserisci 10 regine sulla griglia.
-• Una sola regina per riga.
-• Una sola regina per colonna.
-• Una sola regina per regione colorata.
-• Le regine non possono toccarsi, nemmeno in diagonale.
-• Massimo 3 suggerimenti (con penalità tempo).`
+    "👑 Queens — Regole ufficiali",
+`🎯 Obiettivo  
+Posiziona 10 Regine sulla griglia 10×10.
+
+♟️ Vincoli fondamentali  
+• 1 Regina per riga  
+• 1 Regina per colonna  
+• 1 Regina per regione colorata  
+• Nessuna Regina può toccarne un’altra (nemmeno in diagonale)
+
+⚡ Dinamica intelligente  
+Quando inserisci una Regina, le celle non valide vengono bloccate automaticamente.
+
+💡 Suggerimenti (max 3)  
+• Rimozione errore → −30s  
+• Inserimento corretto → −45s  
+• Correzione combinata → −60s  
+
+⏱️ Il tempo scorre in tempo reale.  
+Vinci solo con 10 Regine valide e zero conflitti.
+
+🏆 Un solo tentativo al giorno.  
+La classifica premia il tempo più basso.`
   );
 });
+
+
 initializePage();
 
 
