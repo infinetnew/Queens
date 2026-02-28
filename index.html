@@ -141,47 +141,82 @@ box-shadow:
 .cell {
   width: 100%;
   height: 100%;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: clamp(24px, 5vw, 40px);
-  font-weight: bold;
-  cursor: pointer;
-position: relative;
-aspect-ratio: 1 / 1;   /* forza quadrato perfetto */
-  overflow: hidden;      /* impedisce espansioni interne */
-  border: 1px solid rgba(255,255,255,0.08);
--webkit-tap-highlight-color: transparent;
-
- box-shadow:
-  0 8px 20px rgba(0,0,0,0.6);
-
-transition:
-  transform 0.25s cubic-bezier(.4,0,.2,1),
-  box-shadow 0.3s ease,
-  background-color 0.3s ease;
-will-change: transform;
-transform-style: preserve-3d;
-
+  border-radius: 20px;
   position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.6),
+    inset 0 1px 1px rgba(255,255,255,0.4),
+    inset 0 -6px 12px rgba(0,0,0,0.4);
+
+  transition:
+    transform 0.25s cubic-bezier(.4,0,.2,1),
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.15) 30%,
+    rgba(255,255,255,0.05) 60%,
+    rgba(255,255,255,0.02) 100%
+  );
+  pointer-events: none;
+}
+.cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  box-shadow:
+    inset 0 0 20px rgba(255,255,255,0.15),
+    0 0 20px rgba(255,255,255,0.08);
 }
 .cell:hover {
-  transform: translateY(-3px);
+  transform: translateY(-6px) scale(1.03);
   box-shadow:
-    0 14px 30px rgba(0,0,0,0.8),
-    0 0 20px rgba(255,215,0,0.15);
+    0 18px 35px rgba(0,0,0,0.8),
+    inset 0 2px 2px rgba(255,255,255,0.5),
+    inset 0 -8px 14px rgba(0,0,0,0.45);
 }
 .cell:active {
-  transform: scale(0.95);
+  transform: scale(0.94);
   box-shadow:
-    inset 0 6px 12px rgba(0,0,0,0.25);
+    inset 0 8px 16px rgba(0,0,0,0.5),
+    inset 0 -2px 6px rgba(255,255,255,0.2);
+}
+.cell.premium-flash {
+  animation: premiumPulse 0.4s ease;
+  animation-fill-mode: forwards;
 }
 .cell:focus,
 .cell:focus-visible {
   outline: none !important;
   box-shadow: none !important;
+}
+@keyframes premiumPulse {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.15); }
+  100% { filter: brightness(1); }
+}
+
+.cell.premium-flash {
+  animation: premiumPulse 0.4s ease;
 }
 
 .queen {
@@ -194,15 +229,25 @@ transform-style: preserve-3d;
 
   animation:
     queenAppear 0.25s cubic-bezier(.4,0,.2,1),
-    floatQueen 2s ease-in-out infinite alternate;
+    floatQueen 2s ease-in-out infinite alternate,
+    queenGlow 2.5s ease-in-out infinite;
 
   filter: drop-shadow(0 0 14px rgba(255,215,0,0.9));
 }
 
 .queen svg {
-  width: 65%;
-  height: 65%;
+  width: 75%;
+  height: 75%;
   color: #ffd700;
+
+  /* bordo luminoso elegante */
+  stroke: #ffffff;
+  stroke-width: 1.2;
+
+  filter:
+    drop-shadow(0 0 6px rgba(255,255,255,0.9))
+    drop-shadow(0 0 18px rgba(255,215,0,0.8))
+    drop-shadow(0 0 30px rgba(255,215,0,0.6));
 }
 
 @keyframes queenAppear {
@@ -220,15 +265,27 @@ transform-style: preserve-3d;
   from { transform: translateY(0px); }
   to   { transform: translateY(-4px); }
 }
+@keyframes queenGlow {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+  100% { filter: brightness(1); }
+}
 
-  .x::before,
-  .x::after {
-    content: "";
-    position: absolute;
-    width: 60%;
-    height: 2px;
-    background: rgba(255,255,255,0.35);
-  }
+.x::before,
+.x::after {
+  content: "";
+  position: absolute;
+  width: 45%;         /* più piccola */
+  height: 2px;
+  background: rgba(0,0,0,0.75);  /* nera elegante */
+  border-radius: 2px;
+
+  box-shadow:
+    0 0 4px rgba(0,0,0,0.5);
+}
+
+.x::before { transform: rotate(45deg); }
+.x::after  { transform: rotate(-45deg); }
 
   .x::before { transform: rotate(45deg); }
   .x::after { transform: rotate(-45deg); }
@@ -390,6 +447,7 @@ let solution = [];
 let regionMap = [];
 let startTime = null;
 let timerInterval = null;
+let boardErrorTimeout = null;
 
 let queryString = window.location.search;
 
@@ -434,16 +492,16 @@ message.classList.add("post-game");
 }
 
 const colors = [
-  "rgba(220, 53, 69, 0.75)",
-  "rgba(255, 140, 0, 0.75)",
-  "rgba(255, 235, 59, 0.75)",
-  "rgba(139, 195, 74, 0.75)",
-  "rgba(0, 150, 136, 0.75)",
-  "rgba(33, 150, 243, 0.75)",
-  "rgba(156, 39, 176, 0.75)",
-  "rgba(121, 85, 72, 0.75)",
-  "rgba(200, 200, 200, 0.75)",
-  "rgba(255, 105, 180, 0.75)"
+  "rgba(231, 76, 60, 0.85)",   // Rosso vivo
+  "rgba(243, 156, 18, 0.85)",  // Arancione forte
+  "rgba(241, 196, 15, 0.85)",  // Giallo oro
+  "rgba(46, 204, 113, 0.85)",  // Verde acceso
+  "rgba(26, 188, 156, 0.85)",  // Turchese vero
+  "rgba(52, 152, 219, 0.85)",  // Blu brillante
+  "rgba(155, 89, 182, 0.85)",  // Viola più saturo
+  "rgba(149, 165, 166, 0.85)", // Grigio bluastro
+  "rgba(230, 126, 34, 0.85)",  // Ambra (diverso dall’arancio)
+  "rgba(233, 30, 99, 0.85)"    // Fucsia forte
 ];
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
@@ -638,11 +696,39 @@ cell.addEventListener("click", async () => {
     document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
     recomputeAutoX();
   }
-
+// ✨ Micro animazione premium
+cell.classList.remove("premium-flash");
+void cell.offsetWidth;
+cell.classList.add("premium-flash");
 const hasConflict = checkConflicts();
 
+// 🔵 Se la situazione è stata corretta, cancella timeout e messaggio
+if (checkWin() || !checkIncompleteBoard()) {
+  if (boardErrorTimeout) {
+    clearTimeout(boardErrorTimeout);
+    boardErrorTimeout = null;
+  }
+  clearHintMessage();
+}
+
 if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
-  showBoardErrorMessage();
+
+  if (boardErrorTimeout) clearTimeout(boardErrorTimeout);
+
+  boardErrorTimeout = setTimeout(() => {
+
+    // Ricontrollo prima di mostrare il messaggio
+    if (!checkWin() && checkIncompleteBoard()) {
+
+      showHintMessage(
+        "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 regine. Hai fatto qualche errore.",
+        "error"
+      );
+
+    }
+
+  }, 600);
+
   return;
 }
 
@@ -772,26 +858,7 @@ function checkIncompleteBoard() {
 
   return false;
 }
-function showBoardErrorMessage() {
 
-  const oldMsg = document.getElementById("boardErrorMessage");
-  if (oldMsg) oldMsg.remove();
-
-  const msg = document.createElement("div");
-  msg.id = "boardErrorMessage";
-  msg.style.marginTop = "20px";
-  msg.style.fontWeight = "700";
-  msg.style.color = "#ff6b6b";
-
-  msg.textContent =
-    "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 regine. Hai fatto qualche errore.";
-
-  gridElement.parentElement.appendChild(msg);
-
-  setTimeout(() => {
-    msg.remove();
-  }, 4000);
-}
 function highlightRow(row) {
   const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
@@ -1082,6 +1149,11 @@ function showHintMessage(text, type = "info") {
     setTimeout(() => msg.remove(), 400);
   }, 3000);
 }
+function clearHintMessage() {
+  const msg = document.getElementById("hintMessage");
+  if (msg) msg.remove();
+}
+
 function showCustomModal(title, message) {
   const modal = document.getElementById("winModal");
   const titleElement = modal.querySelector("h2");
