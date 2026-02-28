@@ -478,12 +478,12 @@ overflow-y: auto;
       <div class="leaderboard-slider" id="leaderboardSlider">
 
         <div class="leaderboard-page">
-          <div class="leaderboard-title">🏆 Giornaliera</div>
+          <div class="leaderboard-title">⚡ Giornaliera</div>
           <div id="dailyLeaderboard"></div>
         </div>
 
         <div class="leaderboard-page">
-          <div class="leaderboard-title">👑 Mensile</div>
+          <div class="leaderboard-title">📊 Mensile</div>
           <div id="monthlyLeaderboard"></div>
         </div>
 
@@ -778,7 +778,7 @@ async function renderDailyPosition() {
   }
 
   positionBox.innerText =
-    `Sei ${dailyPosition.rank}° su ${dailyPosition.totalPlayers} giocatori · Top ${dailyPosition.percent}% oggi`;
+    `Sei ${dailyPosition.rank}° su ${dailyPosition.totalPlayers} giocatori · Top ${dailyPosition.percent}% di oggi`;
 
   document.getElementById("dailyLeaderboard").appendChild(positionBox);
 }
