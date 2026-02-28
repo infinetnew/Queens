@@ -671,7 +671,7 @@ if (todayResult.completed) {
   renderDailyLeaderboard(daily);
   renderMonthlyLeaderboard(monthly);
 
-  document.getElementById("leaderboardModal").style.display = "flex";
+  document.getElementById("leaderboardModal").style.display = "block";
 
   return;
 }
@@ -1124,7 +1124,7 @@ async function closeModal() {
   if (dots[0]) dots[0].classList.add("active");
 
   // Apri modal leaderboard
-  document.getElementById("leaderboardModal").style.display = "flex";
+  document.getElementById("leaderboardModal").style.display = "block";
 }
 function closeLeaderboardModal() {
   document.getElementById("leaderboardModal").style.display = "none";
@@ -1368,7 +1368,7 @@ initializePage();
     <button id="rulesModalBtn">Chiudi</button>
   </div>
 </div>
-<div id="leaderboardModal" class="modal">
+<div id="leaderboardModal" style="display:none; margin-top:25px;">
   <div class="modal-content">
     <h2>🏆 Classifiche</h2>
     <div class="leaderboard-wrapper" id="leaderboardWrapper">
@@ -1387,7 +1387,7 @@ initializePage();
   <span class="dot active"></span>
   <span class="dot"></span>
 </div>
-    <button onclick="closeLeaderboardModal()">Chiudi</button>
+    
   </div>
 </div>
 </body>
