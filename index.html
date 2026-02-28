@@ -1139,12 +1139,8 @@ if (positionData.rank === 1) {
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
 // --- CLASSIFICA MENSILE ---
 const monthly = await loadMonthlyLeaderboard();
-if (!monthly || monthly.length === 0) {
-  const empty = document.createElement("div");
-  empty.style.opacity = "0.6";
-  empty.innerText = "Nessun punteggio mensile disponibile";
-  monthlyDiv.appendChild(empty);
-}
+
+// 1️⃣ Creo prima il contenitore
 const monthlyDiv = document.createElement("div");
 monthlyDiv.classList.add("post-game");
 monthlyDiv.style.marginTop = "20px";
@@ -1161,6 +1157,19 @@ monthlyTitle.innerText = "👑 Classifica Mensile";
 monthlyTitle.style.marginBottom = "10px";
 monthlyDiv.appendChild(monthlyTitle);
 
+// 2️⃣ Se NON ci sono dati
+if (!monthly || monthly.length === 0) {
+  const empty = document.createElement("div");
+  empty.style.opacity = "0.6";
+  empty.style.padding = "8px 0";
+  empty.innerText = "Classifica non disponibile";
+  monthlyDiv.appendChild(empty);
+
+  document.getElementById("playerInfo").appendChild(monthlyDiv);
+}
+
+
+// 3️⃣ Se ci sono dati
 monthly.forEach((player, index) => {
   const row = document.createElement("div");
   row.style.display = "flex";
@@ -1192,7 +1201,7 @@ monthly.forEach((player, index) => {
 });
 
 document.getElementById("playerInfo").appendChild(monthlyDiv);
-}
+  }
 async function showLeaderboardOnly() {
   const leaderboard = await loadTodayLeaderboard();
   const leaderboardDiv = document.createElement("div");
