@@ -559,7 +559,9 @@ async function loadTodayLeaderboard() {
   return data;
 }
 async function loadMonthlyLeaderboard() {
-  const currentMonth = new Date().toISOString().slice(0, 7);
+const now = new Date();
+const currentMonth =
+  now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
 
   const { data, error } = await supabaseClient
     .from("queens_monthly_scores")
@@ -567,6 +569,7 @@ async function loadMonthlyLeaderboard() {
     .eq("month", currentMonth)
     .order("points", { ascending: false })
     .limit(10);
+console.log("Risultato query mensile:", data, error);
 
   if (error) {
     console.error("Errore classifica mensile:", error);
@@ -1136,7 +1139,12 @@ if (positionData.rank === 1) {
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
 // --- CLASSIFICA MENSILE ---
 const monthly = await loadMonthlyLeaderboard();
-
+if (!monthly || monthly.length === 0) {
+  const empty = document.createElement("div");
+  empty.style.opacity = "0.6";
+  empty.innerText = "Nessun punteggio mensile disponibile";
+  monthlyDiv.appendChild(empty);
+}
 const monthlyDiv = document.createElement("div");
 monthlyDiv.classList.add("post-game");
 monthlyDiv.style.marginTop = "20px";
