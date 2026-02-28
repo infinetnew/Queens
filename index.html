@@ -1082,7 +1082,7 @@ function giveHint() {
       }, 800);
       recomputeAutoX();
       showHintMessage(
-  `❌ Ho rimosso una Regina errata nella riga ${row + 1}. (-30s)`,
+  `❌ Ho rimosso una Regina errata nella riga ${row + 1}. (+30s)`,
   "error"
 );
       applyHintPenalty("remove");
@@ -1115,13 +1115,13 @@ if (!queenFound) {
   recomputeAutoX();
 if (removedRow !== null) {
 showHintMessage(
-  `👑 Ho inserito la Regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (-60s)`,
+  `👑 Ho inserito la Regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (+60s)`,
   "success"
 );
   applyHintPenalty("insert_remove");
 } else {
 showHintMessage(
-  `👑 Ho inserito la Regina corretta nella riga ${row + 1}. (-45s)`,
+  `👑 Ho inserito la Regina corretta nella riga ${row + 1}. (+45s)`,
   "success"
 );
   applyHintPenalty("insert");
@@ -1465,9 +1465,9 @@ Osserva ciò che resta libero: lì si nasconde la soluzione.
 
 💡 SUGGERIMENTI (max 3)  
 I suggerimenti sono strumenti, non scorciatoie.  
-• Rimozione errore → −30s  
-• Inserimento corretto → −45s  
-• Correzione combinata → −60s  
+• Rimozione errore → +30s  
+• Inserimento corretto → +45s  
+• Correzione combinata → +60s  
 
 ⏱️ IL TEMPO  
 Il cronometro misura la tua capacità decisionale.  
