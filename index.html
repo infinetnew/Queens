@@ -454,7 +454,34 @@ color: #f5f5f5;
   💡 Suggerimento (3)
 </button>
 </div>
-<div id="rulesBox" class="rules-box">
+<div id="leaderboardModal" style="display:none; margin-top:25px;">
+  <div class="modal-content">
+    <h2>🏆 Classifiche</h2>
+
+    <div class="leaderboard-wrapper" id="leaderboardWrapper">
+      <div class="leaderboard-slider" id="leaderboardSlider">
+
+        <div class="leaderboard-page">
+          <div class="leaderboard-title">🏆 Giornaliera</div>
+          <div id="dailyLeaderboard"></div>
+        </div>
+
+        <div class="leaderboard-page">
+          <div class="leaderboard-title">👑 Mensile</div>
+          <div id="monthlyLeaderboard"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+    </div>
+
+  </div>
+</div>
+<div id="rulesBox" class="rules-box" style="display:none;">
   <h3>👑 Queens — Regole Ufficiali</h3>
   <p><strong>🎯 Obiettivo</strong><br>
   Posiziona 10 Regine sulla griglia 10×10.</p>
@@ -470,6 +497,7 @@ color: #f5f5f5;
   <p><strong>🏆</strong> Un solo tentativo al giorno.<br>
   Vince il tempo più basso.</p>
 </div>
+
 <div id="grid"></div>
 <script>
 const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
@@ -651,6 +679,8 @@ async function initializePage() {
   const todayResult = await getTodayResult();
   if (!todayResult) return;
 if (todayResult.completed) {
+document.getElementById("rulesBox").style.display = "none";
+document.getElementById("rulesFloating").style.display = "flex";
 
   hintBtn.disabled = true;
   startBtn.disabled = true;
@@ -1092,9 +1122,8 @@ async function closeModal() {
   document.getElementById("winModal").style.display = "none";
 
   // Nascondi griglia
-  gridElement.style.visibility = "hidden";
-  gridElement.style.opacity = "0";
-  gridElement.innerHTML = "";
+gridElement.style.display = "none";
+gridElement.innerHTML = "";
 
   startBtn.disabled = true;
   hintBtn.disabled = true;
@@ -1366,28 +1395,6 @@ initializePage();
     <h2>📜 Queens Regole</h2>
     <p id="rulesContent"></p>
     <button id="rulesModalBtn">Chiudi</button>
-  </div>
-</div>
-<div id="leaderboardModal" style="display:none; margin-top:25px;">
-  <div class="modal-content">
-    <h2>🏆 Classifiche</h2>
-    <div class="leaderboard-wrapper" id="leaderboardWrapper">
-      <div class="leaderboard-slider" id="leaderboardSlider">
-        <div class="leaderboard-page">
-          <div class="leaderboard-title">🏆 Giornaliera</div>
-          <div id="dailyLeaderboard"></div>
-        </div>
-        <div class="leaderboard-page">
-          <div class="leaderboard-title">👑 Mensile</div>
-          <div id="monthlyLeaderboard"></div>
-        </div>
-      </div>
-    </div>
-    <div class="dots">
-  <span class="dot active"></span>
-  <span class="dot"></span>
-</div>
-    
   </div>
 </div>
 </body>
