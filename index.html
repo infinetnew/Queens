@@ -1237,7 +1237,7 @@ function showCustomModal(title, message) {
   const button = document.getElementById("modalBtn");
 
   titleElement.textContent = title;
-  messageElement.textContent = message;
+  messageElement.innerHTML = message.replace(/\n/g, "<br>");
 
   button.textContent = "OK";
   button.onclick = () => {
