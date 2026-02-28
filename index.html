@@ -658,19 +658,53 @@ function renderMonthlyLeaderboard(data) {
 
 async function getPlayerPosition() {
   const today = new Date().toISOString().split("T")[0];
+
   const { data, error } = await supabaseClient
     .from("queens_results")
     .select("name, email, time_seconds")
     .eq("date", today)
     .order("time_seconds", { ascending: true });
+
   if (error || !data) return null;
+
   const position = data.findIndex(p => p.email === playerEmail);
   if (position === -1) return null;
+
+  const totalPlayers = data.length;
+  const rank = position + 1;
+  const percent = Math.round((rank / totalPlayers) * 100);
+
   return {
-    rank: position + 1,
-    time: data[position].time_seconds,
-    totalPlayers: data.length
+    rank,
+    totalPlayers,
+    percent,
+    time: data[position].time_seconds
   };
+}
+async function renderDailyPosition() {
+  const dailyPosition = await getPlayerPosition();
+  if (!dailyPosition) return;
+
+  const positionBox = document.createElement("div");
+  positionBox.style.marginTop = "14px";
+  positionBox.style.fontWeight = "700";
+
+  if (dailyPosition.rank === 1) {
+    positionBox.style.color = "#ffd700";
+  } else if (dailyPosition.rank === 2) {
+    positionBox.style.color = "#cfd8dc";
+  } else if (dailyPosition.rank === 3) {
+    positionBox.style.color = "#ffb74d";
+  } else if (dailyPosition.rank <= 10) {
+    positionBox.style.color = "#69f0ae";
+  } else {
+    positionBox.style.color = "#ffffff";
+  }
+
+  positionBox.innerText =
+    `Sei ${dailyPosition.rank}° su ${dailyPosition.totalPlayers} giocatori · Top ${dailyPosition.percent}% oggi`;
+
+  document.getElementById("dailyLeaderboard").appendChild(positionBox);
 }
 async function getMonthlyPlayerPosition() {
   const now = new Date();
@@ -725,8 +759,10 @@ document.getElementById("rulesFloating").style.display = "flex";
   const daily = await loadTodayLeaderboard();
   const monthly = await loadMonthlyLeaderboard();
 
-  renderDailyLeaderboard(daily);
-  renderMonthlyLeaderboard(monthly);
+renderDailyLeaderboard(daily);
+await renderDailyPosition();
+
+renderMonthlyLeaderboard(monthly);
 const monthlyPosition = await getMonthlyPlayerPosition();
 
 if (monthlyPosition) {
@@ -1192,8 +1228,10 @@ gridElement.innerHTML = "";
   const daily = await loadTodayLeaderboard();
   const monthly = await loadMonthlyLeaderboard();
 
-  renderDailyLeaderboard(daily);
-  renderMonthlyLeaderboard(monthly);
+renderDailyLeaderboard(daily);
+await renderDailyPosition();
+
+renderMonthlyLeaderboard(monthly);
 const monthlyPosition = await getMonthlyPlayerPosition();
 
 if (monthlyPosition) {
