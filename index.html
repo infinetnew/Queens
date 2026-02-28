@@ -1434,13 +1434,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     slider.style.transform = `translateX(-${currentPage * 50}%)`;
-const dots = document.querySelectorAll(".dot");
-if (dots.length > 0) {
-  dots.forEach(dot => dot.classList.remove("active"));
-  dots[currentPage]?.classList.add("active");
-}
 
-});
+    const dots = document.querySelectorAll(".dot");
+    if (dots.length > 0) {
+      dots.forEach(dot => dot.classList.remove("active"));
+      dots[currentPage]?.classList.add("active");
+    }
+  });
+
+}); // ← QUESTA CHIUSURA È OBBLIGATORIA
+
 initializePage();
 </script>
 <div id="winModal" class="modal">
