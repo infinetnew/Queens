@@ -195,13 +195,7 @@ box-shadow:
     inset 0 -8px 14px rgba(0,0,0,0.45);
 }
 .cell:active {
-  transform: scale(0.96);
-
-  box-shadow:
-    inset 0 3px 8px rgba(0,0,0,0.25),
-    inset 0 -1px 4px rgba(255,255,255,0.25);
-
-  filter: brightness(1.08);
+  transform: scale(0.97);
 }
 .cell.premium-flash {
   animation: premiumPulse 0.4s ease;
@@ -213,9 +207,9 @@ box-shadow:
   box-shadow: none !important;
 }
 @keyframes premiumPulse {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(1.15); }
-  100% { filter: brightness(1); }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
 }
 
 .queen {
@@ -497,16 +491,16 @@ message.classList.add("post-game");
 }
 
 const colors = [
-  "rgba(231, 76, 60, 0.85)",   // Rosso vivo
-  "rgba(243, 156, 18, 0.85)",  // Arancione forte
-  "rgba(241, 196, 15, 0.85)",  // Giallo oro
-  "rgba(46, 204, 113, 0.85)",  // Verde acceso
-  "rgba(26, 188, 156, 0.85)",  // Turchese vero
-  "rgba(52, 152, 219, 0.85)",  // Blu brillante
-  "rgba(155, 89, 182, 0.85)",  // Viola più saturo
-  "rgba(149, 165, 166, 0.85)", // Grigio bluastro
-  "rgba(230, 126, 34, 0.85)",  // Ambra (diverso dall’arancio)
-  "rgba(233, 30, 99, 0.85)"    // Fucsia forte
+  "rgba(220, 38, 38, 0.9)",   // Rosso rubino
+  "rgba(234, 88, 12, 0.9)",   // Arancione bruciato
+  "rgba(202, 138, 4, 0.9)",   // Oro caldo
+  "rgba(22, 163, 74, 0.9)",   // Verde smeraldo
+  "rgba(6, 182, 212, 0.9)",   // Ciano brillante
+  "rgba(37, 99, 235, 0.9)",   // Blu reale
+  "rgba(124, 58, 237, 0.9)",  // Viola intenso
+  "rgba(190, 24, 93, 0.9)",   // Magenta profondo
+  "rgba(71, 85, 105, 0.9)",   // Slate scuro (non grigio spento)
+  "rgba(16, 185, 129, 0.9)"   // Verde acqua acceso
 ];
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
