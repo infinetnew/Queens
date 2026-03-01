@@ -675,12 +675,12 @@ row.classList.add("first-place");
 
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
-    ${medal} ${index + 1}. 
-    <img 
-      src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
-      style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
-    >
-    ${player.name}
+ ${medal} ${index + 1}. 
+${player.name}
+<img 
+  src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
+  style="width:20px; height:auto; margin-left:6px; vertical-align:middle; border-radius:2px;"
+>
   </span>
   <strong style="color:#ffffff;">
     ${player.time_seconds}s
@@ -725,12 +725,12 @@ row.classList.add("first-place");
 
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
-    ${medal} ${index + 1}. 
-    <img 
-      src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
-      style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
-    >
-    ${player.name}
+${medal} ${index + 1}. 
+${player.name}
+<img 
+  src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
+  style="width:20px; height:auto; margin-left:6px; vertical-align:middle; border-radius:2px;"
+>
   </span>
   <strong style="color:#ffffff;">
     ${player.points} pt
