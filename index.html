@@ -462,7 +462,13 @@ overflow-y: auto;
   </div>
 </div>
 <div id="playerInfo">
-  <div><strong>Giocatore:</strong> <span id="displayName"></span></div>
+  <div>
+  <strong>Giocatore:</strong> 
+  <span id="playerDisplay" style="display:inline-flex; align-items:center; gap:6px;">
+    <span id="displayName"></span>
+    <img id="displayFlag" style="width:20px; height:auto; border-radius:2px;">
+  </span>
+</div>
   <div><strong>Email:</strong> <span id="displayEmail"></span></div>
   <div style="margin-top:10px;">⏱ Tempo: <span id="timer">0s</span></div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
@@ -568,6 +574,8 @@ message.classList.add("post-game");
 } else {
   document.getElementById("displayName").textContent =
     decodeURIComponent(playerName);
+document.getElementById("displayFlag").src =
+  `https://flagcdn.com/24x18/${countryCode.toLowerCase()}.png`;
   document.getElementById("displayEmail").textContent =
     decodeURIComponent(playerEmail);
 }
