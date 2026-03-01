@@ -545,8 +545,14 @@ if (!queryString && window.location.hash.includes("?")) {
 const urlParams = new URLSearchParams(queryString);
 const playerEmail = urlParams.get("email");
 const playerName = urlParams.get("name");
-if (!playerEmail || !playerName) {
-  document.getElementById("displayName").textContent = "Non valido";
+const playerCountry = urlParams.get("country");
+const countryCode = playerCountry?.toUpperCase();
+if (
+  !playerEmail ||
+  !playerName ||
+  !countryCode ||
+  !/^[A-Z]{2}$/.test(countryCode)
+) {  document.getElementById("displayName").textContent = "Non valido";
   document.getElementById("displayEmail").textContent = "Non valido";
   startBtn.disabled = true;
   startBtn.innerText = "Link non valido";
@@ -611,7 +617,7 @@ async function loadTodayLeaderboard() {
   const today = new Date().toISOString().split("T")[0];
   const { data, error } = await supabaseClient
  .from("queens_results")
-.select("name, email, time_seconds")
+.select("name, email, time_seconds, country_code")
 .eq("date", today)
 .order("time_seconds", { ascending: true })
 .limit(10);
@@ -628,7 +634,7 @@ const currentMonth =
 
   const { data, error } = await supabaseClient
     .from("queens_monthly_scores")
-    .select("name, email, points")
+    .select("name, email, points, country_code")
     .eq("month", currentMonth)
     .order("points", { ascending: false })
     .limit(10);
@@ -669,7 +675,8 @@ row.classList.add("first-place");
 
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
-    ${medal} ${index + 1}. ${player.name}
+    ${medal} ${index + 1}. 
+    <span style="margin-right:4px;">${getFlagEmoji(player.country_code)}</span>${player.name}
   </span>
   <strong style="color:#ffffff;">
     ${player.time_seconds}s
@@ -714,7 +721,7 @@ row.classList.add("first-place");
 
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
-    ${medal} ${index + 1}. ${player.name}
+    ${medal} ${index + 1}. ${getFlagEmoji(player.country_code)}<span style="margin-left:4px;"></span>${player.name}
   </span>
   <strong style="color:#ffffff;">
     ${player.points} pt
@@ -789,7 +796,7 @@ async function getMonthlyPlayerPosition() {
 
   const { data, error } = await supabaseClient
     .from("queens_monthly_scores")
-    .select("name, email, points")
+    .select("name, email, points, country_code")
     .eq("month", currentMonth)
     .order("points", { ascending: false });
 
@@ -810,7 +817,7 @@ async function getMonthlyPlayerPosition() {
   };
 }
 async function initializePage() {
-  if (!playerEmail || !playerName) return;
+  if (!playerEmail || !playerName || !countryCode) return;
   const puzzleLoaded = await loadDailyPuzzle();
   if (!puzzleLoaded) return;
   const todayResult = await getTodayResult();
@@ -1459,6 +1466,7 @@ document.getElementById("rulesFloating").style.display = "flex";
   date: today,
   name: playerName,
   email: playerEmail,
+  country_code: countryCode,
   completed: false,
   hints_used: 0,
   penalty_seconds: 0
@@ -1482,6 +1490,14 @@ document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
   initializeGame();
 });
+function getFlagEmoji(code) {
+  if (!code) return "";
+  return code
+    .toUpperCase()
+    .replace(/./g, char =>
+      String.fromCodePoint(127397 + char.charCodeAt())
+    );
+}
 function launchConfetti() {
   const duration = 1000;
   const end = Date.now() + duration;
