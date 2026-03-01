@@ -676,7 +676,11 @@ row.classList.add("first-place");
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
     ${medal} ${index + 1}. 
-    <span style="margin-right:4px;">${getFlagEmoji(player.country_code)}</span>${player.name}
+    <img 
+      src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
+      style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
+    >
+    ${player.name}
   </span>
   <strong style="color:#ffffff;">
     ${player.time_seconds}s
@@ -721,7 +725,12 @@ row.classList.add("first-place");
 
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
-    ${medal} ${index + 1}. ${getFlagEmoji(player.country_code)}<span style="margin-left:4px;"></span>${player.name}
+    ${medal} ${index + 1}. 
+    <img 
+      src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
+      style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
+    >
+    ${player.name}
   </span>
   <strong style="color:#ffffff;">
     ${player.points} pt
@@ -1490,14 +1499,7 @@ document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
   initializeGame();
 });
-function getFlagEmoji(code) {
-  if (!code) return "";
-  return code
-    .toUpperCase()
-    .replace(/./g, char =>
-      String.fromCodePoint(127397 + char.charCodeAt())
-    );
-}
+
 function launchConfetti() {
   const duration = 1000;
   const end = Date.now() + duration;
