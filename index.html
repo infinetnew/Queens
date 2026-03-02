@@ -580,16 +580,16 @@ document.getElementById("displayFlag").src =
     decodeURIComponent(playerEmail);
 }
 const colors = [
-  "rgba(220, 38, 38, 0.9)",   // Rosso rubino
-  "rgba(234, 88, 12, 0.9)",   // Arancione bruciato
-  "rgba(202, 138, 4, 0.9)",   // Oro caldo
+  "rgba(255, 0, 0, 0.9)",  	// Rosso
+  "rgba(255, 165, 0, 0.9)",   // Arancione
+  "rgba(255, 255, 0, 0.9)",   // Giallo
   "rgba(22, 163, 74, 0.9)",   // Verde smeraldo
-  "rgba(6, 182, 212, 0.9)",   // Ciano brillante
-  "rgba(244, 114, 182, 0.9)",   // Rosa luminoso
+  "rgba(135, 206, 255, 0.9)",   // Azzurro
+  "rgba(244, 114, 182, 0.9)", // Rosa luminoso
   "rgba(124, 58, 237, 0.9)",  // Viola intenso
-  "rgba(190, 24, 93, 0.9)",   // Magenta profondo
-  "rgba(71, 85, 105, 0.9)",   // Slate scuro (non grigio spento)
-  "rgba(16, 185, 129, 0.9)"   // Verde acqua acceso
+  "rgba(127, 255, 0 , 0.9)",   // Verde Fluo
+  "rgba(205, 133, 63, 0.9)",   // Slate scuro
+  "rgba(0, 139, 69, 0.9)"   // Verde acqua acceso
 ];
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
@@ -1648,3 +1648,4 @@ initializePage();
 </div>
 </body>
 </html>
+
