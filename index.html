@@ -528,6 +528,40 @@ overflow-y: auto;
   opacity: 0;
   transition: opacity 0.25s ease;
 "></div>
+<div id="authContainer" style="display:none; margin-top:40px; width:100%; max-width:420px;">
+  <div style="
+    background: rgba(255,255,255,0.05);
+    padding:30px;
+    border-radius:28px;
+    backdrop-filter: blur(18px);
+    border:1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  ">
+    <h2 style="margin-bottom:20px;">Accedi o Registrati</h2>
+
+    <input id="authEmail" type="email" placeholder="Email"
+      style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
+
+    <input id="authPassword" type="password" placeholder="Password"
+      style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
+
+    <input id="authName" placeholder="Nome"
+      style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
+
+    <select id="authCountry"
+      style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:none;">
+      <option value="">Seleziona Paese</option>
+      <option value="IT">Italia</option>
+      <option value="FR">Francia</option>
+      <option value="DE">Germania</option>
+      <option value="UK">Regno Unito</option>
+      <option value="US">USA</option>
+    </select>
+
+    <button class="game-btn" onclick="register()">Registrati</button>
+    <button class="game-btn" onclick="login()">Accedi</button>
+  </div>
+</div>
 <div id="grid"></div>
 <script>
 const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
@@ -943,8 +977,8 @@ document.getElementById("rulesFloating").style.display = "flex";
 function showAuthScreen() {
   document.getElementById("playerInfo").style.display = "none";
   document.getElementById("grid").style.display = "none";
+  document.getElementById("authContainer").style.display = "block";
 }
-
 function initializeGame() {
   gridElement.innerHTML = "";
   for (let row = 0; row < size; row++) {
