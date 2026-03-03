@@ -537,7 +537,8 @@ overflow-y: auto;
     border:1px solid rgba(255,255,255,0.1);
     box-shadow: 0 30px 80px rgba(0,0,0,0.7);
   ">
-    <h2 style="margin-bottom:20px;">Accedi o Registrati</h2>
+
+    <h2 id="authTitle" style="margin-bottom:20px;">Accedi</h2>
 
     <input id="authEmail" type="email" placeholder="Email"
       style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
@@ -545,21 +546,36 @@ overflow-y: auto;
     <input id="authPassword" type="password" placeholder="Password"
       style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
 
-    <input id="authName" placeholder="Nome"
-      style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
+    <!-- Campi solo registrazione -->
+    <div id="registerExtra" style="display:none;">
+      <input id="authName" placeholder="Nome"
+        style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
 
-    <select id="authCountry"
-      style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:none;">
-      <option value="">Seleziona Paese</option>
-      <option value="IT">Italia</option>
-      <option value="FR">Francia</option>
-      <option value="DE">Germania</option>
-      <option value="UK">Regno Unito</option>
-      <option value="US">USA</option>
-    </select>
+      <select id="authCountry"
+        style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:none;">
+        <option value="">Seleziona Paese</option>
+        <option value="IT">Italia</option>
+        <option value="FR">Francia</option>
+        <option value="DE">Germania</option>
+        <option value="UK">Regno Unito</option>
+        <option value="US">USA</option>
+      </select>
+    </div>
 
-    <button class="game-btn" onclick="register()">Registrati</button>
-    <button class="game-btn" onclick="login()">Accedi</button>
+    <button id="authMainBtn" class="game-btn" onclick="handleAuth()">
+      Accedi
+    </button>
+
+    <div style="margin-top:15px; font-size:14px; opacity:0.8;">
+      <span id="authSwitchText">Non hai un account?</span>
+      <span 
+        id="authSwitchLink" 
+        style="color:#ffd700; cursor:pointer; font-weight:600;"
+        onclick="toggleAuthMode()">
+        Registrati
+      </span>
+    </div>
+
   </div>
 </div>
 <div id="grid"></div>
@@ -586,6 +602,7 @@ let boardErrorTimeout = null;
 let playerEmail = null;
 let playerName = null;
 let countryCode = null;
+let isRegisterMode = false;
 const colors = [
   "rgba(255, 0, 0, 0.9)",  	// Rosso
   "rgba(181, 181, 181, 0.9)",   // Arancione
@@ -1064,6 +1081,84 @@ if (!hasConflict && checkWin()) {
     }
   }
 }
+
+function toggleAuthMode() {
+
+  isRegisterMode = !isRegisterMode;
+
+  const title = document.getElementById("authTitle");
+  const extra = document.getElementById("registerExtra");
+  const mainBtn = document.getElementById("authMainBtn");
+  const switchText = document.getElementById("authSwitchText");
+  const switchLink = document.getElementById("authSwitchLink");
+
+  if (isRegisterMode) {
+    title.textContent = "Registrati";
+    extra.style.display = "block";
+    mainBtn.textContent = "Registrati";
+    switchText.textContent = "Hai già un account?";
+    switchLink.textContent = "Accedi";
+  } else {
+    title.textContent = "Accedi";
+    extra.style.display = "none";
+    mainBtn.textContent = "Accedi";
+    switchText.textContent = "Non hai un account?";
+    switchLink.textContent = "Registrati";
+  }
+}
+async function handleAuth() {
+
+  if (!isRegisterMode) {
+    alert("Login non ancora implementato");
+    return;
+  }
+
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+  const name = document.getElementById("authName").value.trim();
+  const country = document.getElementById("authCountry").value;
+
+  if (!email || !password || !name || !country) {
+    alert("Compila tutti i campi.");
+    return;
+  }
+
+  if (password.length < 6) {
+    alert("La password deve avere almeno 6 caratteri.");
+    return;
+  }
+
+  // 1️⃣ CREA UTENTE AUTH
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  const user = data.user;
+
+  // 2️⃣ CREA PROFILO IN TABELLA players
+  const { error: profileError } = await supabaseClient
+    .from("players")
+    .insert({
+      id: user.id,
+      email: email,
+      name: name,
+      country_code: country
+    });
+
+  if (profileError) {
+    alert("Errore salvataggio profilo.");
+    return;
+  }
+
+  window.location.reload();
+}
+
 function checkConflicts() {
   const cells = document.querySelectorAll(".cell");
   cells.forEach(cell => cell.classList.remove("error"));
