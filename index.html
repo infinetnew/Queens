@@ -468,7 +468,7 @@ overflow-y: auto;
   </div>
 </div>
 <div id="playerInfo">
-
+<div><strong>Email:</strong> <span id="displayEmail"></span></div>
   <div>
   <strong>Giocatore:</strong> 
   <span id="playerDisplay" style="display:inline-flex; align-items:center; gap:6px;">
@@ -476,9 +476,12 @@ overflow-y: auto;
     <img id="displayFlag" style="width:20px; height:auto; border-radius:2px;">
   </span>
 </div>
-  <div><strong>Email:</strong> <span id="displayEmail"></span></div>
 
-  <div style="margin-top:10px;">⏱ Tempo: <span id="timer">0s</span></div>
+
+  <div style="margin-top:10px;">
+  ⏱ <span style="color:red;">Tempo:</span> 
+  <span id="timer" style="color:red;">0s</span>
+</div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
 <button id="hintBtn" class="game-btn" disabled>
   💡 Suggerimento (3)
@@ -573,6 +576,13 @@ overflow-y: auto;
     <button id="authMainBtn" class="game-btn" onclick="handleAuth()">
       Accedi
     </button>
+<div style="margin-top:12px; font-size:13px;">
+  <span 
+    style="color:#ffd700; cursor:pointer;"
+    onclick="showResetForm()">
+    Password dimenticata?
+  </span>
+</div>
 
     <div style="margin-top:15px; font-size:14px; opacity:0.8;">
       <span id="authSwitchText">Non hai un account?</span>
@@ -611,6 +621,7 @@ let playerEmail = null;
 let playerName = null;
 let countryCode = null;
 let isRegisterMode = false;
+let isResetMode = false;
 const colors = [
   "rgba(255, 0, 0, 0.9)",  	// Rosso
   "rgba(181, 181, 181, 0.9)",   // Arancione
@@ -880,7 +891,12 @@ async function getMonthlyPlayerPosition() {
   };
 }
 async function initializePage() {
+const hash = window.location.hash;
 
+if (hash && hash.includes("type=recovery")) {
+  showNewPasswordForm();
+  return;
+}
   const { data: { session } } = await supabaseClient.auth.getSession();
 
 if (!session) {
@@ -1097,6 +1113,10 @@ if (!hasConflict && checkWin()) {
 
 function toggleAuthMode() {
 
+  // 🔴 RESETTA MODALITÀ RESET
+  isResetMode = false;
+  document.getElementById("authPassword").style.display = "block";
+
   isRegisterMode = !isRegisterMode;
 
   const title = document.getElementById("authTitle");
@@ -1122,6 +1142,23 @@ function toggleAuthMode() {
   const errorBox = document.getElementById("authErrorBox");
   if (errorBox) errorBox.remove();
 }
+
+function showResetForm() {
+
+  isRegisterMode = false;
+  isResetMode = true;
+
+  document.getElementById("authTitle").textContent = "Reset Password";
+  document.getElementById("authPassword").style.display = "none";
+  document.getElementById("registerExtra").style.display = "none";
+  document.getElementById("authMainBtn").textContent = "Invia link reset";
+
+  document.getElementById("authSwitchText").textContent = "Tornare al login?";
+  document.getElementById("authSwitchLink").textContent = "Accedi";
+
+  const errorBox = document.getElementById("authErrorBox");
+  if (errorBox) errorBox.remove();
+}
 function showAuthError(message) {
   let errorBox = document.getElementById("authErrorBox");
 
@@ -1140,6 +1177,33 @@ async function handleAuth() {
 
   const email = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value.trim();
+// 🔴 RESET PASSWORD
+if (isResetMode) {
+
+  if (!email) {
+    showAuthError("Inserisci la tua email.");
+    return;
+  }
+
+  const allowedDomain = "@infineum.com";
+
+  if (!email.toLowerCase().endsWith(allowedDomain)) {
+    showAuthError("Reset consentito solo per email @infineum.com");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin
+  });
+
+  if (error) {
+    showAuthError("Errore invio email reset.");
+    return;
+  }
+
+  showAuthError("Link di reset inviato. Controlla la tua email.");
+  return;
+}
 
   if (!email || !password) {
     showAuthError("Inserisci email e password.");
@@ -1849,7 +1913,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+function showNewPasswordForm() {
 
+  document.getElementById("playerInfo").style.display = "none";
+  document.getElementById("grid").style.display = "none";
+  document.getElementById("authContainer").style.display = "block";
+  document.getElementById("logoutFloating").style.display = "none";
+
+  document.getElementById("authTitle").textContent = "Nuova Password";
+  document.getElementById("authPassword").style.display = "block";
+  document.getElementById("authPassword").value = "";
+  document.getElementById("authMainBtn").textContent = "Aggiorna Password";
+
+  isResetMode = false;
+  isRegisterMode = false;
+
+  document.getElementById("authMainBtn").onclick = async () => {
+
+    const newPassword = document.getElementById("authPassword").value.trim();
+
+    if (newPassword.length < 6) {
+      showAuthError("Minimo 6 caratteri.");
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      showAuthError("Errore aggiornamento password.");
+      return;
+    }
+
+    showAuthError("Password aggiornata con successo.");
+
+    setTimeout(() => {
+      window.location.href = window.location.origin + "/Queens/";
+    }, 1500);
+  };
+}
 initializePage();
 </script>
 <div id="winModal" class="modal">
