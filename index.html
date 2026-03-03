@@ -991,7 +991,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
   boardErrorTimeout = setTimeout(() => {
     if (!checkWin() && checkIncompleteBoard()) {
       showFixedMessage(
-        "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 Regine. Hai fatto qualche errore.",
+        "⚠️ Hai riempito tutto, ma non ci sono 10 Regine",
         "error"
       );
     }
@@ -1669,6 +1669,7 @@ initializePage();
 </div>
 </body>
 </html>
+
 
 
 
