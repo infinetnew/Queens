@@ -1193,8 +1193,8 @@ if (isResetMode) {
   }
 
   const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin
-  });
+  redirectTo: window.location.origin + "/Queens/"
+});
 
   if (error) {
     showAuthError("Errore invio email reset.");
