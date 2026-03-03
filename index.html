@@ -935,20 +935,38 @@ async function renderDailyPosition() {
   positionBox.style.marginTop = "14px";
   positionBox.style.fontWeight = "700";
 
-  if (dailyPosition.rank === 1) {
-    positionBox.style.color = "#ffd700";
-  } else if (dailyPosition.rank === 2) {
-    positionBox.style.color = "#cfd8dc";
-  } else if (dailyPosition.rank === 3) {
-    positionBox.style.color = "#ffb74d";
-  } else if (dailyPosition.rank <= 10) {
-    positionBox.style.color = "#69f0ae";
+  const rank = dailyPosition.rank;
+  const totalPlayers = dailyPosition.totalPlayers;
+
+  // 🎨 Colori posizione
+  if (rank === 1) {
+    positionBox.style.color = "#ffd700"; // Oro
+  } else if (rank === 2) {
+    positionBox.style.color = "#cfd8dc"; // Argento
+  } else if (rank === 3) {
+    positionBox.style.color = "#ffb74d"; // Bronzo
+  } else if (rank <= 10) {
+    positionBox.style.color = "#69f0ae"; // Verde premium
   } else {
     positionBox.style.color = "#ffffff";
   }
 
+  // 🧠 Nuova logica percentuale intelligente
+  let message = "";
+
+  if (rank === 1) {
+    message = "🏆 Leader di oggi 👑";
+  } else if (rank === totalPlayers) {
+    message = "😅 Ultimo di oggi";
+  } else {
+    const betterThan = Math.round(
+      ((totalPlayers - rank) / totalPlayers) * 100
+    );
+    message = `Meglio del ${betterThan}% dei giocatori di oggi`;
+  }
+
   positionBox.innerText =
-    `Sei ${dailyPosition.rank}° su ${dailyPosition.totalPlayers} giocatori · Top ${dailyPosition.percent}% di oggi`;
+    `Sei ${rank}° su ${totalPlayers} giocatori · ${message}`;
 
   document.getElementById("dailyLeaderboard").appendChild(positionBox);
 }
@@ -1061,27 +1079,43 @@ if (monthlyPosition) {
   positionBox.style.marginTop = "14px";
   positionBox.style.fontWeight = "700";
 
-  if (monthlyPosition.rank === 1) {
+  const rank = monthlyPosition.rank;
+  const totalPlayers = monthlyPosition.totalPlayers;
+
+  if (rank === 1) {
     positionBox.style.color = "#ffd700"; // Oro
-  } else if (monthlyPosition.rank === 2) {
+  } else if (rank === 2) {
     positionBox.style.color = "#cfd8dc"; // Argento
-  } else if (monthlyPosition.rank === 3) {
+  } else if (rank === 3) {
     positionBox.style.color = "#ffb74d"; // Bronzo
-  } else if (monthlyPosition.rank <= 10) {
+  } else if (rank <= 10) {
     positionBox.style.color = "#69f0ae"; // Verde premium
   } else {
     positionBox.style.color = "#ffffff"; // Bianco
   }
 
+  let message = "";
+
+  if (rank === 1) {
+    message = "🏆 Leader del mese 👑";
+  } else if (rank === totalPlayers) {
+    message = "😅 Ultimo del mese";
+  } else {
+    const betterThan = Math.round(
+      ((totalPlayers - rank) / totalPlayers) * 100
+    );
+    message = `Meglio del ${betterThan}% dei giocatori del mese`;
+  }
+
   positionBox.innerText =
-    `Sei ${monthlyPosition.rank}° su ${monthlyPosition.totalPlayers} giocatori · Top ${monthlyPosition.percent}% del mese`;
+    `Sei ${rank}° su ${totalPlayers} giocatori · ${message}`;
 
   document.getElementById("monthlyLeaderboard").appendChild(positionBox);
 }
 
-  document.getElementById("leaderboardModal").style.display = "block";
+document.getElementById("leaderboardModal").style.display = "block";
 
-  return;
+return;
 }
   if (!todayResult.completed) {
 hintsUsed = todayResult.hints_used || 0;
@@ -1707,20 +1741,36 @@ if (monthlyPosition) {
   positionBox.style.marginTop = "14px";
   positionBox.style.fontWeight = "700";
 
-  if (monthlyPosition.rank === 1) {
+  const rank = monthlyPosition.rank;
+  const totalPlayers = monthlyPosition.totalPlayers;
+
+  if (rank === 1) {
     positionBox.style.color = "#ffd700"; // Oro
-  } else if (monthlyPosition.rank === 2) {
+  } else if (rank === 2) {
     positionBox.style.color = "#cfd8dc"; // Argento
-  } else if (monthlyPosition.rank === 3) {
+  } else if (rank === 3) {
     positionBox.style.color = "#ffb74d"; // Bronzo
-  } else if (monthlyPosition.rank <= 10) {
+  } else if (rank <= 10) {
     positionBox.style.color = "#69f0ae"; // Verde premium
   } else {
     positionBox.style.color = "#ffffff"; // Bianco
   }
 
+  let message = "";
+
+  if (rank === 1) {
+    message = "🏆 Leader del mese 👑";
+  } else if (rank === totalPlayers) {
+    message = "😅 Ultimo del mese";
+  } else {
+    const betterThan = Math.round(
+      ((totalPlayers - rank) / totalPlayers) * 100
+    );
+    message = `Meglio del ${betterThan}% dei giocatori del mese`;
+  }
+
   positionBox.innerText =
-    `Sei ${monthlyPosition.rank}° su ${monthlyPosition.totalPlayers} giocatori · Top ${monthlyPosition.percent}% del mese`;
+    `Sei ${rank}° su ${totalPlayers} giocatori · ${message}`;
 
   document.getElementById("monthlyLeaderboard").appendChild(positionBox);
 }
