@@ -519,7 +519,15 @@ overflow-y: auto;
   <p><strong>🏆</strong> Un solo tentativo al giorno.<br>
   Vince il tempo più basso.</p>
 </div>
-
+<div id="fixedMessageBox" style="
+  height: 22px; 
+  margin-top: 15px;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+"></div>
 <div id="grid"></div>
 <script>
 const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
@@ -655,7 +663,20 @@ console.log("Risultato query mensile:", data, error);
 
   return data;
 }
+function showFixedMessage(text, type = "info", DURATION = 800) {
+  const box = document.getElementById("fixedMessageBox");
 
+  if (type === "error") box.style.color = "#ff6b6b";
+  else if (type === "success") box.style.color = "#69f0ae";
+  else box.style.color = "#ffffff";
+
+  box.textContent = text;
+  box.style.opacity = "1";
+
+  setTimeout(() => {
+    box.style.opacity = "0";
+  }, DURATION);
+}
 function renderDailyLeaderboard(data) {
   const container = document.getElementById("dailyLeaderboard");
   container.innerHTML = "";
@@ -969,7 +990,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
   if (boardErrorTimeout) clearTimeout(boardErrorTimeout);
   boardErrorTimeout = setTimeout(() => {
     if (!checkWin() && checkIncompleteBoard()) {
-      showHintMessage(
+      showFixedMessagge(
         "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 Regine. Hai fatto qualche errore.",
         "error"
       );
@@ -1170,7 +1191,7 @@ function giveHint() {
         queenCell.classList.remove("error");
       }, 800);
       recomputeAutoX();
-      showHintMessage(
+      showFixedMessagge(
   `❌ Ho rimosso una Regina errata nella riga ${row + 1}. (+30s)`,
   "error"
 );
@@ -1203,13 +1224,13 @@ if (!queenFound) {
   targetCell.dataset.state = "queen";
   recomputeAutoX();
 if (removedRow !== null) {
-showHintMessage(
+showFixedMessagge(
   `👑 Ho inserito la Regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (+60s)`,
   "success"
 );
   applyHintPenalty("insert_remove");
 } else {
-showHintMessage(
+showFixedMessagge(
   `👑 Ho inserito la Regina corretta nella riga ${row + 1}. (+45s)`,
   "success"
 );
@@ -1648,7 +1669,6 @@ initializePage();
 </div>
 </body>
 </html>
-
 
 
 
