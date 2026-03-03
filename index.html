@@ -990,7 +990,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
   if (boardErrorTimeout) clearTimeout(boardErrorTimeout);
   boardErrorTimeout = setTimeout(() => {
     if (!checkWin() && checkIncompleteBoard()) {
-      showFixedMessagge(
+      showFixedMessage(
         "⚠️ Il tabellone risulta completato, ma non sono state inserite le 10 Regine. Hai fatto qualche errore.",
         "error"
       );
@@ -1191,7 +1191,7 @@ function giveHint() {
         queenCell.classList.remove("error");
       }, 800);
       recomputeAutoX();
-      showFixedMessagge(
+      showFixedMessage(
   `❌ Ho rimosso una Regina errata nella riga ${row + 1}. (+30s)`,
   "error"
 );
@@ -1224,13 +1224,13 @@ if (!queenFound) {
   targetCell.dataset.state = "queen";
   recomputeAutoX();
 if (removedRow !== null) {
-showFixedMessagge(
+showFixedMessage(
   `👑 Ho inserito la Regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (+60s)`,
   "success"
 );
   applyHintPenalty("insert_remove");
 } else {
-showFixedMessagge(
+showFixedMessage(
   `👑 Ho inserito la Regina corretta nella riga ${row + 1}. (+45s)`,
   "success"
 );
