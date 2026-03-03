@@ -617,22 +617,23 @@ const colors = [
 ];
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
+  console.log("DATA CERCATA:", today);
+
   const { data, error } = await supabaseClient
     .from("queens_puzzles")
     .select("*")
-    .eq("date", today)
-    .single();
-if (error || !data) {
-  startBtn.disabled = true;
-  startBtn.innerText = "Non disponibile";
-showRulesModal(
-`Il puzzle di oggi non è ancora stato pubblicato.
-Torna più tardi 👑`
-);
-  return false;
-}
-  solution = data.solution;
-  regionMap = data.region_map;
+    .eq("date", today);
+
+  console.log("RISULTATO QUERY:", data);
+  console.log("ERRORE:", error);
+
+  if (!data || data.length === 0) {
+    console.log("PUZZLE NON TROVATO");
+    return false;
+  }
+
+  solution = data[0].solution;
+  regionMap = data[0].region_map;
   return true;
 }
 async function getTodayResult() {
