@@ -449,7 +449,12 @@ overflow-y: auto;
 </style>
 </head>
 <body>
-<div id="rulesFloating" class="rules-floating">?</div>
+<div style="position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:10000;">
+  <div id="logoutFloating" class="rules-floating" style="background:rgba(255,0,0,0.15);">
+    ⎋
+  </div>
+  <div id="rulesFloating" class="rules-floating">?</div>
+</div>
 <div class="app-header">
   <div class="app-icon">
     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -471,7 +476,7 @@ overflow-y: auto;
   </span>
 </div>
   <div><strong>Email:</strong> <span id="displayEmail"></span></div>
-<button id="logoutBtn" class="game-btn" style="margin-top:10px; background:#b71c1c;">
+
   🔓 Logout
 </button>
   <div style="margin-top:10px;">⏱ Tempo: <span id="timer">0s</span></div>
@@ -1833,7 +1838,7 @@ dots.forEach((dot, index) => {
 });
 }); 
 document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutBtn = document.getElementById("logoutFloating");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       await supabaseClient.auth.signOut();
