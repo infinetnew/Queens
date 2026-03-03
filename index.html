@@ -845,7 +845,20 @@ if (player.email === playerEmail) {
     container.appendChild(row);
   });
 }
-
+const countryNames = {
+  BR: "Brasile",
+  CN: "Cina",
+  KR: "Corea del Sud",
+  FR: "Francia",
+  DE: "Germania",
+  JP: "Giappone",
+  IN: "India",
+  GB: "Inghilterra",
+  IT: "Italia",
+  SG: "Singapore",
+  ES: "Spagna",
+  US: "Stati Uniti"
+};
 function renderMonthlyCountryLeaderboard(data) {
   const container = document.getElementById("countryLeaderboard");
   container.innerHTML = "";
@@ -878,7 +891,7 @@ function renderMonthlyCountryLeaderboard(data) {
           src="https://flagcdn.com/24x18/${country.country_code.toLowerCase()}.png"
           style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
         >
-        ${country.country_code}
+        ${countryNames[country.country_code] || country.country_code}
       </span>
       <strong style="color:#ffffff;">
         ${country.total_points} pt
