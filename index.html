@@ -534,8 +534,7 @@ const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZWF4enRrZmRydWZnbmlteGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjA0MTksImV4cCI6MjA4NzY5NjQxOX0.nylDg56BcUzcq6Ag35N8zBDe5zXDCHC-iGwPcZ-ERYk";
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY,
-  { auth: { persistSession: false } }
+  SUPABASE_ANON_KEY
 );
 const size = 10;
 const gridElement = document.getElementById("grid");
@@ -550,43 +549,9 @@ let regionMap = [];
 let startTime = null;
 let timerInterval = null;
 let boardErrorTimeout = null;
-let queryString = window.location.search;
-if (!queryString && window.location.hash.includes("?")) {
-  queryString = window.location.hash.substring(
-    window.location.hash.indexOf("?")
-  );
-}
-const urlParams = new URLSearchParams(queryString);
-const playerEmail = urlParams.get("email");
-const playerName = urlParams.get("name");
-const playerCountry = urlParams.get("country");
-const countryCode = playerCountry?.toUpperCase();
-if (
-  !playerEmail ||
-  !playerName ||
-  !countryCode ||
-  !/^[A-Z]{2}$/.test(countryCode)
-) {  document.getElementById("displayName").textContent = "Non valido";
-  document.getElementById("displayEmail").textContent = "Non valido";
-  startBtn.disabled = true;
-  startBtn.innerText = "Link non valido";
-  const oldElements = document.querySelectorAll(".post-game");
-  oldElements.forEach(el => el.remove());
-const message = document.createElement("div");
-message.classList.add("post-game");
-  message.style.marginTop = "15px";
-  message.style.fontWeight = "600";
-  message.style.color = "red";
-  message.innerText = "Accesso non consentito. Usa il link personale.";
-  document.getElementById("playerInfo").appendChild(message);
-} else {
-  document.getElementById("displayName").textContent =
-    decodeURIComponent(playerName);
-document.getElementById("displayFlag").src =
-  `https://flagcdn.com/24x18/${countryCode.toLowerCase()}.png`;
-  document.getElementById("displayEmail").textContent =
-    decodeURIComponent(playerEmail);
-}
+let playerEmail = null;
+let playerName = null;
+let countryCode = null;
 const colors = [
   "rgba(255, 0, 0, 0.9)",  	// Rosso
   "rgba(181, 181, 181, 0.9)",   // Arancione
@@ -855,11 +820,46 @@ async function getMonthlyPlayerPosition() {
   };
 }
 async function initializePage() {
-  if (!playerEmail || !playerName || !countryCode) return;
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    showAuthScreen();
+    return;
+  }
+
+  const user = session.user;
+
+  const { data, error } = await supabaseClient
+    .from("players")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (error || !data) {
+    showAuthScreen();
+    return;
+  }
+
+  playerEmail = data.email;
+  playerName = data.name;
+  countryCode = data.country_code;
+
+  document.getElementById("displayName").textContent = playerName;
+  document.getElementById("displayEmail").textContent = playerEmail;
+  document.getElementById("displayFlag").src =
+    `https://flagcdn.com/24x18/${countryCode.toLowerCase()}.png`;
+
+  // Da qui in poi è il tuo flusso normale
+
   const puzzleLoaded = await loadDailyPuzzle();
   if (!puzzleLoaded) return;
+
   const todayResult = await getTodayResult();
   if (!todayResult) return;
+
+  // lasci tutto il resto della logica che avevi
+
 if (todayResult.completed) {
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
@@ -939,6 +939,12 @@ document.getElementById("rulesFloating").style.display = "flex";
     initializeGame();
   }
 }
+
+function showAuthScreen() {
+  document.getElementById("playerInfo").style.display = "none";
+  document.getElementById("grid").style.display = "none";
+}
+
 function initializeGame() {
   gridElement.innerHTML = "";
   for (let row = 0; row < size; row++) {
@@ -1669,7 +1675,6 @@ initializePage();
 </div>
 </body>
 </html>
-
 
 
 
