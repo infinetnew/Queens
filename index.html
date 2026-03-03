@@ -462,6 +462,7 @@ overflow-y: auto;
   </div>
 </div>
 <div id="playerInfo">
+
   <div>
   <strong>Giocatore:</strong> 
   <span id="playerDisplay" style="display:inline-flex; align-items:center; gap:6px;">
@@ -470,6 +471,9 @@ overflow-y: auto;
   </span>
 </div>
   <div><strong>Email:</strong> <span id="displayEmail"></span></div>
+<button id="logoutBtn" class="game-btn" style="margin-top:10px; background:#b71c1c;">
+  🔓 Logout
+</button>
   <div style="margin-top:10px;">⏱ Tempo: <span id="timer">0s</span></div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
 <button id="hintBtn" class="game-btn" disabled>
@@ -886,7 +890,7 @@ async function initializePage() {
     .from("players")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     showAuthScreen();
@@ -1106,43 +1110,84 @@ function toggleAuthMode() {
     switchText.textContent = "Non hai un account?";
     switchLink.textContent = "Registrati";
   }
+  // 👇 AGGIUNGI QUESTO BLOCCO QUI
+  const errorBox = document.getElementById("authErrorBox");
+  if (errorBox) errorBox.remove();
+}
+function showAuthError(message) {
+  let errorBox = document.getElementById("authErrorBox");
+
+  if (!errorBox) {
+    errorBox = document.createElement("div");
+    errorBox.id = "authErrorBox";
+    errorBox.style.marginTop = "12px";
+    errorBox.style.fontWeight = "600";
+    errorBox.style.color = "#ff6b6b";
+    document.getElementById("authMainBtn").after(errorBox);
+  }
+
+  errorBox.textContent = message;
 }
 async function handleAuth() {
 
-  if (!isRegisterMode) {
-    alert("Login non ancora implementato");
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+
+  if (!email || !password) {
+    showAuthError("Inserisci email e password.");
     return;
   }
 
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value.trim();
+  // 🔵 LOGIN
+  if (!isRegisterMode) {
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      showAuthError("Email o password non validi.");
+      return;
+    }
+
+    window.location.reload();
+    return;
+  }
+
+  // 🟣 REGISTRAZIONE
   const name = document.getElementById("authName").value.trim();
   const country = document.getElementById("authCountry").value;
 
-  if (!email || !password || !name || !country) {
-    alert("Compila tutti i campi.");
+  if (!name || !country) {
+    showAuthError("Compila tutti i campi.");
+    return;
+  }
+
+  const allowedDomain = "@infineum.com";
+
+  if (!email.toLowerCase().endsWith(allowedDomain)) {
+    showAuthError("Devi utilizzare la tua email aziendale @infineum.com");
     return;
   }
 
   if (password.length < 6) {
-    alert("La password deve avere almeno 6 caratteri.");
+    showAuthError("La password deve avere almeno 6 caratteri.");
     return;
   }
 
-  // 1️⃣ CREA UTENTE AUTH
   const { data, error } = await supabaseClient.auth.signUp({
     email,
     password
   });
 
   if (error) {
-    alert(error.message);
+    showAuthError(error.message);
     return;
   }
 
   const user = data.user;
 
-  // 2️⃣ CREA PROFILO IN TABELLA players
   const { error: profileError } = await supabaseClient
     .from("players")
     .insert({
@@ -1153,12 +1198,13 @@ async function handleAuth() {
     });
 
   if (profileError) {
-    alert("Errore salvataggio profilo.");
+    showAuthError("Errore salvataggio profilo.");
     return;
   }
 
   window.location.reload();
 }
+
 
 function checkConflicts() {
   const cells = document.querySelectorAll(".cell");
@@ -1786,6 +1832,15 @@ dots.forEach((dot, index) => {
   });
 });
 }); 
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.reload();
+    });
+  }
+});
 
 initializePage();
 </script>
