@@ -393,11 +393,11 @@ color: #f5f5f5;
 }
 .leaderboard-slider {
   display: flex;
-  width: 200%;
+  width: 300%;
   transition: transform 0.35s cubic-bezier(.4,0,.2,1);
 }
 .leaderboard-page {
-  width: 50%;
+  width: 33.3333%;
   padding: 0 10px;
   box-sizing: border-box;
 }
@@ -503,6 +503,10 @@ overflow-y: auto;
           <div class="leaderboard-title">📊 Mensile</div>
           <div id="monthlyLeaderboard"></div>
         </div>
+<div class="leaderboard-page">
+  <div class="leaderboard-title">🌍 Mensile per Paese</div>
+  <div id="countryLeaderboard"></div>
+</div>
 
       </div>
     </div>
@@ -510,6 +514,7 @@ overflow-y: auto;
     <div class="dots">
       <span class="dot active"></span>
       <span class="dot"></span>
+<span class="dot"></span>
     </div>
 
   </div>
@@ -566,18 +571,18 @@ overflow-y: auto;
   style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:none;">
   <option value="">Seleziona Paese</option>
 
-  <option value="BR">🇧🇷 Brasile</option>
-  <option value="CN">🇨🇳 Cina</option>
-  <option value="KR">🇰🇷 Corea del Sud</option>
-  <option value="FR">🇫🇷 Francia</option>
-  <option value="DE">🇩🇪 Germania</option>
-  <option value="JP">🇯🇵 Giappone</option>
-  <option value="IN">🇮🇳 India</option>
-  <option value="GB">🇬🇧 Inghilterra</option>
-  <option value="IT">🇮🇹 Italia</option>
-  <option value="SG">🇸🇬 Singapore</option>
-  <option value="ES">🇪🇸 Spagna</option>
-  <option value="US">🇺🇸 Stati Uniti</option>
+  <option value="BR">Brasile</option>
+  <option value="CN">Cina</option>
+  <option value="KR">Corea del Sud</option>
+  <option value="FR">Francia</option>
+  <option value="DE">Germania</option>
+  <option value="JP">Giappone</option>
+  <option value="IN">India</option>
+  <option value="GB">Inghilterra</option>
+  <option value="IT">Italia</option>
+  <option value="SG">Singapore</option>
+  <option value="ES">Spagna</option>
+  <option value="US">Stati Uniti</option>
 
 </select>
     </div>
@@ -708,6 +713,25 @@ console.log("Risultato query mensile:", data, error);
 
   return data;
 }
+async function loadMonthlyCountryLeaderboard() {
+  const now = new Date();
+  const currentMonth =
+    now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+
+  const { data, error } = await supabaseClient
+    .from("queens_monthly_country_scores")
+    .select("country_code, total_points")
+    .eq("month", currentMonth)
+    .order("total_points", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Errore classifica paesi:", error);
+    return [];
+  }
+
+  return data;
+}
 function showFixedMessage(text, type = "info", DURATION = 800) {
   const box = document.getElementById("fixedMessageBox");
 
@@ -817,6 +841,49 @@ if (player.email === playerEmail) {
   row.style.borderRadius = "8px";
   row.style.padding = "6px 8px";
 }
+
+    container.appendChild(row);
+  });
+}
+
+function renderMonthlyCountryLeaderboard(data) {
+  const container = document.getElementById("countryLeaderboard");
+  container.innerHTML = "";
+
+  data.forEach((country, index) => {
+    const row = document.createElement("div");
+    row.className = "leaderboard-row";
+
+    let medal = "";
+    let color = "#ffffff";
+
+    if (index === 0) {
+      row.classList.add("first-place");
+      medal = "👑";
+      color = "#ffd700";
+    } else if (index === 1) {
+      medal = "🥈";
+      color = "#cfd8dc";
+    } else if (index === 2) {
+      medal = "🥉";
+      color = "#ffb74d";
+    } else if (index < 10) {
+      color = "#69f0ae";
+    }
+
+    row.innerHTML = `
+      <span style="color:${color}; font-weight:600;">
+        ${medal} ${index + 1}.
+        <img 
+          src="https://flagcdn.com/24x18/${country.country_code.toLowerCase()}.png"
+          style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
+        >
+        ${country.country_code}
+      </span>
+      <strong style="color:#ffffff;">
+        ${country.total_points} pt
+      </strong>
+    `;
 
     container.appendChild(row);
   });
@@ -967,11 +1034,13 @@ document.getElementById("rulesFloating").style.display = "flex";
 
   const daily = await loadTodayLeaderboard();
   const monthly = await loadMonthlyLeaderboard();
+const countries = await loadMonthlyCountryLeaderboard();
 
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
 
 renderMonthlyLeaderboard(monthly);
+renderMonthlyCountryLeaderboard(countries);
 const monthlyPosition = await getMonthlyPlayerPosition();
 
 if (monthlyPosition) {
@@ -1611,11 +1680,13 @@ gridElement.innerHTML = "";
   // Carica classifiche
   const daily = await loadTodayLeaderboard();
   const monthly = await loadMonthlyLeaderboard();
+const countries = await loadMonthlyCountryLeaderboard();
 
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
 
 renderMonthlyLeaderboard(monthly);
+renderMonthlyCountryLeaderboard(countries);
 const monthlyPosition = await getMonthlyPlayerPosition();
 
 if (monthlyPosition) {
@@ -1892,7 +1963,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currentPage = 0;
     }
 
-    slider.style.transform = `translateX(-${currentPage * 50}%)`;
+    slider.style.transform = `translateX(-${currentPage * 33.3333}%)`;
 
     const dots = document.querySelectorAll(".dot");
     if (dots.length > 0) {
