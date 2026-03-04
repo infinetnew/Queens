@@ -94,8 +94,8 @@ letter-spacing: 0.3px;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s ease;
-  width: min(94vw, 94vh);
-  height: min(94vw, 94vh);
+  width: min(90vw, 90vh);
+height: min(90vw, 90vh);
   max-width: 650px;
   max-height: 650px;
   grid-template-columns: repeat(10, 1fr);
@@ -106,8 +106,12 @@ letter-spacing: 0.3px;
 background: rgba(255,255,255,0.06);
 backdrop-filter: blur(20px);
   border-radius: 28px;
-border: 4px solid rgba(0,0,0,0.7);
+border: 3px solid rgba(255,255,255,0.35);
+
 box-shadow:
+  0 0 0 2px rgba(120,80,255,0.35),
+  0 0 20px rgba(120,80,255,0.45),
+  0 0 40px rgba(120,80,255,0.35),
   0 60px 140px rgba(0,0,0,0.95),
   0 0 80px rgba(120,80,255,0.18),
   0 0 40px rgba(255,255,255,0.04);
@@ -145,6 +149,37 @@ position: relative;
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
+  }
+}
+@keyframes boardGlowStart {
+  0% {
+    box-shadow:
+      0 0 0 2px rgba(120,80,255,0.15),
+      0 0 8px rgba(120,80,255,0.15),
+      0 0 12px rgba(120,80,255,0.12),
+      0 60px 140px rgba(0,0,0,0.95),
+      0 0 30px rgba(120,80,255,0.08),
+      0 0 10px rgba(255,255,255,0.02);
+  }
+
+  60% {
+    box-shadow:
+      0 0 0 2px rgba(120,80,255,0.45),
+      0 0 30px rgba(120,80,255,0.6),
+      0 0 80px rgba(120,80,255,0.45),
+      0 60px 140px rgba(0,0,0,0.95),
+      0 0 120px rgba(120,80,255,0.35),
+      0 0 50px rgba(255,255,255,0.1);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(120,80,255,0.35),
+      0 0 20px rgba(120,80,255,0.45),
+      0 0 40px rgba(120,80,255,0.35),
+      0 60px 140px rgba(0,0,0,0.95),
+      0 0 80px rgba(120,80,255,0.18),
+      0 0 40px rgba(255,255,255,0.04);
   }
 }
 .cell {
@@ -322,7 +357,6 @@ contain: layout paint;
   height: 140px;
 }
   }
-}
 @keyframes winPulse {
   0% { transform: scale(1); }
   40% { transform: scale(1.25); }
@@ -382,6 +416,16 @@ contain: layout paint;
   40%  { color: #ff1744; transform: scale(1.15); }
   70%  { color: #ff5252; transform: scale(1.08); }
 100% { color: rgba(255,255,255,0.8); transform: scale(1); }
+}
+@keyframes messageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .timer-penalty {
   animation: penaltyFlash 1.4s ease;
@@ -552,7 +596,7 @@ overflow-y: auto;
           <div id="monthlyLeaderboard"></div>
         </div>
 <div class="leaderboard-page">
-  <div class="leaderboard-title">🌍 Mensile per Paese ( Top 3 Giocatori )</div>
+  <div class="leaderboard-title">🌍 Mensile per Paese (Top 3 Giocatori)</div>
   <div id="countryLeaderboard"></div>
 </div>
 
@@ -584,13 +628,14 @@ overflow-y: auto;
   Vince il tempo più basso.</p>
 </div>
 <div id="fixedMessageBox" style="
-  height: 22px; 
+  height: 22px;
   margin-top: 15px;
   font-weight: 700;
   text-align: center;
   color: #ffffff;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
 "></div>
 <div id="authContainer" style="display:none; margin-top:40px; width:100%; max-width:420px;">
   <div style="
@@ -780,7 +825,7 @@ async function loadMonthlyCountryLeaderboard() {
 
   return data;
 }
-function showFixedMessage(text, type = "info", DURATION = 800) {
+function showFixedMessage(text, type = "info", DURATION = 2500) {
   const box = document.getElementById("fixedMessageBox");
 
   if (type === "error") box.style.color = "#ff6b6b";
@@ -788,10 +833,18 @@ function showFixedMessage(text, type = "info", DURATION = 800) {
   else box.style.color = "#ffffff";
 
   box.textContent = text;
-  box.style.opacity = "1";
+
+  box.style.opacity = "0";
+  box.style.transform = "translateY(6px)";
+
+  requestAnimationFrame(() => {
+    box.style.opacity = "1";
+    box.style.transform = "translateY(0)";
+  });
 
   setTimeout(() => {
     box.style.opacity = "0";
+    box.style.transform = "translateY(-4px)";
   }, DURATION);
 }
 function renderDailyLeaderboard(data) {
@@ -1184,8 +1237,9 @@ startTime = startedAt - (penalty * 1000);
       const seconds = Math.floor((Date.now() - startTime) / 1000);
       document.getElementById("timer").textContent = seconds + "s";
     }, 1000);
-    gridElement.style.visibility = "visible";
-    gridElement.style.opacity = "1";
+gridElement.style.animation = "none";
+void gridElement.offsetWidth;
+gridElement.style.animation = "boardGlowStart 1.2s ease";
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
     initializeGame();
@@ -1276,7 +1330,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
         "error"
       );
     }
-  }, 600);
+  }, 1200);
   return;
 }
 if (!hasConflict && checkWin()) {
@@ -1987,6 +2041,7 @@ document.getElementById("rulesFloating").style.display = "flex";
   }, 1000);
   gridElement.style.visibility = "visible";
   gridElement.style.opacity = "1";
+gridElement.style.animation = "boardGlowStart 1.2s ease";
   startBtn.disabled = true;
   hintBtn.disabled = false;
 document.getElementById("rulesBox").style.display = "none";
