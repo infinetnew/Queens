@@ -24,8 +24,8 @@ color: #f5f5f5;
   margin-top: 40px;
 }
 .app-icon {
-  width: 140px;
-  height: 140px;
+  width: 240px;
+  height: 240px;
   border-radius: 20px;
   background: transparent;
   display: flex;
@@ -33,12 +33,13 @@ color: #f5f5f5;
   justify-content: center;
 }
 .app-icon img {
-  width: 120%;
+  width: 150%;
   height: auto;
   object-fit: contain;
-  filter:
-    drop-shadow(0 0 10px rgba(255,215,0,0.6))
-    drop-shadow(0 0 20px rgba(255,215,0,0.4));
+filter:
+  drop-shadow(0 0 12px rgba(255,215,0,0.8))
+  drop-shadow(0 0 30px rgba(255,215,0,0.6))
+  drop-shadow(0 0 60px rgba(255,215,0,0.25));
 }
 .app-info h1 {
   margin: 0;
@@ -99,13 +100,13 @@ letter-spacing: 0.3px;
   max-height: 650px;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  gap: 1%;
+  gap: 0;
   margin-top: 30px;
   padding: 2.5%;
 background: rgba(255,255,255,0.06);
 backdrop-filter: blur(20px);
-border: 1px solid rgba(255,255,255,0.14);
   border-radius: 28px;
+border: 4px solid rgba(0,0,0,0.7);
 box-shadow:
   0 60px 140px rgba(0,0,0,0.95),
   0 0 80px rgba(120,80,255,0.18),
@@ -246,14 +247,14 @@ contain: layout paint;
     drop-shadow(0 0 30px rgba(255,215,0,0.6));
 }
 .queen-icon {
-  width: 90%;
-  height: 90%;
+  width: 120%;
+  height: 120%;
   object-fit: contain;
 
   filter:
-    drop-shadow(0 0 6px rgba(255,255,255,0.9))
-    drop-shadow(0 0 18px rgba(255,215,0,0.8))
-    drop-shadow(0 0 30px rgba(255,215,0,0.6));
+    drop-shadow(0 0 10px rgba(255,255,255,1))
+    drop-shadow(0 0 22px rgba(255,215,0,0.9))
+    drop-shadow(0 0 45px rgba(255,215,0,0.7));
 }
 @keyframes queenAppear {
   from {
@@ -316,9 +317,10 @@ contain: layout paint;
   .app-header {
     gap: 12px;
   }
-  .app-icon {
-    width: 52px;
-    height: 52px;
+.app-icon {
+  width: 140px;
+  height: 140px;
+}
   }
 }
 @keyframes winPulse {
@@ -1205,8 +1207,8 @@ function initializeGame() {
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
 const region = regionMap[row][col];
-const borderColor = "rgba(0,0,0,0.55)";
-const borderSize = 3;
+const borderColor = "rgba(0,0,0,0.8)";
+const borderSize = 2;
 
 const border = document.createElement("div");
 border.classList.add("region-border");
