@@ -94,7 +94,6 @@ letter-spacing: 0.3px;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s ease;
-touch-action: manipulation;
   width: min(90vw, 90vh);
 height: min(90vw, 90vh);
   max-width: 650px;
@@ -192,7 +191,6 @@ position: relative;
   cursor: pointer;
   aspect-ratio: 1 / 1;
   border: none;
-transform: translateZ(0);
   backdrop-filter: blur(6px);
 box-shadow:
   0 12px 28px rgba(0,0,0,0.7),
@@ -715,7 +713,6 @@ const supabaseClient = supabase.createClient(
 );
 const size = 10;
 const gridElement = document.getElementById("grid");
-let cellsCache = [];
 const startBtn = document.getElementById("startBtn");
 const hintBtn = document.getElementById("hintBtn");
 let hintsUsed = 0;
@@ -1256,84 +1253,109 @@ function showAuthScreen() {
 document.getElementById("logoutFloating").style.display = "none";
 }
 function initializeGame() {
-
   gridElement.innerHTML = "";
-  cellsCache = [];
-
   for (let row = 0; row < size; row++) {
     for (let col = 0; col < size; col++) {
-
       const cell = document.createElement("div");
       cell.classList.add("cell");
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
-cell.addEventListener("click", () => {
+const region = regionMap[row][col];
+const borderColor = "rgba(0,0,0,0.8)";
+const borderSize = 2;
 
+const border = document.createElement("div");
+border.classList.add("region-border");
+
+if (row === 0 || regionMap[row-1][col] !== region) {
+  border.style.borderTop = borderSize + "px solid " + borderColor;
+}
+
+if (col === 0 || regionMap[row][col-1] !== region) {
+  border.style.borderLeft = borderSize + "px solid " + borderColor;
+}
+
+if (row === size-1 || regionMap[row+1][col] !== region) {
+  border.style.borderBottom = borderSize + "px solid " + borderColor;
+}
+
+if (col === size-1 || regionMap[row][col+1] !== region) {
+  border.style.borderRight = borderSize + "px solid " + borderColor;
+}
+
+cell.appendChild(border);
+cell.addEventListener("click", async () => {
+  if (document.querySelector(".error")) {
+    const isErrorQueen =
+      cell.dataset.state === "queen" &&
+      cell.classList.contains("error");
+    if (!isErrorQueen) return;
+  }
   const state = cell.dataset.state;
-
   if (state === "empty") {
-
-    const queen = document.createElement("span");
-    queen.className = "queen";
-
-    const img = document.createElement("img");
-    img.src = "queens-logo.png";
-    img.className = "queen-icon";
-
-    queen.appendChild(img);
-    cell.appendChild(queen);
-
+    cell.classList.add("x");
+    cell.dataset.state = "x";
+  } else if (state === "x") {
+    cell.classList.remove("x");
+  cell.innerHTML = `
+  <span class="queen">
+    <img src="queens-logo.png" class="queen-icon">
+  </span>
+`;
     cell.dataset.state = "queen";
-
-    requestAnimationFrame(recomputeAutoX);
-
-  } 
-  else if (state === "queen") {
-
+    recomputeAutoX();
+  } else if (state === "queen") {
     cell.innerHTML = "";
     cell.dataset.state = "empty";
-
-    requestAnimationFrame(recomputeAutoX);
-
-  } 
-  else if (state === "x") {
-
-    cell.classList.remove("x");
-    cell.dataset.state = "empty";
-
+    document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
+    recomputeAutoX();
   }
-
+cell.classList.remove("premium-flash");
+void cell.offsetWidth;
+cell.classList.add("premium-flash");
+const hasConflict = checkConflicts();
+if (checkWin() || !checkIncompleteBoard()) {
+  if (boardErrorTimeout) {
+    clearTimeout(boardErrorTimeout);
+    boardErrorTimeout = null;
+  }
+  clearHintMessage();
+}
+if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
+  if (boardErrorTimeout) clearTimeout(boardErrorTimeout);
+  boardErrorTimeout = setTimeout(() => {
+    if (!checkWin() && checkIncompleteBoard()) {
+      showFixedMessage(
+        "⚠️ Hai riempito tutto, ma non ci sono 10 Regine",
+        "error"
+      );
+    }
+  }, 1200);
+  return;
+}
+if (!hasConflict && checkWin()) {
+    clearInterval(timerInterval);
+    const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+    await supabaseClient
+      .from("queens_results")
+      .update({
+        completed: true,
+        time_seconds: totalSeconds
+      })
+      .eq("email", playerEmail)
+      .eq("date", new Date().toISOString().split("T")[0]);
+    startBtn.disabled = true;
+    hintBtn.disabled = true;
+    document.querySelectorAll(".queen").forEach(q => {
+      q.classList.add("win-effect");
+    });
+    launchConfetti();
+    setTimeout(() => {
+      showModal(totalSeconds);
+    }, 1200);
+  }
 });
-
-      const region = regionMap[row][col];
-      const borderColor = "rgba(0,0,0,0.8)";
-      const borderSize = 2;
-
-      const border = document.createElement("div");
-      border.classList.add("region-border");
-
-      if (row === 0 || regionMap[row-1][col] !== region) {
-        border.style.borderTop = borderSize + "px solid " + borderColor;
-      }
-
-      if (col === 0 || regionMap[row][col-1] !== region) {
-        border.style.borderLeft = borderSize + "px solid " + borderColor;
-      }
-
-      if (row === size-1 || regionMap[row+1][col] !== region) {
-        border.style.borderBottom = borderSize + "px solid " + borderColor;
-      }
-
-      if (col === size-1 || regionMap[row][col+1] !== region) {
-        border.style.borderRight = borderSize + "px solid " + borderColor;
-      }
-
-      cell.appendChild(border);
-
       gridElement.appendChild(cell);
-
-      cellsCache.push(cell);
-
     }
   }
 }
@@ -1506,7 +1528,7 @@ if (isResetMode) {
 
 
 function checkConflicts() {
-  const cells = cellsCache;
+  const cells = document.querySelectorAll(".cell");
   cells.forEach(cell => cell.classList.remove("error"));
   const queens = [];
   cells.forEach((cell, index) => {
@@ -1549,7 +1571,7 @@ if (hasError && navigator.vibrate) {
 return hasError;
 }
 function checkWin() {
-  const cells = cellsCache;
+  const cells = document.querySelectorAll(".cell");
   let queenCount = 0;
   cells.forEach(cell => {
     if (cell.dataset.state === "queen") queenCount++;
@@ -1557,7 +1579,7 @@ function checkWin() {
   return queenCount === size;
 }
 function checkIncompleteBoard() {
-  const cells = cellsCache;
+  const cells = document.querySelectorAll(".cell");
   let queenCount = 0;
   let filledCount = 0;
   cells.forEach(cell => {
@@ -1572,21 +1594,21 @@ function checkIncompleteBoard() {
   return false;
 }
 function highlightRow(row) {
-  const cells = cellsCache;
+  const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
     const r = Math.floor(index / size);
     if (r === row) cell.classList.add("error");
   });
 }
 function highlightColumn(col) {
-  const cells = cellsCache;
+  const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
     const c = index % size;
     if (c === col) cell.classList.add("error");
   });
 }
 function highlightRegion(region) {
-  const cells = cellsCache;
+  const cells = document.querySelectorAll(".cell");
   cells.forEach((cell, index) => {
     const row = Math.floor(index / size);
     const col = index % size;
@@ -1596,55 +1618,35 @@ function highlightRegion(region) {
   });
 }
 function recomputeAutoX() {
-
-  const cells = cellsCache;
-
+  const cells = document.querySelectorAll(".cell");
   cells.forEach(cell => {
     if (cell.dataset.state === "x") {
       cell.classList.remove("x");
       cell.dataset.state = "empty";
     }
   });
-
-  const queens = [];
-
   cells.forEach((cell, index) => {
-    if (cell.dataset.state === "queen") {
-      queens.push(index);
-    }
-  });
-
-  queens.forEach(index => {
-
+    if (cell.dataset.state !== "queen") return;
     const row = Math.floor(index / size);
     const col = index % size;
     const region = regionMap[row][col];
-
     cells.forEach((target, i) => {
-
       if (target.dataset.state !== "empty") return;
-
       const r = Math.floor(i / size);
       const c = i % size;
-
+      const targetRegion = regionMap[r][c];
+      const rowDiff = Math.abs(r - row);
+      const colDiff = Math.abs(c - col);
       const sameRow = r === row;
       const sameCol = c === col;
-      const sameRegion = regionMap[r][c] === region;
-      const adjacent =
-        Math.abs(r - row) <= 1 &&
-        Math.abs(c - col) <= 1;
-
+      const sameRegion = targetRegion === region;
+      const adjacent = rowDiff <= 1 && colDiff <= 1;
       if (sameRow || sameCol || sameRegion || adjacent) {
-
         target.classList.add("x");
         target.dataset.state = "x";
-
       }
-
     });
-
   });
-
 }
 function markCell(cell) {
   const state = cell.dataset.state;
@@ -1659,8 +1661,7 @@ function markCell(cell) {
     return;
   }
   if (state === "queen") {
-    const queen = cell.querySelector(".queen");
-if (queen) queen.remove();
+    cell.innerHTML = "";
     cell.dataset.state = "empty";
     recomputeAutoX();
     return;
@@ -1670,7 +1671,7 @@ function giveHint() {
   if (!startTime) return;
   if (hintsUsed >= maxHints) return;
   if (document.querySelector(".error")) return;
-  const cells = cellsCache;
+  const cells = document.querySelectorAll(".cell");
   for (let row = 0; row < size; row++) {
     let queenFound = false;
     let queenCol = null;
@@ -1771,11 +1772,7 @@ async function applyHintPenalty(type) {
   hintsUsed = newHints;
   const timerEl = document.getElementById("timer");
   timerEl.classList.remove("timer-penalty");
-  timerEl.classList.remove("timer-penalty");
-
-setTimeout(() => {
-  timerEl.classList.add("timer-penalty");
-}, 10);
+  void timerEl.offsetWidth;
   timerEl.classList.add("timer-penalty");
   hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
   if (hintsUsed >= maxHints) {
