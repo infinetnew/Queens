@@ -99,7 +99,7 @@ letter-spacing: 0.3px;
   max-height: 650px;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  gap: 1.5%;
+  gap: 1%;
   margin-top: 30px;
   padding: 2.5%;
 background: rgba(255,255,255,0.06);
@@ -149,12 +149,12 @@ position: relative;
 .cell {
   width: 100%;
   height: 100%;
-  border-radius: 20px;
+  border-radius: 16%;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   aspect-ratio: 1 / 1;
-  border: 1px solid rgba(255,255,255,0.18);
+  border: none;
   backdrop-filter: blur(6px);
 box-shadow:
   0 12px 28px rgba(0,0,0,0.7),
@@ -189,6 +189,13 @@ contain: layout paint;
   box-shadow:
     inset 0 0 20px rgba(255,255,255,0.15),
     0 0 20px rgba(255,255,255,0.08);
+}
+.region-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16%;
+  box-sizing: border-box;
 }
 .cell:hover {
   transform: translateY(-6px) scale(1.03);
@@ -239,8 +246,8 @@ contain: layout paint;
     drop-shadow(0 0 30px rgba(255,215,0,0.6));
 }
 .queen-icon {
-  width: 70%;
-  height: 70%;
+  width: 90%;
+  height: 90%;
   object-fit: contain;
 
   filter:
@@ -1197,6 +1204,30 @@ function initializeGame() {
       cell.classList.add("cell");
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
+const region = regionMap[row][col];
+const borderColor = "rgba(0,0,0,0.55)";
+const borderSize = 3;
+
+const border = document.createElement("div");
+border.classList.add("region-border");
+
+if (row === 0 || regionMap[row-1][col] !== region) {
+  border.style.borderTop = borderSize + "px solid " + borderColor;
+}
+
+if (col === 0 || regionMap[row][col-1] !== region) {
+  border.style.borderLeft = borderSize + "px solid " + borderColor;
+}
+
+if (row === size-1 || regionMap[row+1][col] !== region) {
+  border.style.borderBottom = borderSize + "px solid " + borderColor;
+}
+
+if (col === size-1 || regionMap[row][col+1] !== region) {
+  border.style.borderRight = borderSize + "px solid " + borderColor;
+}
+
+cell.appendChild(border);
 cell.addEventListener("click", async () => {
   if (document.querySelector(".error")) {
     const isErrorQueen =
