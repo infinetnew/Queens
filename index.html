@@ -273,7 +273,6 @@ contain: layout paint;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  animation:
  animation: queenAppear 0.25s ease;
 }
 .queen svg {
@@ -579,7 +578,7 @@ overflow-y: auto;
 <button id="installBtn" class="game-btn" style="display:none;">
 📲 Installa App
 </button>
-<button id="pushBtn" class="game-btn">
+<button id="pushBtn" class="game-btn" style="display:none;">
 🔔 Attiva notifiche
 </button>
 </div>
@@ -1146,14 +1145,25 @@ document.getElementById("logoutFloating").style.display = "flex";
   document.getElementById("displayEmail").textContent = playerEmail;
 document.getElementById("displayFlag").src =
   `https://flagcdn.com/24x18/${(countryCode || "xx").toLowerCase()}.png`;
+const pushBtn = document.getElementById("pushBtn");
+pushBtn.style.display = "inline-block";
 
-  // Da qui in poi è il tuo flusso normale
+// controllo notifiche già attive
+if (Notification.permission === "granted") {
+  pushBtn.disabled = true;
+  pushBtn.innerText = "🔔 Notifiche attive";
+}
 
-  const puzzleLoaded = await loadDailyPuzzle();
-  if (!puzzleLoaded) return;
+// Da qui in poi è il tuo flusso normale
+
+const puzzleLoaded = await loadDailyPuzzle();
+if (!puzzleLoaded) return;
 
   const todayResult = await getTodayResult();
-  if (!todayResult) return;
+if (!todayResult) {
+  // nessuna partita iniziata oggi
+  return;
+}
 
   // lasci tutto il resto della logica che avevi
 
@@ -2332,12 +2342,13 @@ installBtn.addEventListener("click", async () => {
   if (choice.outcome === "accepted") {
     installBtn.style.display = "none";
   }
-window.addEventListener("appinstalled", () => {
-  installBtn.style.display = "none";
-});
 
   deferredPrompt = null;
 
+});
+
+window.addEventListener("appinstalled", () => {
+  installBtn.style.display = "none";
 });
 function isIOS() {
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -2393,10 +2404,14 @@ if (!playerEmail) {
 
   const registration = await navigator.serviceWorker.ready;
 
-const subscription = await registration.pushManager.subscribe({
-  userVisibleOnly: true,
-  applicationServerKey: urlBase64ToUint8Array("BH5RAfIh1Qw6EzNbviVnECgDBe9PGF9NgpZUHP8a6Tz2YwDY9tDZvq6tmiOBBlHQSI5owfK6cRcPrladyYcPh2M")
-});
+let subscription = await registration.pushManager.getSubscription();
+
+if (!subscription) {
+  subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array("BH5RAfIh1Qw6EzNbviVnECgDBe9PGF9NgpZUHP8a6Tz2YwDY9tDZvq6tmiOBBlHQSI5owfK6cRcPrladyYcPh2M")
+  });
+}
 
   const { error } = await supabaseClient
     .from("push_subscriptions")
