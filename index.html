@@ -31,7 +31,7 @@ color: #f5f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  margin-top: calc(env(safe-area-inset-top) + 40px);
 }
 .app-icon {
   width: 240px;
@@ -544,7 +544,7 @@ overflow-y: auto;
 </style>
 </head>
 <body>
-<div style="position:fixed; top:20px; left:20px; display:flex; gap:10px; z-index:10000;">
+<div style="position:fixed; top:calc(env(safe-area-inset-top) + 12px); left:20px; display:flex; gap:10px; z-index:10000;">
 
   <div id="installFloating" class="rules-floating" title="Installa App">
     📲
@@ -555,7 +555,7 @@ overflow-y: auto;
   </div>
 
 </div>
-<div style="position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:10000;">
+<div style="position:fixed; top:calc(env(safe-area-inset-top) + 12px); right:20px; display:flex; gap:10px; z-index:10000;">
 
   <div id="rulesFloating" class="rules-floating" title="Regole">
     ?
@@ -2474,7 +2474,7 @@ document
   .addEventListener("click", async () => {
 
     if (!deferredPrompt) {
-      showFixedMessage("Installa Queens dal menu del browser");
+      showFixedMessage("📲 Per installare Queens: premi Condividi ↑ e poi 'Aggiungi alla schermata Home'", "info", 6000);
       return;
     }
 
