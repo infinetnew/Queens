@@ -104,7 +104,7 @@ height: min(90vw, 90vh);
   margin-top: 30px;
   padding: 2.5%;
 background: rgba(255,255,255,0.06);
-backdrop-filter: blur(20px);
+backdrop-filter: blur(8px);
   border-radius: 28px;
 border: 3px solid rgba(255,255,255,0.35);
 
@@ -712,6 +712,12 @@ const supabaseClient = supabase.createClient(
   SUPABASE_ANON_KEY
 );
 const size = 10;
+const rows = new Array(size).fill(0);
+const cols = new Array(size).fill(0);
+const regions = new Array(size).fill(0);
+
+let queens = [];
+let cells = [];
 const gridElement = document.getElementById("grid");
 const startBtn = document.getElementById("startBtn");
 const hintBtn = document.getElementById("hintBtn");
@@ -1253,10 +1259,21 @@ function showAuthScreen() {
 document.getElementById("logoutFloating").style.display = "none";
 }
 function initializeGame() {
+rows.fill(0);
+  cols.fill(0);
+  regions.fill(0);
+  queens = [];
   gridElement.innerHTML = "";
-  for (let row = 0; row < size; row++) {
-    for (let col = 0; col < size; col++) {
+  cells = [];
+
+ for (let row = 0; row < size; row++) {
+  for (let col = 0; col < size; col++) {
+
       const cell = document.createElement("div");
+
+      cells.push(cell);
+
+
       cell.classList.add("cell");
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
@@ -1297,17 +1314,11 @@ cell.addEventListener("click", async () => {
     cell.dataset.state = "x";
   } else if (state === "x") {
     cell.classList.remove("x");
-  cell.innerHTML = `
-  <span class="queen">
-    <img src="queens-logo.png" class="queen-icon">
-  </span>
-`;
-    cell.dataset.state = "queen";
+    placeQueen(cell,row,col);
     recomputeAutoX();
   } else if (state === "queen") {
-    cell.innerHTML = "";
-    cell.dataset.state = "empty";
-    document.querySelectorAll(".cell").forEach(c => c.classList.remove("error"));
+    removeQueen(cell,row,col);
+    cells.forEach(c => c.classList.remove("error"));
     recomputeAutoX();
   }
 cell.classList.remove("premium-flash");
@@ -1391,7 +1402,45 @@ function toggleAuthMode() {
   const errorBox = document.getElementById("authErrorBox");
   if (errorBox) errorBox.remove();
 }
+function placeQueen(cell, row, col) {
 
+  const region = regionMap[row][col];
+
+  rows[row]++;
+  cols[col]++;
+  regions[region]++;
+
+  queens.push({cell,row,col,region});
+
+  const queen = document.createElement("span");
+  queen.className = "queen";
+
+  const img = document.createElement("img");
+  img.src = "queens-logo.png";
+  img.className = "queen-icon";
+
+  queen.appendChild(img);
+  cell.appendChild(queen);
+
+  cell.dataset.state = "queen";
+
+}
+function removeQueen(cell,row,col){
+
+  const region = regionMap[row][col];
+
+  rows[row]--;
+  cols[col]--;
+  regions[region]--;
+
+  queens = queens.filter(q => q.cell !== cell);
+
+  const queen = cell.querySelector(".queen");
+  if (queen) queen.remove();
+
+  cell.dataset.state = "empty";
+
+}
 function showResetForm() {
 
   isRegisterMode = false;
@@ -1528,145 +1577,138 @@ if (isResetMode) {
 
 
 function checkConflicts() {
-  const cells = document.querySelectorAll(".cell");
-  cells.forEach(cell => cell.classList.remove("error"));
-  const queens = [];
-  cells.forEach((cell, index) => {
-    if (cell.dataset.state === "queen") {
-      const row = Math.floor(index / size);
-      const col = index % size;
-      const region = regionMap[row][col];
-      queens.push({ cell, row, col, region });
-    }
-  });
+
   let hasError = false;
-  for (let i = 0; i < queens.length; i++) {
-    for (let j = i + 1; j < queens.length; j++) {
+
+  queens.forEach(q => {
+
+    if(rows[q.row] > 1) {
+      highlightRow(q.row);
+      hasError = true;
+    }
+
+    if(cols[q.col] > 1) {
+      highlightColumn(q.col);
+      hasError = true;
+    }
+
+    if(regions[q.region] > 1) {
+      highlightRegion(q.region);
+      hasError = true;
+    }
+
+  });
+
+  for(let i=0;i<queens.length;i++){
+    for(let j=i+1;j<queens.length;j++){
+
       const q1 = queens[i];
       const q2 = queens[j];
-      const rowDiff = Math.abs(q1.row - q2.row);
-      const colDiff = Math.abs(q1.col - q2.col);
-      if (q1.region === q2.region) {
-        highlightRegion(q1.region);
-        hasError = true;
-      }
-      if (q1.row === q2.row) {
-        highlightRow(q1.row);
-        hasError = true;
-      }
-      if (q1.col === q2.col) {
-        highlightColumn(q1.col);
-        hasError = true;
-      }
-      if ((rowDiff <= 1 && colDiff <= 1) && !(rowDiff === 0 && colDiff === 0)) {
+
+      const rowDiff = Math.abs(q1.row-q2.row);
+      const colDiff = Math.abs(q1.col-q2.col);
+
+      if(rowDiff<=1 && colDiff<=1){
         q1.cell.classList.add("error");
         q2.cell.classList.add("error");
         hasError = true;
       }
+
     }
   }
-if (hasError && navigator.vibrate) {
-  navigator.vibrate(120);
-}
-return hasError;
+
+  if (hasError && navigator.vibrate) {
+    navigator.vibrate(120);
+  }
+
+  return hasError;
+
 }
 function checkWin() {
-  const cells = document.querySelectorAll(".cell");
-  let queenCount = 0;
-  cells.forEach(cell => {
-    if (cell.dataset.state === "queen") queenCount++;
-  });
-  return queenCount === size;
+  return queens.length === size;
 }
 function checkIncompleteBoard() {
-  const cells = document.querySelectorAll(".cell");
+
   let queenCount = 0;
   let filledCount = 0;
+
   cells.forEach(cell => {
     if (cell.dataset.state === "queen") queenCount++;
-    if (cell.dataset.state === "queen" || cell.dataset.state === "x") {
+
+    if (
+      cell.dataset.state === "queen" ||
+      cell.dataset.state === "x"
+    ) {
       filledCount++;
     }
   });
-  if (filledCount === size * size && queenCount < size) {
-    return true;
-  }
-  return false;
+
+  return filledCount === size * size && queenCount < size;
+
 }
 function highlightRow(row) {
-  const cells = document.querySelectorAll(".cell");
-  cells.forEach((cell, index) => {
-    const r = Math.floor(index / size);
-    if (r === row) cell.classList.add("error");
-  });
+  for (let col = 0; col < size; col++) {
+    cells[row * size + col].classList.add("error");
+  }
 }
 function highlightColumn(col) {
-  const cells = document.querySelectorAll(".cell");
-  cells.forEach((cell, index) => {
-    const c = index % size;
-    if (c === col) cell.classList.add("error");
-  });
+  for (let row = 0; row < size; row++) {
+    cells[row * size + col].classList.add("error");
+  }
 }
 function highlightRegion(region) {
-  const cells = document.querySelectorAll(".cell");
-  cells.forEach((cell, index) => {
-    const row = Math.floor(index / size);
-    const col = index % size;
-    if (regionMap[row][col] === region) {
+
+  cells.forEach((cell,i)=>{
+
+    const r=Math.floor(i/size);
+    const c=i%size;
+
+    if(regionMap[r][c]===region){
       cell.classList.add("error");
     }
+
   });
+
 }
 function recomputeAutoX() {
-  const cells = document.querySelectorAll(".cell");
-  cells.forEach(cell => {
-    if (cell.dataset.state === "x") {
+
+  cells.forEach(cell=>{
+    if(cell.dataset.state==="x"){
       cell.classList.remove("x");
-      cell.dataset.state = "empty";
+      cell.dataset.state="empty";
     }
   });
-  cells.forEach((cell, index) => {
-    if (cell.dataset.state !== "queen") return;
-    const row = Math.floor(index / size);
-    const col = index % size;
-    const region = regionMap[row][col];
-    cells.forEach((target, i) => {
-      if (target.dataset.state !== "empty") return;
-      const r = Math.floor(i / size);
-      const c = i % size;
-      const targetRegion = regionMap[r][c];
-      const rowDiff = Math.abs(r - row);
-      const colDiff = Math.abs(c - col);
-      const sameRow = r === row;
-      const sameCol = c === col;
-      const sameRegion = targetRegion === region;
-      const adjacent = rowDiff <= 1 && colDiff <= 1;
-      if (sameRow || sameCol || sameRegion || adjacent) {
+
+  queens.forEach(q=>{
+
+    cells.forEach((target,i)=>{
+
+      if(target.dataset.state!=="empty") return;
+
+      const r=Math.floor(i/size);
+      const c=i%size;
+
+      const region=regionMap[r][c];
+
+      const rowDiff=Math.abs(r-q.row);
+      const colDiff=Math.abs(c-q.col);
+
+      if(
+        r===q.row ||
+        c===q.col ||
+        region===q.region ||
+        (rowDiff<=1 && colDiff<=1)
+      ){
         target.classList.add("x");
-        target.dataset.state = "x";
+        target.dataset.state="x";
       }
+
     });
+
   });
+
 }
-function markCell(cell) {
-  const state = cell.dataset.state;
-  if (state === "empty") {
-    cell.classList.add("x");
-    cell.dataset.state = "x";
-    return;
-  }
-  if (state === "x") {
-    cell.classList.remove("x");
-    cell.dataset.state = "empty";
-    return;
-  }
-  if (state === "queen") {
-    cell.innerHTML = "";
-    cell.dataset.state = "empty";
-    recomputeAutoX();
-    return;
-  }
-}
+
 function giveHint() {
   if (!startTime) return;
   if (hintsUsed >= maxHints) return;
@@ -1687,8 +1729,7 @@ function giveHint() {
       }
     }
     if (queenFound && queenCol !== solution[row]) {
-      queenCell.innerHTML = "";
-      queenCell.dataset.state = "empty";
+      removeQueen(queenCell,row,queenCol);
       queenCell.classList.add("error");
       setTimeout(() => {
         queenCell.classList.remove("error");
@@ -1716,13 +1757,8 @@ if (!queenFound) {
   }
   const index = row * size + correctCol;
   const targetCell = cells[index];
-  targetCell.classList.remove("x");
-targetCell.innerHTML = `
-  <span class="queen">
-    <img src="queens-logo.png" class="queen-icon">
-  </span>
-`;
-  targetCell.dataset.state = "queen";
+targetCell.classList.remove("x");
+placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
 if (removedRow !== null) {
 showFixedMessage(
