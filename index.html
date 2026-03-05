@@ -545,10 +545,23 @@ overflow-y: auto;
 </head>
 <body>
 <div style="position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:10000;">
+
+  <div id="installFloating" class="rules-floating" title="Installa App">
+    📲
+  </div>
+
+  <div id="pushFloating" class="rules-floating" title="Notifiche">
+    🔔
+  </div>
+
+  <div id="rulesFloating" class="rules-floating" title="Regole">
+    ?
+  </div>
+
   <div id="logoutFloating" class="rules-floating" title="Logout">
     🔒
   </div>
-  <div id="rulesFloating" class="rules-floating" title="Regole">?</div>
+
 </div>
 <div class="app-header">
   <div class="app-icon">
@@ -572,15 +585,11 @@ overflow-y: auto;
   <span id="timer" style="color:red;">0s</span>
 </div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
-<button id="hintBtn" class="game-btn" disabled>
+<button id="hintBtn" class="game-btn" disabled style="display:none;">
   💡 Suggerimento (3)
 </button>
-<button id="installBtn" class="game-btn" style="display:none;">
-📲 Installa App
-</button>
-<button id="pushBtn" class="game-btn" style="display:none;">
-🔔 Attiva notifiche
-</button>
+<button id="installBtn" style="display:none;"></button>
+<button id="pushBtn" style="display:none;"></button>
 </div>
 <div id="leaderboardModal" style="display:none; margin-top:25px;">
   <div class="modal-content">
@@ -1168,6 +1177,8 @@ if (!todayResult) {
   // lasci tutto il resto della logica che avevi
 
 if (todayResult.completed) {
+startBtn.style.display = "none";
+hintBtn.style.display = "none";
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
 
@@ -2049,6 +2060,8 @@ if (player.email === playerEmail) {
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 startBtn.addEventListener("click", async () => {
+startBtn.style.display = "none";
+hintBtn.style.display = "inline-block";
   hintsUsed = 0;
   hintBtn.textContent = "💡 Suggerimento (3)";
   const today = new Date().toISOString().split("T")[0];
@@ -2289,6 +2302,20 @@ function showNewPasswordForm() {
   };
 }
 initializePage();
+if ("Notification" in window) {
+  const pushIcon = document.getElementById("pushFloating");
+  if (pushIcon && Notification.permission === "granted") {
+    pushIcon.style.opacity = "0.5";
+  }
+}
+if (!window.matchMedia('(display-mode: standalone)').matches) {
+  const pushIcon = document.getElementById("pushFloating");
+  if (pushIcon) pushIcon.style.display = "none";
+}
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  const installIcon = document.getElementById("installFloating");
+  if (installIcon) installIcon.style.display = "none";
+}
 </script>
 <div id="winModal" class="modal">
   <div class="modal-content">
@@ -2306,7 +2333,7 @@ initializePage();
 </div>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
+  navigator.serviceWorker.register('/Queens/service-worker.js')
   .then(() => console.log("Service Worker registrato"))
   .catch(err => console.log("Errore SW:", err));
 }
@@ -2427,6 +2454,11 @@ if (!subscription) {
   }
 
 showFixedMessage("🔔 Notifiche attivate");
+const pushIcon = document.getElementById("pushFloating");
+if (pushIcon) {
+  pushIcon.style.opacity = "0.5";
+  pushIcon.innerText = "🔕";
+}
 
 const btn = document.getElementById("pushBtn");
 btn.disabled = true;
@@ -2437,6 +2469,30 @@ btn.innerText = "🔔 Notifiche attive";
 document
   .getElementById("pushBtn")
   .addEventListener("click", enablePush);
+document
+  .getElementById("pushFloating")
+  .addEventListener("click", enablePush);
+
+document
+  .getElementById("installFloating")
+  .addEventListener("click", async () => {
+
+    if (!deferredPrompt) {
+      showFixedMessage("Installa Queens dal menu del browser");
+      return;
+    }
+
+    deferredPrompt.prompt();
+
+    const choice = await deferredPrompt.userChoice;
+
+    if (choice.outcome === "accepted") {
+      document.getElementById("installFloating").style.display = "none";
+    }
+
+    deferredPrompt = null;
+
+});
 </script>
 </body>
 </html>
