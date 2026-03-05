@@ -191,11 +191,10 @@ position: relative;
   cursor: pointer;
   aspect-ratio: 1 / 1;
   border: none;
-  backdrop-filter: blur(6px);
+touch-action: manipulation;
+  backdrop-filter: none;
 box-shadow:
-  0 12px 28px rgba(0,0,0,0.7),
-  inset 0 1px 2px rgba(255,255,255,0.45),
-  inset 0 -6px 14px rgba(0,0,0,0.45);
+  0 6px 12px rgba(0,0,0,0.6);
   transition:
     transform 0.25s cubic-bezier(.4,0,.2,1),
     box-shadow 0.25s ease,
@@ -265,10 +264,7 @@ contain: layout paint;
   justify-content: center;
   pointer-events: none;
   animation:
-    queenAppear 0.25s cubic-bezier(.4,0,.2,1),
-    floatQueen 2s ease-in-out infinite alternate,
-    queenGlow 2.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 14px rgba(255,215,0,0.9));
+ animation: queenAppear 0.25s ease;
 }
 .queen svg {
   width: 75%;
@@ -301,15 +297,7 @@ contain: layout paint;
     transform: scale(1);
   }
 }
-@keyframes floatQueen {
-  from { transform: translateY(0px); }
-  to   { transform: translateY(-4px); }
-}
-@keyframes queenGlow {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(1.2); }
-  100% { filter: brightness(1); }
-}
+
 .x::before,
 .x::after {
   content: "";
@@ -1672,40 +1660,59 @@ function highlightRegion(region) {
 }
 function recomputeAutoX() {
 
-  cells.forEach(cell=>{
-    if(cell.dataset.state==="x"){
+  cells.forEach(cell => {
+    if (cell.dataset.state === "x") {
       cell.classList.remove("x");
-      cell.dataset.state="empty";
+      cell.dataset.state = "empty";
     }
   });
 
-  queens.forEach(q=>{
+  queens.forEach(q => {
 
-    cells.forEach((target,i)=>{
+    for (let r = 0; r < size; r++) {
 
-      if(target.dataset.state!=="empty") return;
+      const indexRow = q.row * size + r;
+      const indexCol = r * size + q.col;
 
+      markX(indexRow);
+      markX(indexCol);
+
+    }
+
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+
+        const r = q.row + i;
+        const c = q.col + j;
+
+        if (r >= 0 && r < size && c >= 0 && c < size) {
+          markX(r * size + c);
+        }
+
+      }
+    }
+
+    cells.forEach((cell,i)=>{
       const r=Math.floor(i/size);
       const c=i%size;
 
-      const region=regionMap[r][c];
-
-      const rowDiff=Math.abs(r-q.row);
-      const colDiff=Math.abs(c-q.col);
-
-      if(
-        r===q.row ||
-        c===q.col ||
-        region===q.region ||
-        (rowDiff<=1 && colDiff<=1)
-      ){
-        target.classList.add("x");
-        target.dataset.state="x";
+      if(regionMap[r][c]===q.region){
+        markX(i);
       }
-
     });
 
   });
+
+}
+
+function markX(index){
+
+  const cell = cells[index];
+
+  if(cell.dataset.state==="empty"){
+    cell.dataset.state="x";
+    cell.classList.add("x");
+  }
 
 }
 
