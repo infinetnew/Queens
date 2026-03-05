@@ -544,7 +544,7 @@ overflow-y: auto;
 </style>
 </head>
 <body>
-<div style="position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:10000;">
+<div style="position:fixed; top:20px; left:20px; display:flex; gap:10px; z-index:10000;">
 
   <div id="installFloating" class="rules-floating" title="Installa App">
     📲
@@ -553,6 +553,9 @@ overflow-y: auto;
   <div id="pushFloating" class="rules-floating" title="Notifiche">
     🔔
   </div>
+
+</div>
+<div style="position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:10000;">
 
   <div id="rulesFloating" class="rules-floating" title="Regole">
     ?
@@ -588,8 +591,7 @@ overflow-y: auto;
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
   💡 Suggerimento (3)
 </button>
-<button id="installBtn" style="display:none;"></button>
-<button id="pushBtn" style="display:none;"></button>
+
 </div>
 <div id="leaderboardModal" style="display:none; margin-top:25px;">
   <div class="modal-content">
@@ -1154,13 +1156,14 @@ document.getElementById("logoutFloating").style.display = "flex";
   document.getElementById("displayEmail").textContent = playerEmail;
 document.getElementById("displayFlag").src =
   `https://flagcdn.com/24x18/${(countryCode || "xx").toLowerCase()}.png`;
-const pushBtn = document.getElementById("pushBtn");
-pushBtn.style.display = "inline-block";
 
 // controllo notifiche già attive
 if (Notification.permission === "granted") {
-  pushBtn.disabled = true;
-  pushBtn.innerText = "🔔 Notifiche attive";
+  const pushIcon = document.getElementById("pushFloating");
+  if (pushIcon) {
+    pushIcon.style.opacity = "0.5";
+    pushIcon.innerText = "🔕";
+  }
 }
 
 // Da qui in poi è il tuo flusso normale
@@ -1642,9 +1645,9 @@ function checkConflicts() {
     }
   }
 
-  if (hasError && navigator.vibrate) {
-    navigator.vibrate(120);
-  }
+if (hasError && "vibrate" in navigator) {
+  navigator.vibrate(120);
+}
 
   return hasError;
 
@@ -2341,7 +2344,7 @@ if ('serviceWorker' in navigator) {
 <script>
 
 let deferredPrompt;
-const installBtn = document.getElementById("installBtn");
+const installBtn = document.getElementById("installFloating");
 if (window.matchMedia('(display-mode: standalone)').matches) {
   installBtn.style.display = "none";
 }
@@ -2383,7 +2386,7 @@ function isIOS() {
 
 if (isIOS() && !window.navigator.standalone) {
 
-  const installBtn = document.getElementById("installBtn");
+  const installBtn = document.getElementById("installFloating");
 
   installBtn.style.display = "inline-block";
 
@@ -2444,7 +2447,7 @@ if (!subscription) {
     .from("push_subscriptions")
     .upsert({
       email: playerEmail,
-      subscription: subscription
+      subscription: subscription.toJSON()
     });
 
   if (error) {
@@ -2460,15 +2463,8 @@ if (pushIcon) {
   pushIcon.innerText = "🔕";
 }
 
-const btn = document.getElementById("pushBtn");
-btn.disabled = true;
-btn.innerText = "🔔 Notifiche attive";
-
 }
 
-document
-  .getElementById("pushBtn")
-  .addEventListener("click", enablePush);
 document
   .getElementById("pushFloating")
   .addEventListener("click", enablePush);
