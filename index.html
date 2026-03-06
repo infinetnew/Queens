@@ -574,19 +574,18 @@ overflow-y: auto;
 
 </div>
 <div id="playerInfo">
-<div><strong>Email:</strong> <span id="displayEmail"></span></div>
-  <div>
-  <strong>Giocatore:</strong> 
-  <span id="playerDisplay" style="display:inline-flex; align-items:center; gap:6px;">
-    <span id="displayName"></span>
-    <img id="displayFlag" style="width:20px; height:auto; border-radius:2px;">
-  </span>
+
+<div>
+👤 
+<span id="playerDisplay" style="display:inline-flex; align-items:center; gap:6px;">
+<span id="displayName"></span>
+<img id="displayFlag" style="width:20px; height:auto; border-radius:2px;">
+</span>
 </div>
 
 
-  <div style="margin-top:10px;">
-  ⏱ <span style="color:red;">Tempo:</span> 
-  <span id="timer" style="color:red;">0s</span>
+ <div style="margin-top:10px;">
+⏱ <span id="timer" style="color:red;">0s</span>
 </div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
@@ -1167,9 +1166,11 @@ if (todayResult.completed) {
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
 
-  hintBtn.disabled = true;
-  startBtn.disabled = true;
-  startBtn.innerText = "Già giocato";
+hintBtn.disabled = true;
+hintBtn.style.display = "none";
+
+startBtn.disabled = true;
+startBtn.innerText = "Già giocato";
 startBtn.style.display = "none";
 
   document.getElementById("timer").textContent =
@@ -1934,10 +1935,12 @@ gridElement.style.height = "0";
 gridElement.style.padding = "0";
 gridElement.style.margin = "0";
 gridElement.innerHTML = "";
-  startBtn.disabled = true;
-  hintBtn.disabled = true;
-  startBtn.innerText = "Già giocato";
+startBtn.disabled = true;
+hintBtn.disabled = true;
+
+startBtn.innerText = "Già giocato";
 startBtn.style.display = "none";
+hintBtn.style.display = "none";
 
   // Messaggio completamento
   const message = document.createElement("div");
