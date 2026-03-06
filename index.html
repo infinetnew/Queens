@@ -20,7 +20,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   min-height: 100dvh;
   margin: 0;
 
@@ -1168,6 +1168,7 @@ document.getElementById("rulesFloating").style.display = "flex";
   hintBtn.disabled = true;
   startBtn.disabled = true;
   startBtn.innerText = "Già giocato";
+startBtn.style.display = "none";
 
   document.getElementById("timer").textContent =
     todayResult.time_seconds + "s";
@@ -1897,11 +1898,13 @@ async function closeModal() {
 
   // Nascondi griglia
 gridElement.style.display = "none";
+gridElement.style.marginTop = "0";
 gridElement.innerHTML = "";
 
   startBtn.disabled = true;
   hintBtn.disabled = true;
   startBtn.innerText = "Già giocato";
+startBtn.style.display = "none";
 
   // Messaggio completamento
   const message = document.createElement("div");
