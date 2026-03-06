@@ -544,6 +544,17 @@ overflow-y: auto;
 </style>
 </head>
 <body>
+<div id="leftFloatingButtons" style="position:fixed; top:20px; left:20px; display:flex; gap:10px; z-index:10000;">
+  
+  <div id="installFloating" class="rules-floating" title="Installa">
+    📲
+  </div>
+
+  <div id="pushFloating" class="rules-floating" title="Notifiche">
+    🔔
+  </div>
+
+</div>
 <div style="position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:10000;">
   <div id="logoutFloating" class="rules-floating" title="Logout">
     🔒
@@ -572,15 +583,10 @@ overflow-y: auto;
   <span id="timer" style="color:red;">0s</span>
 </div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
-<button id="hintBtn" class="game-btn" disabled>
+<button id="hintBtn" class="game-btn" disabled style="display:none;">
   💡 Suggerimento (3)
 </button>
-<button id="installBtn" class="game-btn" style="display:none;">
-📲 Installa App
-</button>
-<button id="pushBtn" class="game-btn" style="display:none;">
-🔔 Attiva notifiche
-</button>
+
 </div>
 <div id="leaderboardModal" style="display:none; margin-top:25px;">
   <div class="modal-content">
@@ -1136,25 +1142,18 @@ if (error || !data) {
 
 // 👇 METTILO QUI, NON PRIMA
 document.getElementById("logoutFloating").style.display = "flex";
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  document.getElementById("pushBtn").style.display = "inline-block";
-}
+
 
   playerEmail = data.email;
   playerName = data.name;
   countryCode = data.country_code;
+setupFloatingButtons();
 
   document.getElementById("displayName").textContent = playerName;
   document.getElementById("displayEmail").textContent = playerEmail;
 document.getElementById("displayFlag").src =
   `https://flagcdn.com/24x18/${(countryCode || "xx").toLowerCase()}.png`;
-const pushBtn = document.getElementById("pushBtn");
 
-if ('Notification' in window && Notification.permission === "granted") {
-  pushBtn.style.display = "none";
-} else {
-  pushBtn.style.display = "inline-block";
-}
 
 // Da qui in poi è il tuo flusso normale
 
@@ -1241,6 +1240,8 @@ document.getElementById("leaderboardModal").style.display = "block";
 return;
 }
   if (!todayResult.completed) {
+startBtn.style.display = "none";
+hintBtn.style.display = "inline-block";
 hintsUsed = todayResult.hints_used || 0;
 hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
 if (hintsUsed >= maxHints) {
@@ -2051,6 +2052,8 @@ if (player.email === playerEmail) {
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 startBtn.addEventListener("click", async () => {
+startBtn.style.display = "none";
+hintBtn.style.display = "inline-block";
   hintsUsed = 0;
   hintBtn.textContent = "💡 Suggerimento (3)";
   const today = new Date().toISOString().split("T")[0];
@@ -2290,7 +2293,34 @@ function showNewPasswordForm() {
     }, 1500);
   };
 }
+
+
+function setupFloatingButtons() {
+
+  const installBtn = document.getElementById("installFloating");
+  const pushBtn = document.getElementById("pushFloating");
+
+  const installed = isAppInstalled();
+
+  // default: nascondiamo tutto
+if (installBtn) installBtn.style.display = "none";
+if (pushBtn) pushBtn.style.display = "none";
+  // se l'app NON è installata → mostra install
+if (!installed && installBtn) {
+  installBtn.style.display = "flex";
+} else if (installed && playerEmail && 'Notification' in window && Notification.permission !== "granted") {
+  if (pushBtn) pushBtn.style.display = "flex";
+}
+  // se app installata ma NON loggato → niente
+if (!playerEmail || playerEmail === null) {
+  return;
+}
+
+}
+
 initializePage();
+setupFloatingButtons();
+
 </script>
 <div id="winModal" class="modal">
   <div class="modal-content">
@@ -2316,27 +2346,37 @@ if ('serviceWorker' in navigator) {
 <script>
 
 let deferredPrompt;
-const installBtn = document.getElementById("installBtn");
-if (isAppInstalled()) {
-  installBtn.style.display = "none";
-}
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  installBtn.style.display = "none";
+const installBtn = document.getElementById("installFloating");
+
+if (!installBtn) {
+  console.warn("installFloating non trovato");
+} else {
+
+  if (isAppInstalled()) {
+    installBtn.style.display = "none";
+  }
+
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    installBtn.style.display = "none";
+  }
+
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
+if (isAppInstalled()) return;
 
 
   e.preventDefault();
 
   deferredPrompt = e;
 
-  installBtn.style.display = "inline-block";
+ if (installBtn && !isAppInstalled()) installBtn.style.display = "flex";
 showFixedMessage("📲 Installa Queens per giocare più velocemente");
 
 });
 
-installBtn.addEventListener("click", async () => {
+if (installBtn) {
+  installBtn.addEventListener("click", async () => {
 
   if (!deferredPrompt) return;
 
@@ -2351,13 +2391,14 @@ installBtn.addEventListener("click", async () => {
   deferredPrompt = null;
 
 });
+}
 
 window.addEventListener("appinstalled", () => {
 
   localStorage.setItem("queens_installed", "true");
 
-  const installBtn = document.getElementById("installBtn");
-  if (installBtn) installBtn.style.display = "none";
+const installBtn = document.getElementById("installFloating");
+if (installBtn) installBtn.style.display = "none";
 
 });
 function isIOS() {
@@ -2382,22 +2423,24 @@ function isAppInstalled() {
 
   return false;
 }
-
 if (isIOS() && !window.navigator.standalone) {
 
-  const installBtn = document.getElementById("installBtn");
+  const installBtn = document.getElementById("installFloating");
 
-  installBtn.style.display = "inline-block";
+  if (installBtn) {
+    if (!isAppInstalled()) installBtn.style.display = "flex";
 
-installBtn.addEventListener("click", () => {
+    installBtn.addEventListener("click", () => {
 
-  showFixedMessage(
-    "Su iPhone premi Condividi → Aggiungi alla schermata Home",
-    "info",
-    6000
-  );
+      showFixedMessage(
+        "Su iPhone premi Condividi → Aggiungi alla schermata Home",
+        "info",
+        6000
+      );
 
-});
+    });
+  }
+
 }
 function urlBase64ToUint8Array(base64String) {
 
@@ -2463,14 +2506,15 @@ if (!subscription) {
 
 showFixedMessage("🔔 Notifiche attivate");
 
-const btn = document.getElementById("pushBtn");
-btn.style.display = "none";
+const btn = document.getElementById("pushFloating");
+if (btn) btn.style.display = "none";
 
 }
 
-document
-  .getElementById("pushBtn")
-  .addEventListener("click", enablePush);
+const pushBtn = document.getElementById("pushFloating");
+if (pushBtn) {
+  pushBtn.addEventListener("click", enablePush);
+}
 </script>
 </body>
 </html>
