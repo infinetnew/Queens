@@ -216,6 +216,8 @@ box-shadow:
   transform-style: preserve-3d;
   will-change: transform;
 contain: layout paint;
+transform: translateZ(0);
+backface-visibility: hidden;
 }
 .cell::before {
   content: "";
@@ -1928,9 +1930,10 @@ async function closeModal() {
 
   // Nascondi griglia
 gridElement.style.display = "none";
-gridElement.style.marginTop = "0";
+gridElement.style.height = "0";
+gridElement.style.padding = "0";
+gridElement.style.margin = "0";
 gridElement.innerHTML = "";
-
   startBtn.disabled = true;
   hintBtn.disabled = true;
   startBtn.innerText = "Già giocato";
