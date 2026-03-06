@@ -21,17 +21,21 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
+
+  padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
-background: radial-gradient(circle at 20% 20%, #2b1055, #0f0c29 70%);
-color: #f5f5f5;
+
+  background: radial-gradient(circle at 20% 20%, #2b1055, #0f0c29 70%);
+  color: #f5f5f5;
 }
 .app-header {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  margin-top: calc(env(safe-area-inset-top) + 40px);
+  padding-top: calc(env(safe-area-inset-top) * 0.4);
 }
 .app-icon {
   width: 240px;
@@ -544,7 +548,7 @@ overflow-y: auto;
 </style>
 </head>
 <body>
-<div id="leftFloatingButtons" style="position:fixed; top:20px; left:20px; display:flex; gap:10px; z-index:10000;">
+<div id="leftFloatingButtons" style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); left:20px; display:flex; gap:10px; z-index:10000;">
   
   <div id="installFloating" class="rules-floating" title="Installa">
     📲
@@ -555,7 +559,7 @@ overflow-y: auto;
   </div>
 
 </div>
-<div style="position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:10000;">
+<div style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); right:20px; display:flex; gap:10px; z-index:10000;">
   <div id="logoutFloating" class="rules-floating" title="Logout">
     🔒
   </div>
@@ -901,12 +905,7 @@ ${player.name}
   </strong>
 `;
 
-if (player.email === playerEmail) {
-  row.style.fontWeight = "700";
-  row.style.background = "rgba(255,255,255,0.05)";
-  row.style.borderRadius = "8px";
-  row.style.padding = "6px 8px";
-}
+
 
     container.appendChild(row);
   });
@@ -951,12 +950,6 @@ ${player.name}
   </strong>
 `;
 
-if (player.email === playerEmail) {
-  row.style.fontWeight = "700";
-  row.style.background = "rgba(255,255,255,0.05)";
-  row.style.borderRadius = "8px";
-  row.style.padding = "6px 8px";
-}
 
     container.appendChild(row);
   });
