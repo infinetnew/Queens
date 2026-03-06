@@ -216,6 +216,8 @@ box-shadow:
   transform-style: preserve-3d;
   will-change: transform;
 contain: layout paint;
+transform: translateZ(0);
+backface-visibility: hidden;
 }
 .cell::before {
   content: "";
@@ -572,19 +574,18 @@ overflow-y: auto;
 
 </div>
 <div id="playerInfo">
-<div><strong>Email:</strong> <span id="displayEmail"></span></div>
-  <div>
-  <strong>Giocatore:</strong> 
-  <span id="playerDisplay" style="display:inline-flex; align-items:center; gap:6px;">
-    <span id="displayName"></span>
-    <img id="displayFlag" style="width:20px; height:auto; border-radius:2px;">
-  </span>
+
+<div style="margin-top:14px; font-size:20px; font-weight:700; color:#ffd700; text-shadow:0 0 8px rgba(255,215,0,0.5);">
+<span style="font-size:22px;">👤</span>
+<span id="playerDisplay" style="display:inline-flex; align-items:center; gap:8px;">
+<span id="displayName"></span>
+<img id="displayFlag" style="width:22px; height:auto; border-radius:3px;">
+</span>
 </div>
 
 
-  <div style="margin-top:10px;">
-  ⏱ <span style="color:red;">Tempo:</span> 
-  <span id="timer" style="color:red;">0s</span>
+<div style="margin-top:14px; color:red; font-size:20px; font-weight:700; text-shadow:0 0 6px rgba(255,0,0,0.5);">
+<span style="font-size:22px;">⏱</span> <span id="timer">0s</span>
 </div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
@@ -1165,9 +1166,11 @@ if (todayResult.completed) {
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
 
-  hintBtn.disabled = true;
-  startBtn.disabled = true;
-  startBtn.innerText = "Già giocato";
+hintBtn.disabled = true;
+hintBtn.style.display = "none";
+
+startBtn.disabled = true;
+startBtn.innerText = "Già giocato";
 startBtn.style.display = "none";
 
   document.getElementById("timer").textContent =
@@ -1884,6 +1887,36 @@ function showRulesModal(message) {
 function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
+const shareBtn = document.createElement("button");
+shareBtn.textContent = "📤 Condividi risultato";
+shareBtn.style.marginTop = "10px";
+
+shareBtn.onclick = async () => {
+
+  const result = await getPlayerPosition();
+
+  const text =
+`👑 Queens — ${new Date().toLocaleDateString()}
+
+⏱ ${time}s
+🏆 ${result.rank}/${result.totalPlayers}
+
+Gioca anche tu:
+${window.location.href}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "Queens Game",
+      text: text
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    showFixedMessage("Risultato copiato negli appunti");
+  }
+
+};
+
+document.querySelector("#winModal .modal-content").appendChild(shareBtn);
   modal.querySelector("h2").textContent = "👑 Partita Conclusa";
   document.getElementById("finalTime").textContent =
     "Tempo: " + time + " secondi";
@@ -1901,10 +1934,12 @@ gridElement.style.display = "none";
 gridElement.style.marginTop = "0";
 gridElement.innerHTML = "";
 
-  startBtn.disabled = true;
-  hintBtn.disabled = true;
-  startBtn.innerText = "Già giocato";
+startBtn.disabled = true;
+hintBtn.disabled = true;
+
+startBtn.innerText = "Già giocato";
 startBtn.style.display = "none";
+hintBtn.style.display = "none";
 
   // Messaggio completamento
   const message = document.createElement("div");
