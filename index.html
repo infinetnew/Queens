@@ -1884,6 +1884,36 @@ function showRulesModal(message) {
 function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
+const shareBtn = document.createElement("button");
+shareBtn.textContent = "📤 Condividi risultato";
+shareBtn.style.marginTop = "10px";
+
+shareBtn.onclick = async () => {
+
+  const result = await getPlayerPosition();
+
+  const text =
+`👑 Queens — ${new Date().toLocaleDateString()}
+
+⏱ ${time}s
+🏆 ${result.rank}/${result.totalPlayers}
+
+Gioca anche tu:
+${window.location.href}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "Queens",
+      text: text
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    showFixedMessage("Risultato copiato negli appunti");
+  }
+
+};
+
+document.querySelector("#winModal .modal-content").appendChild(shareBtn);
   modal.querySelector("h2").textContent = "👑 Partita Conclusa";
   document.getElementById("finalTime").textContent =
     "Tempo: " + time + " secondi";
