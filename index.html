@@ -218,6 +218,7 @@ box-shadow:
 contain: layout paint;
 transform: translateZ(0);
 backface-visibility: hidden;
+contain: content;
 }
 .cell::before {
   content: "";
@@ -552,11 +553,11 @@ overflow-y: auto;
 <body>
 <div id="leftFloatingButtons" style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); left:20px; display:flex; gap:10px; z-index:10000;">
   
-  <div id="installFloating" class="rules-floating" title="Installa">
+  <div id="installFloating" class="rules-floating" title="Install">
     📲
   </div>
 
-  <div id="pushFloating" class="rules-floating" title="Notifiche">
+  <div id="pushFloating" class="rules-floating" title="Notifications">
     🔔
   </div>
 
@@ -565,7 +566,7 @@ overflow-y: auto;
   <div id="logoutFloating" class="rules-floating" title="Logout">
     🔒
   </div>
-  <div id="rulesFloating" class="rules-floating" title="Regole">?</div>
+  <div id="rulesFloating" class="rules-floating" title="Rules">?</div>
 </div>
 <div class="app-header">
   <div class="app-icon">
@@ -586,30 +587,30 @@ overflow-y: auto;
 <div style="margin-top:14px; color:red; font-size:20px; font-weight:700; text-shadow:0 0 6px rgba(255,0,0,0.5);">
 <span style="font-size:22px;">⏱</span> <span id="timer">0s</span>
 </div>
-<button id="startBtn" class="game-btn">▶ Gioca</button>
+<button id="startBtn" class="game-btn">▶ Play</button>
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
-  💡 Suggerimento (3)
+  💡 Hint (3)
 </button>
 
 </div>
 <div id="leaderboardModal" style="display:none; margin-top:25px;">
   <div class="modal-content">
-    <h2>🏆 Classifiche</h2>
+    <h2>🏆 Leaderboards</h2>
 
     <div class="leaderboard-wrapper" id="leaderboardWrapper">
       <div class="leaderboard-slider" id="leaderboardSlider">
 
         <div class="leaderboard-page">
-          <div class="leaderboard-title">⚡ Giornaliera</div>
+          <div class="leaderboard-title">⚡ Daily</div>
           <div id="dailyLeaderboard"></div>
         </div>
 
         <div class="leaderboard-page">
-          <div class="leaderboard-title">📊 Mensile Individuale</div>
+          <div class="leaderboard-title">📊 Monthly (Individual)</div>
           <div id="monthlyLeaderboard"></div>
         </div>
 <div class="leaderboard-page">
-  <div class="leaderboard-title">🌍 Mensile per Paese (Top 3 Giocatori)</div>
+  <div class="leaderboard-title">🌍 Monthly by Country (Top 3 Players)</div>
   <div id="countryLeaderboard"></div>
 </div>
 
@@ -625,20 +626,23 @@ overflow-y: auto;
   </div>
 </div>
 <div id="rulesBox" class="rules-box" style="display:none;">
-  <h3>👑 Queens — Regole Ufficiali</h3>
-  <p><strong>🎯 Obiettivo</strong><br>
-  Posiziona 10 Regine sulla griglia 10×10.</p>
-  <p><strong>♟️ Vincoli</strong><br>
-  • 1 Regina per riga<br>
-  • 1 Regina per colonna<br>
-  • 1 Regina per regione colorata<br>
-  • Nessun contatto, nemmeno diagonale</p>
-  <p><strong>💡 Suggerimenti</strong> (max 3)<br>
-  −30s Rimozione Regina <br>
-  −45s Inserimento Regina<br>
-  −60s Correzione completa</p>
-  <p><strong>🏆</strong> Un solo tentativo al giorno.<br>
-  Vince il tempo più basso.</p>
+<h3>👑 Queens — Official Rules</h3>
+<p><strong>🎯 Objective</strong><br>
+Place 10 Queens on the 10×10 grid.</p>
+
+<p><strong>♟️ Constraints</strong><br>
+• 1 Queen per row<br>
+• 1 Queen per column<br>
+• 1 Queen per colored region<br>
+• Queens cannot touch each other, not even diagonally</p>
+
+<p><strong>💡 Hints</strong> (max 3)<br>
++30s Remove Queen<br>
++45s Insert Queen<br>
++60s Full correction</p>
+
+<p><strong>🏆</strong> One attempt per day.<br>
+Lowest time wins.</p>
 </div>
 <div id="fixedMessageBox" style="
   height: 22px;
@@ -660,7 +664,7 @@ overflow-y: auto;
     box-shadow: 0 30px 80px rgba(0,0,0,0.7);
   ">
 
-    <h2 id="authTitle" style="margin-bottom:20px;">Accedi</h2>
+    <h2 id="authTitle" style="margin-bottom:20px;">Login</h2>
 
     <input id="authEmail" type="email" placeholder="Email"
       style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
@@ -670,47 +674,47 @@ overflow-y: auto;
 
     <!-- Campi solo registrazione -->
     <div id="registerExtra" style="display:none;">
-      <input id="authName" placeholder="Nome"
+      <input id="authName" placeholder="Name"
         style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
 
 <select id="authCountry"
   style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:none;">
-  <option value="">Seleziona Paese</option>
+ <option value="">Select Country</option>
 
-  <option value="BR">Brasile</option>
-  <option value="CN">Cina</option>
-  <option value="KR">Corea del Sud</option>
-  <option value="FR">Francia</option>
-  <option value="DE">Germania</option>
-  <option value="JP">Giappone</option>
+  <option value="BR">Brazil</option>
+  <option value="CN">China</option>
+  <option value="KR">South Korea</option>
+  <option value="FR">France</option>
+  <option value="DE">Germany</option>
+  <option value="JP">Japan</option>
   <option value="IN">India</option>
-  <option value="GB">Inghilterra</option>
-  <option value="IT">Italia</option>
+  <option value="GB">United Kingdom</option>
+  <option value="IT">Italy</option>
   <option value="SG">Singapore</option>
-  <option value="ES">Spagna</option>
-  <option value="US">Stati Uniti</option>
+  <option value="ES">Spain</option>
+  <option value="US">United States</option>
 
 </select>
     </div>
 
     <button id="authMainBtn" class="game-btn" onclick="handleAuth()">
-      Accedi
+      Login
     </button>
 <div style="margin-top:12px; font-size:13px;">
   <span 
     style="color:#ffd700; cursor:pointer;"
     onclick="showResetForm()">
-    Password dimenticata?
+    Forgot password?
   </span>
 </div>
 
     <div style="margin-top:15px; font-size:14px; opacity:0.8;">
-      <span id="authSwitchText">Non hai un account?</span>
+      <span id="authSwitchText">Don't have an account?</span>
       <span 
         id="authSwitchLink" 
         style="color:#ffd700; cursor:pointer; font-weight:600;"
         onclick="toggleAuthMode()">
-        Registrati
+        Register
       </span>
     </div>
 
@@ -762,18 +766,18 @@ const colors = [
 ];
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
-  console.log("DATA CERCATA:", today);
+  console.log("Searching puzzle date:", today);
 
   const { data, error } = await supabaseClient
     .from("queens_puzzles")
     .select("*")
     .eq("date", today);
 
-  console.log("RISULTATO QUERY:", data);
-  console.log("ERRORE:", error);
+  console.log("Query result:", data);
+  console.log("Error:", error);
 
   if (!data || data.length === 0) {
-    console.log("PUZZLE NON TROVATO");
+    console.log("Puzzle not found");
     return false;
   }
 
@@ -800,7 +804,7 @@ async function loadTodayLeaderboard() {
 .order("time_seconds", { ascending: true })
 .limit(10);
   if (error) {
-    console.error("Errore classifica:", error);
+    console.error("Leaderboard error", error);
     return [];
   }
   return data;
@@ -816,10 +820,10 @@ const currentMonth =
     .eq("month", currentMonth)
     .order("points", { ascending: false })
     .limit(10);
-console.log("Risultato query mensile:", data, error);
+console.log("Monthly leaderboard query:", data, error);
 
   if (error) {
-    console.error("Errore classifica mensile:", error);
+    console.error("Monthly leaderboard error:", error);
     return [];
   }
 
@@ -838,7 +842,7 @@ async function loadMonthlyCountryLeaderboard() {
     .limit(10);
 
   if (error) {
-    console.error("Errore classifica paesi:", error);
+    console.error("Country leaderboard error:", error);
     return [];
   }
 
@@ -896,7 +900,7 @@ row.innerHTML = `
  ${medal} ${index + 1}. 
 ${player.name}
 <img 
-  src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
+  src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
   style="width:20px; height:auto; margin-left:6px; vertical-align:middle; border-radius:2px;"
 >
   </span>
@@ -941,7 +945,7 @@ row.innerHTML = `
 ${medal} ${index + 1}. 
 ${player.name}
 <img 
-  src="https://flagcdn.com/24x18/${(player.country_code || "xx").toLowerCase()}.png"
+  src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
   style="width:20px; height:auto; margin-left:6px; vertical-align:middle; border-radius:2px;"
 >
   </span>
@@ -955,18 +959,18 @@ ${player.name}
   });
 }
 const countryNames = {
-  BR: "Brasile",
-  CN: "Cina",
-  KR: "Corea del Sud",
-  FR: "Francia",
-  DE: "Germania",
-  JP: "Giappone",
+  BR: "Brazil",
+  CN: "China",
+  KR: "South Korea",
+  FR: "France",
+  DE: "Germany",
+  JP: "Japan",
   IN: "India",
-  GB: "Inghilterra",
-  IT: "Italia",
+  GB: "United Kingdom",
+  IT: "Italy",
   SG: "Singapore",
-  ES: "Spagna",
-  US: "Stati Uniti"
+  ES: "Spain",
+  US: "United States"
 };
 function renderMonthlyCountryLeaderboard(data) {
   const container = document.getElementById("countryLeaderboard");
@@ -997,7 +1001,7 @@ row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
     ${medal} ${index + 1}.
     <img 
-      src="https://flagcdn.com/24x18/${(country.country_code || "xx").toLowerCase()}.png"
+      src="https://flagcdn.com/24x18/${(country.country_code || "un").toLowerCase()}.png"
       style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
     >
     ${countryNames[country.country_code] || country.country_code}
@@ -1064,18 +1068,18 @@ async function renderDailyPosition() {
   let message = "";
 
   if (rank === 1) {
-    message = "🏆 Leader di oggi 👑";
+    message = "🏆 Today's Leader";
   } else if (rank === totalPlayers) {
-    message = "😅 Ultimo di oggi";
+    message = "😅 Last place today";
   } else {
     const betterThan = Math.round(
       ((totalPlayers - rank) / totalPlayers) * 100
     );
-    message = `Meglio del ${betterThan}% dei giocatori di oggi`;
+    message = `Better than ${betterThan}% of today's players`;
   }
 
-  positionBox.innerText =
-    `Sei ${rank}° su ${totalPlayers} giocatori · ${message}`;
+ positionBox.innerText =
+`You are #${rank} of ${totalPlayers} players · ${message}`;
 
   document.getElementById("dailyLeaderboard").appendChild(positionBox);
 }
@@ -1144,7 +1148,7 @@ setupFloatingButtons();
 
   document.getElementById("displayName").textContent = playerName;
 document.getElementById("displayFlag").src =
-  `https://flagcdn.com/24x18/${(countryCode || "xx").toLowerCase()}.png`;
+  `https://flagcdn.com/24x18/${(countryCode || "un").toLowerCase()}.png`;
 
 
 // Da qui in poi è il tuo flusso normale
@@ -1152,9 +1156,11 @@ document.getElementById("displayFlag").src =
 const puzzleLoaded = await loadDailyPuzzle();
 if (!puzzleLoaded) return;
 
-  const todayResult = await getTodayResult();
+const todayResult = await getTodayResult();
+
 if (!todayResult) {
   // nessuna partita iniziata oggi
+  startBtn.style.display = "inline-block";
   return;
 }
 
@@ -1168,7 +1174,7 @@ hintBtn.disabled = true;
 hintBtn.style.display = "none";
 
 startBtn.disabled = true;
-startBtn.innerText = "Già giocato";
+startBtn.innerText = "Already played";
 startBtn.style.display = "none";
 
   document.getElementById("timer").textContent =
@@ -1177,12 +1183,14 @@ startBtn.style.display = "none";
   const message = document.createElement("div");
   message.style.marginTop = "15px";
   message.style.fontWeight = "600";
-  message.innerText = "Hai già completato il puzzle di oggi 👑";
+  message.innerText = "You already completed today's puzzle 👑";
   document.getElementById("playerInfo").appendChild(message);
 
-  const daily = await loadTodayLeaderboard();
-  const monthly = await loadMonthlyLeaderboard();
-const countries = await loadMonthlyCountryLeaderboard();
+const [daily, monthly, countries] = await Promise.all([
+  loadTodayLeaderboard(),
+  loadMonthlyLeaderboard(),
+  loadMonthlyCountryLeaderboard()
+]);
 
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
@@ -1214,18 +1222,18 @@ if (monthlyPosition) {
   let message = "";
 
   if (rank === 1) {
-    message = "🏆 Leader del mese 👑";
+    message = "🏆 Monthly Leader";
   } else if (rank === totalPlayers) {
-    message = "😅 Ultimo del mese";
+    message = "😅 Last place this month";
   } else {
     const betterThan = Math.round(
       ((totalPlayers - rank) / totalPlayers) * 100
     );
-    message = `Meglio del ${betterThan}% dei giocatori del mese`;
+    message = `Better than ${betterThan}% of this month's players`;
   }
 
   positionBox.innerText =
-    `Sei ${rank}° su ${totalPlayers} giocatori · ${message}`;
+`You are #${rank} of ${totalPlayers} players · ${message}`;
 
   document.getElementById("monthlyLeaderboard").appendChild(positionBox);
 }
@@ -1238,7 +1246,7 @@ return;
 startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
 hintsUsed = todayResult.hints_used || 0;
-hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+hintBtn.textContent = `💡 Hint (${maxHints - hintsUsed})`;
 if (hintsUsed >= maxHints) {
   hintBtn.disabled = true;
 }
@@ -1349,7 +1357,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
   boardErrorTimeout = setTimeout(() => {
     if (!checkWin() && checkIncompleteBoard()) {
       showFixedMessage(
-        "⚠️ Hai riempito tutto, ma non ci sono 10 Regine",
+        "⚠️ The board is full but there are not 10 Queens",
         "error"
       );
     }
@@ -1398,18 +1406,18 @@ function toggleAuthMode() {
   const switchLink = document.getElementById("authSwitchLink");
 
   if (isRegisterMode) {
-    title.textContent = "Registrati";
+    title.textContent = "Register";
     extra.style.display = "block";
-    mainBtn.textContent = "Registrati";
-    switchText.textContent = "Hai già un account?";
-    switchLink.textContent = "Accedi";
-  } else {
-    title.textContent = "Accedi";
-    extra.style.display = "none";
-    mainBtn.textContent = "Accedi";
-    switchText.textContent = "Non hai un account?";
-    switchLink.textContent = "Registrati";
-  }
+    mainBtn.textContent = "Register";
+    switchText.textContent = "Already have an account?";
+    switchLink.textContent = "Login";
+} else {
+  title.textContent = "Login";
+  extra.style.display = "none";
+  mainBtn.textContent = "Login";
+  switchText.textContent = "Don't have an account?";
+  switchLink.textContent = "Register";
+}
   // 👇 AGGIUNGI QUESTO BLOCCO QUI
   const errorBox = document.getElementById("authErrorBox");
   if (errorBox) errorBox.remove();
@@ -1461,10 +1469,10 @@ function showResetForm() {
   document.getElementById("authTitle").textContent = "Reset Password";
   document.getElementById("authPassword").style.display = "none";
   document.getElementById("registerExtra").style.display = "none";
-  document.getElementById("authMainBtn").textContent = "Invia link reset";
+  document.getElementById("authMainBtn").textContent = "Send reset link";
 
-  document.getElementById("authSwitchText").textContent = "Tornare al login?";
-  document.getElementById("authSwitchLink").textContent = "Accedi";
+  document.getElementById("authSwitchText").textContent = "Back to login?";
+  document.getElementById("authSwitchLink").textContent = "Login";
 
   const errorBox = document.getElementById("authErrorBox");
   if (errorBox) errorBox.remove();
@@ -1491,14 +1499,14 @@ async function handleAuth() {
 if (isResetMode) {
 
   if (!email) {
-    showAuthError("Inserisci la tua email.");
+    showAuthError("Enter your email.");
     return;
   }
 
   const allowedDomain = "@infineum.com";
 
   if (!email.toLowerCase().endsWith(allowedDomain)) {
-    showAuthError("Reset consentito solo per email @infineum.com");
+    showAuthError("Password reset allowed only for @infineum.com email.");
     return;
   }
 
@@ -1507,16 +1515,16 @@ if (isResetMode) {
 });
 
   if (error) {
-    showAuthError("Errore invio email reset.");
+    showAuthError("Error sending reset email.");
     return;
   }
 
-  showAuthError("Link di reset inviato. Controlla la tua email.");
+  showAuthError("Reset link sent.  Check your email.");
   return;
 }
 
   if (!email || !password) {
-    showAuthError("Inserisci email e password.");
+    showAuthError("Enter email and password.");
     return;
   }
 
@@ -1529,7 +1537,7 @@ if (isResetMode) {
     });
 
     if (error) {
-      showAuthError("Email o password non validi.");
+      showAuthError("Invalid email or password.");
       return;
     }
 
@@ -1542,19 +1550,19 @@ if (isResetMode) {
   const country = document.getElementById("authCountry").value;
 
   if (!name || !country) {
-    showAuthError("Compila tutti i campi.");
+    showAuthError("Fill in all fields.");
     return;
   }
 
   const allowedDomain = "@infineum.com";
 
   if (!email.toLowerCase().endsWith(allowedDomain)) {
-    showAuthError("Devi utilizzare la tua email aziendale @infineum.com");
+    showAuthError("You must use your company email @infineum.com");
     return;
   }
 
   if (password.length < 6) {
-    showAuthError("La password deve avere almeno 6 caratteri.");
+    showAuthError("Password must contain at least 6 characters.");
     return;
   }
 
@@ -1580,7 +1588,7 @@ if (isResetMode) {
     });
 
   if (profileError) {
-    showAuthError("Errore salvataggio profilo.");
+    showAuthError("Error saving profile.");
     return;
   }
 
@@ -1594,40 +1602,47 @@ function checkConflicts() {
 
   queens.forEach(q => {
 
-    if(rows[q.row] > 1) {
+    if (rows[q.row] > 1) {
       highlightRow(q.row);
       hasError = true;
     }
 
-    if(cols[q.col] > 1) {
+    if (cols[q.col] > 1) {
       highlightColumn(q.col);
       hasError = true;
     }
 
-    if(regions[q.region] > 1) {
+    if (regions[q.region] > 1) {
       highlightRegion(q.region);
       hasError = true;
     }
 
   });
 
-  for(let i=0;i<queens.length;i++){
-    for(let j=i+1;j<queens.length;j++){
+  // controllo adiacenza (unico controllo necessario)
+  const queenMap = new Set(
+    queens.map(q => q.row + "-" + q.col)
+  );
 
-      const q1 = queens[i];
-      const q2 = queens[j];
+  queens.forEach(q => {
 
-      const rowDiff = Math.abs(q1.row-q2.row);
-      const colDiff = Math.abs(q1.col-q2.col);
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
 
-      if(rowDiff<=1 && colDiff<=1){
-        q1.cell.classList.add("error");
-        q2.cell.classList.add("error");
-        hasError = true;
+        if (dr === 0 && dc === 0) continue;
+
+        const r = q.row + dr;
+        const c = q.col + dc;
+
+        if (queenMap.has(r + "-" + c)) {
+          q.cell.classList.add("error");
+          hasError = true;
+        }
+
       }
-
     }
-  }
+
+  });
 
   if (hasError && navigator.vibrate) {
     navigator.vibrate(120);
@@ -1767,7 +1782,7 @@ function giveHint() {
       }, 800);
       recomputeAutoX();
       showFixedMessage(
-  `❌ Ho rimosso una Regina errata nella riga ${row + 1}. (+30s)`,
+  `❌ I removed an incorrect Queen from row ${row + 1}. (+30s)`,
   "error"
 );
       applyHintPenalty("remove");
@@ -1793,13 +1808,13 @@ placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
 if (removedRow !== null) {
 showFixedMessage(
-  `👑 Ho inserito la Regina corretta nella riga ${row + 1} e ho rimosso quella errata nella riga ${removedRow + 1}. (+60s)`,
+  `👑 I inserted the correct Queen in row ${row + 1} and removed the incorrect one from row ${removedRow + 1}. (+60s)`,
   "success"
 );
   applyHintPenalty("insert_remove");
 } else {
 showFixedMessage(
-  `👑 Ho inserito la Regina corretta nella riga ${row + 1}. (+45s)`,
+  `👑 I inserted the correct Queen in row ${row + 1}. (+45s)`,
   "success"
 );
   applyHintPenalty("insert");
@@ -1841,7 +1856,7 @@ async function applyHintPenalty(type) {
   timerEl.classList.remove("timer-penalty");
   void timerEl.offsetWidth;
   timerEl.classList.add("timer-penalty");
-  hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+  hintBtn.textContent = `💡 Hint (${maxHints - hintsUsed})`;
   if (hintsUsed >= maxHints) {
     hintBtn.disabled = true;
   }
@@ -1886,7 +1901,7 @@ function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
 const shareBtn = document.createElement("button");
-shareBtn.textContent = "📤 Condividi risultato";
+shareBtn.textContent = "📤 Share result";
 shareBtn.style.marginTop = "10px";
 
 shareBtn.onclick = async () => {
@@ -1894,12 +1909,12 @@ shareBtn.onclick = async () => {
   const result = await getPlayerPosition();
 
   const text =
-`👑 Queens — ${new Date().toLocaleDateString()}
+`👑 Queens — ${new Date().toISOString().split("T")[0]}
 
 ⏱ ${time}s
 🏆 ${result.rank}/${result.totalPlayers}
 
-Gioca anche tu:
+Play now:
 ${window.location.href}`;
 
   if (navigator.share) {
@@ -1909,16 +1924,16 @@ ${window.location.href}`;
     });
   } else {
     navigator.clipboard.writeText(text);
-    showFixedMessage("Risultato copiato negli appunti");
+    showFixedMessage("Result copied to clipboard");
   }
 
 };
 
 document.querySelector("#winModal .modal-content").appendChild(shareBtn);
-  modal.querySelector("h2").textContent = "👑 Partita Conclusa";
+  modal.querySelector("h2").textContent = "👑 Game Completed";
   document.getElementById("finalTime").textContent =
-    "Tempo: " + time + " secondi";
-  button.textContent = "Chiudi";
+    "Time: " + time + " seconds";
+  button.textContent = "Close";
   button.onclick = closeModal;
   modal.style.display = "flex";
 }
@@ -1937,7 +1952,7 @@ gridElement.innerHTML = "";
 startBtn.disabled = true;
 hintBtn.disabled = true;
 
-startBtn.innerText = "Già giocato";
+startBtn.innerText = "Already played";
 startBtn.style.display = "none";
 hintBtn.style.display = "none";
 
@@ -1946,13 +1961,15 @@ hintBtn.style.display = "none";
   message.classList.add("post-game");
   message.style.marginTop = "15px";
   message.style.fontWeight = "600";
-  message.innerText = "Hai già completato il puzzle di oggi 👑";
+  message.innerText = "You already completed today's puzzle 👑";
   document.getElementById("playerInfo").appendChild(message);
 
   // Carica classifiche
-  const daily = await loadTodayLeaderboard();
-  const monthly = await loadMonthlyLeaderboard();
-const countries = await loadMonthlyCountryLeaderboard();
+const [daily, monthly, countries] = await Promise.all([
+  loadTodayLeaderboard(),
+  loadMonthlyLeaderboard(),
+  loadMonthlyCountryLeaderboard()
+]);
 
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
@@ -1984,18 +2001,18 @@ if (monthlyPosition) {
   let message = "";
 
   if (rank === 1) {
-    message = "🏆 Leader del mese 👑";
+    message = "🏆 Monthly Leader";
   } else if (rank === totalPlayers) {
-    message = "😅 Ultimo del mese";
+    message = "😅 Last place this month";
   } else {
     const betterThan = Math.round(
       ((totalPlayers - rank) / totalPlayers) * 100
     );
-    message = `Meglio del ${betterThan}% dei giocatori del mese`;
+    message = `Better than ${betterThan}% of this month's players`;
   }
 
   positionBox.innerText =
-    `Sei ${rank}° su ${totalPlayers} giocatori · ${message}`;
+    `You are #${rank} of ${totalPlayers} players · ${message}`;
 
   document.getElementById("monthlyLeaderboard").appendChild(positionBox);
 }
@@ -2027,7 +2044,7 @@ leaderboardDiv.style.backdropFilter = "blur(12px)";
   leaderboardDiv.style.maxWidth = "350px";
   leaderboardDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
   const title = document.createElement("h3");
-  title.innerText = "🏆 Classifica di oggi";
+  title.innerText = "🏆 Today's Leaderboard";
   title.style.marginBottom = "10px";
   leaderboardDiv.appendChild(title);
   leaderboard.forEach((player, index) => {
@@ -2077,7 +2094,7 @@ if (player.email === playerEmail) {
   positionBox.style.color = "#b0bec5"; // Grigio elegante
 }
     positionBox.innerText =
-      `Sei ${positionData.rank}° su ${positionData.totalPlayers} giocatori · ${positionData.time}s`;
+`You are #${positionData.rank} of ${positionData.totalPlayers} players · ${positionData.time}s`;
     leaderboardDiv.appendChild(positionBox);
   }
   document.getElementById("playerInfo").appendChild(leaderboardDiv);
@@ -2086,7 +2103,7 @@ startBtn.addEventListener("click", async () => {
 startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
   hintsUsed = 0;
-  hintBtn.textContent = "💡 Suggerimento (3)";
+  hintBtn.textContent = "💡 Hint (3)";
   const today = new Date().toISOString().split("T")[0];
   const { data: existing } = await supabaseClient
     .from("queens_results")
@@ -2101,7 +2118,7 @@ if (existing) {
   }
   startBtn.disabled = true;
   hintsUsed = existing.hints_used || 0;
-  hintBtn.textContent = `💡 Suggerimento (${maxHints - hintsUsed})`;
+  hintBtn.textContent = `💡 Hint (${maxHints - hintsUsed})`;
   if (hintsUsed < maxHints) {
     hintBtn.disabled = false;
   } else {
@@ -2181,50 +2198,50 @@ function launchConfetti() {
 hintBtn.addEventListener("click", giveHint);
 document.getElementById("rulesFloating").addEventListener("click", () => {
   showRulesModal(
-`🧠 QUEENS — STRATEGIA PURA
+`🧠 QUEENS — PURE STRATEGY
 
-Non è un gioco di velocità.  
-È un gioco di lucidità.
+This is not a game of speed.  
+It is a game of clarity.
 
-🎯 OBIETTIVO  
-Posiziona 10 Regine nella griglia 10×10 rispettando tutti i vincoli.  
-Ogni scelta influenza l’intera struttura.
+🎯 OBJECTIVE  
+Place 10 Queens on the 10×10 grid while respecting all constraints.  
+Every move affects the entire structure.
 
-♟️ VINCOLI STRATEGICI  
-• 1 Regina per riga  
-• 1 Regina per colonna  
-• 1 Regina per regione colorata  
-• Nessuna Regina può toccarne un’altra (nemmeno in diagonale)
+♟️ STRATEGIC CONSTRAINTS  
+• 1 Queen per row  
+• 1 Queen per column  
+• 1 Queen per colored region  
+• Queens cannot touch each other (not even diagonally)
 
-⚡ DINAMICA INTELLIGENTE  
-Quando inserisci una Regina, le celle impossibili vengono bloccate.  
-Osserva ciò che resta libero: lì si nasconde la soluzione.
+⚡ SMART MECHANICS  
+When you place a Queen, impossible cells are automatically blocked.  
+Look at what remains free — that is where the solution hides.
 
-💡 SUGGERIMENTI (max 3)  
-I suggerimenti sono strumenti, non scorciatoie.  
-• Rimozione errore → +30s  
-• Inserimento corretto → +45s  
-• Correzione combinata → +60s  
+💡 HINTS (max 3)  
+Hints are tools, not shortcuts.  
+• Remove wrong Queen → +30s  
+• Insert correct Queen → +45s  
+• Combined correction → +60s
 
-⏱️ IL TEMPO  
-Il cronometro misura la tua capacità decisionale.  
-Non vince chi è impulsivo.  
-Vince chi è preciso.
+⏱️ TIME  
+The timer measures your decision-making ability.  
+The fastest player does not always win.  
+The most precise one does.
 
-📊 SISTEMA PUNTEGGIO MENSILE  
-• Partecipazione → +1 punto  
-• 🥇 1° posto → +15 punti  
-• 🥈 2° posto → +10 punti  
-• 🥉 3° posto → +7 punti  
-• 4°–10° posto → +3 punti  
+📊 MONTHLY SCORING SYSTEM  
+• Participation → +1 point  
+• 🥇 1st place → +15 points  
+• 🥈 2nd place → +10 points  
+• 🥉 3rd place → +7 points  
+• 4th–10th place → +3 points
 
-Anche una giornata difficile contribuisce alla classifica.
+Even a difficult day contributes to the leaderboard.
 
-🧩 Un solo tentativo al giorno.  
-Ogni partita è una decisione definitiva.
+🧩 Only one attempt per day.  
+Each game is a final decision.
 
-👑 Queens non premia la fortuna.  
-Premia la mente.`
+👑 Queens does not reward luck.  
+It rewards the mind.`
   );
 });
 // --- SWIPE LEADERBOARD ---
@@ -2291,10 +2308,10 @@ function showNewPasswordForm() {
   document.getElementById("authContainer").style.display = "block";
   document.getElementById("logoutFloating").style.display = "none";
 
-  document.getElementById("authTitle").textContent = "Nuova Password";
+  document.getElementById("authTitle").textContent = "New Password";
   document.getElementById("authPassword").style.display = "block";
   document.getElementById("authPassword").value = "";
-  document.getElementById("authMainBtn").textContent = "Aggiorna Password";
+  document.getElementById("authMainBtn").textContent = "Update Password";
 
   isResetMode = false;
   isRegisterMode = false;
@@ -2304,7 +2321,7 @@ function showNewPasswordForm() {
     const newPassword = document.getElementById("authPassword").value.trim();
 
     if (newPassword.length < 6) {
-      showAuthError("Minimo 6 caratteri.");
+      showAuthError("Minimum 6 characters.");
       return;
     }
 
@@ -2313,11 +2330,11 @@ function showNewPasswordForm() {
     });
 
     if (error) {
-      showAuthError("Errore aggiornamento password.");
+      showAuthError("Error updating password.");
       return;
     }
 
-    showAuthError("Password aggiornata con successo.");
+    showAuthError("Password updated successfully.");
 
     setTimeout(() => {
       window.location.href = window.location.origin + "/Queens/";
@@ -2348,30 +2365,48 @@ if (!playerEmail || playerEmail === null) {
 }
 
 }
+// --- RESET BADGE E NOTIFICHE ALL'APERTURA APP ---
 
+if ('serviceWorker' in navigator) {
+
+  navigator.serviceWorker.getRegistration().then(reg => {
+    if (reg) {
+
+      reg.getNotifications().then(notifications => {
+        notifications.forEach(n => n.close());
+      });
+
+    }
+  });
+
+}
+
+if ('clearAppBadge' in navigator) {
+  navigator.clearAppBadge();
+}
 initializePage();
 setupFloatingButtons();
 
 </script>
 <div id="winModal" class="modal">
   <div class="modal-content">
-    <h2>👑 Partita Conclusa</h2>
+    <h2>👑 Game Completed</h2>
     <p id="finalTime"></p>
-    <button id="modalBtn">Chiudi</button>
+    <button id="modalBtn">Close</button>
   </div>
 </div>
 <div id="rulesModal" class="modal">
   <div class="modal-content">
-    <h2>📜 Queens Regole</h2>
+    <h2>📜 Queens Rules</h2>
     <p id="rulesContent"></p>
-    <button id="rulesModalBtn">Chiudi</button>
+    <button id="rulesModalBtn">Close</button>
   </div>
 </div>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
-  .then(() => console.log("Service Worker registrato"))
-  .catch(err => console.log("Errore SW:", err));
+  .then(() => console.log("Service Worker registered"))
+  .catch(err => console.log("Service Worker error:", err));
 }
 </script>
 <script>
@@ -2402,7 +2437,7 @@ if (isAppInstalled()) return;
   deferredPrompt = e;
 
  if (installBtn && !isAppInstalled()) installBtn.style.display = "flex";
-showFixedMessage("📲 Installa Queens per giocare più velocemente");
+showFixedMessage("📲 Install Queens for faster access");
 
 });
 
@@ -2464,9 +2499,9 @@ if (isIOS() && !window.navigator.standalone) {
     installBtn.addEventListener("click", () => {
 
       showFixedMessage(
-        "Su iPhone premi Condividi → Aggiungi alla schermata Home",
+        "On iPhone tap Share → Add to Home Screen",
         "info",
-        6000
+        8000
       );
 
     });
@@ -2492,22 +2527,22 @@ function urlBase64ToUint8Array(base64String) {
 }
 async function enablePush() {
 if (!playerEmail) {
-    showFixedMessage("Effettua prima il login");
+    showFixedMessage("Please login first");
     return;
   }
  if (!('serviceWorker' in navigator)) {
-    showFixedMessage("Push non supportato su questo browser");
+    showFixedMessage("Push notifications not supported on this browser");
     return;
   }
 if (!('Notification' in window)) {
-  showFixedMessage("Notifiche non supportate su questo browser");
+  showFixedMessage("Notifications not supported on this browser");
   return;
 }
 
 const permission = await Notification.requestPermission();
 
   if (permission !== "granted") {
-    showFixedMessage("❌ Notifiche non abilitate");
+    showFixedMessage("❌ Notifications not enabled");
     return;
   }
 
@@ -2531,11 +2566,11 @@ if (!subscription) {
 
   if (error) {
     console.error(error);
-    showFixedMessage("Errore attivazione notifiche");
+    showFixedMessage("Error enabling notifications");
     return;
   }
 
-showFixedMessage("🔔 Notifiche attivate");
+showFixedMessage("🔔 Notifications enabled");
 
 const btn = document.getElementById("pushFloating");
 if (btn) btn.style.display = "none";
