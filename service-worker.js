@@ -22,9 +22,28 @@ self.addEventListener("push", function(event) {
     }
   };
 
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
+  event.waitUntil((async () => {
+
+    // mostra notifica
+    await self.registration.showNotification(data.title, options);
+
+    // aggiorna badge numerico
+    if ('setAppBadge' in self.navigator) {
+
+      const notifications = await self.registration.getNotifications();
+
+let count = notifications.length;
+
+// limite badge stile app mobile
+if (count > 9) {
+  count = 9;
+}
+
+await self.navigator.setAppBadge(count);
+
+    }
+
+  })());
 
 });
 
@@ -34,8 +53,14 @@ self.addEventListener("notificationclick", function(event) {
 
   const url = event.notification.data.url;
 
-  event.waitUntil(
-    clients.openWindow(url)
-  );
+  event.waitUntil((async () => {
+
+    if ('clearAppBadge' in self.navigator) {
+      await self.navigator.clearAppBadge();
+    }
+
+    clients.openWindow(url);
+
+  })());
 
 });
