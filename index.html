@@ -670,6 +670,20 @@ overflow-y: auto;
   color:#ff5252;
   text-shadow:0 0 6px rgba(255,0,0,0.6);
 }
+.timer-green{
+  color:#69f0ae;
+  text-shadow:0 0 10px rgba(105,240,174,0.8);
+}
+
+.timer-yellow{
+  color:#ffd740;
+  text-shadow:0 0 10px rgba(255,215,0,0.8);
+}
+
+.timer-red{
+  color:#ff5252;
+  text-shadow:0 0 10px rgba(255,0,0,0.8);
+}
 .timer-complete {
   color: #ffd700;
   text-shadow:
@@ -792,9 +806,15 @@ overflow-y: auto;
 
   </div>
 
-  <div class="player-timer">
-    ⏱ <span id="timer">00:00</span>
-  </div>
+<div class="player-timer">
+  ⏱ <span id="timer">00:00</span>
+  <span id="challengeTarget" style="
+    font-size:13px;
+    margin-left:6px;
+    opacity:0.8;
+    color:#ffd700;
+  "></span>
+</div>
 
 </div>
 <button id="startBtn" class="game-btn">▶ Play</button>
@@ -957,6 +977,7 @@ let regionMap = [];
 let startTime = null;
 let timerInterval = null;
 let boardErrorTimeout = null;
+let challengeTargetTime = null;
 let playerEmail = null;
 let playerName = null;
 let countryCode = null;
@@ -1359,6 +1380,10 @@ setupFloatingButtons();
   document.getElementById("displayName").textContent = playerName;
 document.getElementById("displayFlag").src =
   `https://flagcdn.com/24x18/${(countryCode || "un").toLowerCase()}.png`;
+if (challengeTargetTime) {
+  const target = document.getElementById("challengeTarget");
+  target.textContent = "Beat " + formatTime(challengeTargetTime);
+}
 
 
 // Da qui in poi è il tuo flusso normale
@@ -1481,6 +1506,7 @@ startTime = startedAt - (penalty * 1000);
   const timerEl = document.getElementById("timer");
 
   timerEl.textContent = formatTime(seconds);
+updateChallengeColor(seconds);
 
   timerEl.classList.remove("timer-pulse");
   void timerEl.offsetWidth;
@@ -2203,9 +2229,9 @@ if (games >= 3) {
 
   let label = "Unstable ⚠️";
 
-  if (score >= 95) label = "Elite 👑";
-  else if (score >= 85) label = "Strong 💎";
-  else if (score >= 70) label = "Solid 👍";
+  if (score >= 90) label = "Elite 👑";
+  else if (score >= 70) label = "Strong 💎";
+  else if (score >= 50) label = "Solid 👍";
 
   rating = `${label} (${score}%)`;
 }
@@ -2273,15 +2299,21 @@ shareBtn.style.marginTop = "10px";
 shareBtn.onclick = async () => {
 
   const result = await getPlayerPosition();
+const challengeLink =
+`${window.location.origin}/Queens/?challenge=${time}&player=${encodeURIComponent(playerName)}`;
 
-  const text =
-`👑 Queens — ${new Date().toISOString().split("T")[0]}
+const text =
+`🔥 Queens Challenge
 
-⏱ ${time}s
-🏆 ${result.rank}/${result.totalPlayers}
+Solved in ${time}s.
 
-Play now:
-${window.location.href}`;
+🏆 Rank ${result.rank}/${result.totalPlayers}
+
+Can you do better?
+
+Or is this too hard for you?
+
+${challengeLink}`;
 
   if (navigator.share) {
     navigator.share({
@@ -2501,6 +2533,7 @@ if (existing) {
   const timerEl = document.getElementById("timer");
 
   timerEl.textContent = formatTime(seconds);
+updateChallengeColor(seconds);
 
   timerEl.classList.remove("timer-pulse");
   void timerEl.offsetWidth;
@@ -2539,6 +2572,7 @@ document.getElementById("rulesFloating").style.display = "flex";
   const timerEl = document.getElementById("timer");
 
   timerEl.textContent = formatTime(seconds);
+updateChallengeColor(seconds);
 
   timerEl.classList.remove("timer-pulse");
   void timerEl.offsetWidth;
@@ -2780,7 +2814,64 @@ function formatTime(seconds) {
   );
 
 }
+
+function updateChallengeColor(seconds){
+
+  if(!challengeTargetTime) return;
+
+  const timerEl = document.getElementById("timer");
+
+  timerEl.classList.remove(
+    "timer-green",
+    "timer-yellow",
+    "timer-red"
+  );
+
+  const ratio = seconds / challengeTargetTime;
+
+  if (ratio < 0.7){
+    timerEl.classList.add("timer-green");
+  }
+  else if (ratio < 1){
+    timerEl.classList.add("timer-yellow");
+  }
+  else{
+    timerEl.classList.add("timer-red");
+  }
+
+}
+// --- CHALLENGE LINK ---
+
+const params = new URLSearchParams(window.location.search);
+
+const challengeTime = params.get("challenge");
+const challengePlayer = params.get("player");
+if (challengeTime) {
+  challengeTargetTime = parseInt(challengeTime);
+}
+
+if (challengeTime) {
+
+  if (challengePlayer) {
+    showFixedMessage(
+      `🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTime)}`,
+      "info",
+      6000
+    );
+  } else {
+    showFixedMessage(
+      `🔥 Challenge: beat ${challengeTime}s`,
+      "info",
+      6000
+    );
+  }
+
+}
+if (challengeTime) {
+  history.replaceState({}, "", window.location.pathname);
+}
 initializePage();
+
 
 
 </script>
