@@ -621,6 +621,13 @@ overflow-y: auto;
   color:#ff5252;
   text-shadow:0 0 6px rgba(255,0,0,0.6);
 }
+.timer-complete {
+  color: #ffd700;
+  text-shadow:
+    0 0 10px rgba(255,215,0,0.9),
+    0 0 20px rgba(255,215,0,0.7),
+    0 0 40px rgba(255,215,0,0.4);
+}
 .player-timer span{
   display:inline-block;
 }
@@ -683,7 +690,6 @@ overflow-y: auto;
   </div>
 </div>
 <div id="playerInfo">
-<div style="margin-top:14px; color:white; font-size:20px; font-weight:700; text-shadow:0 0 6px rgba(255,255,255,0.35);">
 <div class="player-hud">
 
   <div class="player-left">
@@ -695,7 +701,7 @@ overflow-y: auto;
   </div>
 
   <div class="player-timer">
-    ⏱ <span id="timer">0s</span>
+    ⏱ <span id="timer">00:00</span>
   </div>
 
 </div>
@@ -1290,13 +1296,18 @@ startBtn.innerText = "Already played";
 startBtn.style.display = "none";
 
   document.getElementById("timer").textContent =
-    todayResult.time_seconds + "s";
+  formatTime(todayResult.time_seconds);
+const timerEl = document.getElementById("timer");
+timerEl.classList.add("timer-complete");
 
-  const message = document.createElement("div");
-  message.style.marginTop = "15px";
-  message.style.fontWeight = "600";
-  message.innerText = "You already completed today's puzzle 👑";
-  document.getElementById("playerInfo").appendChild(message);
+const message = document.createElement("div");
+message.style.marginTop = "15px";
+message.style.fontWeight = "600";
+message.style.textAlign = "center";
+message.innerText = "You already completed today's puzzle 👑";
+
+const leaderboard = document.getElementById("leaderboardModal");
+leaderboard.parentNode.insertBefore(message, leaderboard);
 
 const [daily, monthly, countries] = await Promise.all([
   loadTodayLeaderboard(),
@@ -1487,6 +1498,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
 }
 if (!hasConflict && checkWin()) {
     clearInterval(timerInterval);
+document.getElementById("timer").classList.add("timer-complete");
     const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
     await supabaseClient
       .from("queens_results")
