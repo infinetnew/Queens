@@ -55,6 +55,15 @@ filter:
   drop-shadow(0 0 30px rgba(255,215,0,0.6))
   drop-shadow(0 0 60px rgba(255,215,0,0.25));
 }
+.app-subtitle{
+  margin-top:8px;
+  font-size:15px;
+  letter-spacing:1px;
+  opacity:0.75;
+  text-align:center;
+  font-weight:500;
+  color:#ffffff;
+}
 .app-info h1 {
   margin: 0;
   font-size: 28px;
@@ -73,35 +82,52 @@ filter:
   font-weight: 600;
 }
 .game-btn {
-  margin-top: 15px;
-  padding: 12px 24px;
-  border-radius: 16px;
-  border: none;
-  background: linear-gradient(135deg, #4b1fa8, #ff5c8a);
-  color: white;
-  font-weight: 700;
-  font-size: 15px;
-letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: all 0.25s ease;
+
+  margin-top:20px;
+
+  padding:14px 38px;
+
+  border-radius:30px;
+  border:none;
+
+  background:linear-gradient(135deg,#5b2be0,#ff4f8b);
+
+  color:white;
+
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:1px;
+
+  cursor:pointer;
+
+  transition:all 0.25s ease;
+
   box-shadow:
-    0 12px 30px rgba(0,0,0,0.7),
-    0 0 10px rgba(255,255,255,0.08);
+    0 12px 30px rgba(0,0,0,0.8),
+    0 0 18px rgba(255,255,255,0.12);
+
 }
-.game-btn:hover:not(:disabled) {
-  transform: translateY(-4px) scale(1.04);
+.game-btn:hover:not(:disabled){
+
+  transform:translateY(-4px) scale(1.05);
+
   box-shadow:
     0 20px 50px rgba(0,0,0,0.9),
-    0 0 15px rgba(255,255,255,0.15);
+    0 0 25px rgba(255,255,255,0.18);
+
 }
-.game-btn:active {
-  transform: scale(0.97);
+.game-btn:active{
+
+  transform:scale(0.94);
+
 }
-.game-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+.game-btn:disabled{
+
+  opacity:0.45;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+
 }
 #grid {
   display: grid;
@@ -115,7 +141,7 @@ height: min(90vw, 90vh);
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   gap: 0;
-  margin-top: 30px;
+  margin-top: 35px;
   padding: 2.5%;
 background: rgba(255,255,255,0.06);
 backdrop-filter: blur(8px);
@@ -548,6 +574,81 @@ overflow-y: auto;
 .dot {
   cursor: pointer;
 }
+.player-hud{
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:10px 16px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(8px);
+
+  border:1px solid rgba(255,255,255,0.15);
+
+  max-width:420px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.player-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  font-size:18px;
+  font-weight:700;
+}
+
+#playerDisplay{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+#displayFlag{
+  width:22px;
+  height:auto;
+  border-radius:3px;
+}
+
+.player-timer{
+  font-size:18px;
+  font-weight:700;
+  color:#ff5252;
+  text-shadow:0 0 6px rgba(255,0,0,0.6);
+}
+.player-timer span{
+  display:inline-block;
+}
+#timer{
+  font-variant-numeric: tabular-nums;
+}
+@keyframes timerPulse {
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255,0,0,0.6);
+  }
+
+  50% {
+    transform: scale(1.12);
+    text-shadow:
+      0 0 10px rgba(255,0,0,0.9),
+      0 0 20px rgba(255,80,80,0.7);
+  }
+
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255,0,0,0.6);
+  }
+}
+
+.timer-pulse {
+  animation: timerPulse 0.35s ease;
+}
 </style>
 </head>
 <body>
@@ -569,27 +670,38 @@ overflow-y: auto;
   <div id="rulesFloating" class="rules-floating" title="Rules">?</div>
 </div>
 <div class="app-header">
-  <div class="app-icon">
-  <img src="queens-logo.png" alt="Queens Logo">
-</div>
+  <div style="display:flex; flex-direction:column; align-items:center;">
+    
+    <div class="app-icon">
+      <img src="queens-logo.png" alt="Queens Logo">
+    </div>
 
+    <div class="app-subtitle">
+      The Daily Quiz Puzzle
+    </div>
+
+  </div>
 </div>
 <div id="playerInfo">
 <div style="margin-top:14px; color:white; font-size:20px; font-weight:700; text-shadow:0 0 6px rgba(255,255,255,0.35);">
-<span style="font-size:22px;">👤</span>
-<span id="playerDisplay" style="display:inline-flex; align-items:center; gap:8px;">
-<span id="displayName"></span>
-<img id="displayFlag" style="width:22px; height:auto; border-radius:3px;">
-</span>
-</div>
+<div class="player-hud">
 
+  <div class="player-left">
+    <span style="font-size:22px;">👤</span>
+    <span id="playerDisplay">
+      <span id="displayName"></span>
+      <img id="displayFlag">
+    </span>
+  </div>
 
-<div style="margin-top:14px; color:red; font-size:20px; font-weight:700; text-shadow:0 0 6px rgba(255,0,0,0.5);">
-<span style="font-size:22px;">⏱</span> <span id="timer">0s</span>
+  <div class="player-timer">
+    ⏱ <span id="timer">0s</span>
+  </div>
+
 </div>
 <button id="startBtn" class="game-btn">▶ Play</button>
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
-  💡 Hint (3)
+  💡 Hint • 3
 </button>
 
 </div>
@@ -1259,10 +1371,19 @@ if (hintsUsed < maxHints) {
     const startedAt = new Date(todayResult.started_at).getTime();
 const penalty = todayResult.penalty_seconds || 0;
 startTime = startedAt - (penalty * 1000);
-    timerInterval = setInterval(() => {
-      const seconds = Math.floor((Date.now() - startTime) / 1000);
-      document.getElementById("timer").textContent = seconds + "s";
-    }, 1000);
+   timerInterval = setInterval(() => {
+
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+
+  const timerEl = document.getElementById("timer");
+
+  timerEl.textContent = formatTime(seconds);
+
+  timerEl.classList.remove("timer-pulse");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-pulse");
+
+}, 1000);
 gridElement.style.visibility = "visible";
 gridElement.style.opacity = "1";
 gridElement.style.animation = "boardGlowStart 1.2s ease";
@@ -2103,7 +2224,7 @@ startBtn.addEventListener("click", async () => {
 startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
   hintsUsed = 0;
-  hintBtn.textContent = "💡 Hint (3)";
+  hintBtn.textContent = "💡 Hint • 3";
   const today = new Date().toISOString().split("T")[0];
   const { data: existing } = await supabaseClient
     .from("queens_results")
@@ -2129,9 +2250,18 @@ if (existing) {
   startTime = startedAt - (penalty * 1000);
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    const seconds = Math.floor((Date.now() - startTime) / 1000);
-    document.getElementById("timer").textContent = seconds + "s";
-  }, 1000);
+
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+
+  const timerEl = document.getElementById("timer");
+
+  timerEl.textContent = formatTime(seconds);
+
+  timerEl.classList.remove("timer-pulse");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-pulse");
+
+}, 1000);
   gridElement.style.visibility = "visible";
   gridElement.style.opacity = "1";
 document.getElementById("rulesBox").style.display = "none";
@@ -2158,9 +2288,18 @@ document.getElementById("rulesFloating").style.display = "flex";
   }
   startTime = new Date(data.started_at).getTime();
   timerInterval = setInterval(() => {
-    const seconds = Math.floor((Date.now() - startTime) / 1000);
-    document.getElementById("timer").textContent = seconds + "s";
-  }, 1000);
+
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+
+  const timerEl = document.getElementById("timer");
+
+  timerEl.textContent = formatTime(seconds);
+
+  timerEl.classList.remove("timer-pulse");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-pulse");
+
+}, 1000);
   gridElement.style.visibility = "visible";
   gridElement.style.opacity = "1";
 gridElement.style.animation = "boardGlowStart 1.2s ease";
@@ -2383,6 +2522,18 @@ if ('serviceWorker' in navigator) {
 
 if ('clearAppBadge' in navigator) {
   navigator.clearAppBadge();
+}
+function formatTime(seconds) {
+
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+
+  return (
+    String(m).padStart(2, "0") +
+    ":" +
+    String(s).padStart(2, "0")
+  );
+
 }
 initializePage();
 setupFloatingButtons();
