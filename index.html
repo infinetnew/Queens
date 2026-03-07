@@ -216,6 +216,8 @@ box-shadow:
   transform-style: preserve-3d;
   will-change: transform;
 contain: layout paint;
+transform: translateZ(0);
+backface-visibility: hidden;
 }
 .cell::before {
   content: "";
@@ -1162,9 +1164,11 @@ if (todayResult.completed) {
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
 
-  hintBtn.disabled = true;
-  startBtn.disabled = true;
-  startBtn.innerText = "Già giocato";
+hintBtn.disabled = true;
+hintBtn.style.display = "none";
+
+startBtn.disabled = true;
+startBtn.innerText = "Già giocato";
 startBtn.style.display = "none";
 
   document.getElementById("timer").textContent =
@@ -1881,6 +1885,36 @@ function showRulesModal(message) {
 function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
+const shareBtn = document.createElement("button");
+shareBtn.textContent = "📤 Condividi risultato";
+shareBtn.style.marginTop = "10px";
+
+shareBtn.onclick = async () => {
+
+  const result = await getPlayerPosition();
+
+  const text =
+`👑 Queens — ${new Date().toLocaleDateString()}
+
+⏱ ${time}s
+🏆 ${result.rank}/${result.totalPlayers}
+
+Gioca anche tu:
+${window.location.href}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "Queens Game",
+      text: text
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    showFixedMessage("Risultato copiato negli appunti");
+  }
+
+};
+
+document.querySelector("#winModal .modal-content").appendChild(shareBtn);
   modal.querySelector("h2").textContent = "👑 Partita Conclusa";
   document.getElementById("finalTime").textContent =
     "Tempo: " + time + " secondi";
@@ -1895,13 +1929,17 @@ async function closeModal() {
 
   // Nascondi griglia
 gridElement.style.display = "none";
-gridElement.style.marginTop = "0";
+gridElement.style.height = "0";
+gridElement.style.padding = "0";
+gridElement.style.margin = "0";
 gridElement.innerHTML = "";
 
-  startBtn.disabled = true;
-  hintBtn.disabled = true;
-  startBtn.innerText = "Già giocato";
+startBtn.disabled = true;
+hintBtn.disabled = true;
+
+startBtn.innerText = "Già giocato";
 startBtn.style.display = "none";
+hintBtn.style.display = "none";
 
   // Messaggio completamento
   const message = document.createElement("div");
