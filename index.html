@@ -762,6 +762,771 @@ overflow-y: auto;
       <div class="leaderboard-slider" id="leaderboardSlider">
 
         <div class="leaderboard-page">
+          <div class="leaderboard-title"><!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Queens Game</title>
+<link rel="manifest" href="manifest.json">
+
+<link rel="icon" type="image/png" href="queens-icon-192.png">
+<link rel="apple-touch-icon" href="queens-icon-192.png">
+
+<meta name="theme-color" content="#2b1055">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Queens">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100dvh;
+  margin: 0;
+
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  background: radial-gradient(circle at 20% 20%, #2b1055, #0f0c29 70%);
+  color: #f5f5f5;
+}
+.app-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: calc(env(safe-area-inset-top) + 40px);
+  padding-top: calc(env(safe-area-inset-top) * 0.4);
+}
+.app-icon {
+  width: 320px;
+  height: 320px;
+  border-radius: 20px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app-icon img {
+  width: 180%;
+max-width: 100vw;
+  height: auto;
+  object-fit: contain;
+animation:
+  logoFloat 4s ease-in-out infinite,
+  logoGlow 3s ease-in-out infinite;
+filter:
+  drop-shadow(0 0 12px rgba(255,215,0,0.8))
+  drop-shadow(0 0 30px rgba(255,215,0,0.6))
+  drop-shadow(0 0 60px rgba(255,215,0,0.25));
+}
+.app-subtitle{
+  margin-top:8px;
+  font-size:15px;
+  letter-spacing:1px;
+  opacity:0.75;
+  text-align:center;
+  font-weight:500;
+  color:#ffffff;
+}
+.app-info h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.app-info span {
+  font-size: 14px;
+  opacity: 0.6;
+}
+#playerInfo {
+  margin-top: 15px;
+  text-align: center;
+  padding: 0 10px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+.game-btn {
+
+  margin-top:20px;
+
+  padding:14px 38px;
+
+  border-radius:30px;
+  border:none;
+
+  background:linear-gradient(135deg,#5b2be0,#ff4f8b);
+
+  color:white;
+
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:1px;
+
+  cursor:pointer;
+
+  transition:all 0.25s ease;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.8),
+    0 0 18px rgba(255,255,255,0.12);
+
+}
+.game-btn:hover:not(:disabled){
+
+  transform:translateY(-4px) scale(1.05);
+
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.9),
+    0 0 25px rgba(255,255,255,0.18);
+
+}
+.game-btn:active{
+
+  transform:scale(0.94);
+
+}
+.game-btn:disabled{
+
+  opacity:0.45;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+
+}
+#grid {
+  display: grid;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+  width: min(90vw, 90vh);
+height: min(90vw, 90vh);
+  max-width: 650px;
+  max-height: 650px;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 0;
+  margin-top: 35px;
+  padding: 2.5%;
+background: rgba(255,255,255,0.06);
+backdrop-filter: blur(8px);
+  border-radius: 28px;
+border: 3px solid rgba(255,255,255,0.35);
+
+box-shadow:
+  0 0 0 2px rgba(120,80,255,0.35),
+  0 0 20px rgba(120,80,255,0.45),
+  0 0 40px rgba(120,80,255,0.35),
+  0 60px 140px rgba(0,0,0,0.95),
+  0 0 80px rgba(120,80,255,0.18),
+  0 0 40px rgba(255,255,255,0.04);
+  animation: boardEntrance 0.6s cubic-bezier(.4,0,.2,1);
+position: relative;
+}
+#grid::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -40px;
+  transform: translateX(-50%);
+  width: 85%;
+  height: 80px;
+
+  background: radial-gradient(
+    ellipse at center,
+    rgba(120,80,255,0.35) 0%,
+    rgba(120,80,255,0.15) 40%,
+    rgba(120,80,255,0.05) 60%,
+    transparent 80%
+  );
+
+  filter: blur(40px);
+  z-index: -1;
+  pointer-events: none;
+}
+@keyframes boardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.94);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes boardGlowStart {
+  0% {
+    box-shadow:
+      0 0 0 2px rgba(120,80,255,0.15),
+      0 0 8px rgba(120,80,255,0.15),
+      0 0 12px rgba(120,80,255,0.12),
+      0 60px 140px rgba(0,0,0,0.95),
+      0 0 30px rgba(120,80,255,0.08),
+      0 0 10px rgba(255,255,255,0.02);
+  }
+
+  60% {
+    box-shadow:
+      0 0 0 2px rgba(120,80,255,0.45),
+      0 0 30px rgba(120,80,255,0.6),
+      0 0 80px rgba(120,80,255,0.45),
+      0 60px 140px rgba(0,0,0,0.95),
+      0 0 120px rgba(120,80,255,0.35),
+      0 0 50px rgba(255,255,255,0.1);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(120,80,255,0.35),
+      0 0 20px rgba(120,80,255,0.45),
+      0 0 40px rgba(120,80,255,0.35),
+      0 60px 140px rgba(0,0,0,0.95),
+      0 0 80px rgba(120,80,255,0.18),
+      0 0 40px rgba(255,255,255,0.04);
+  }
+}
+.cell {
+  width: 100%;
+  height: 100%;
+  border-radius: 16%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  border: none;
+touch-action: manipulation;
+  backdrop-filter: none;
+box-shadow:
+  0 6px 12px rgba(0,0,0,0.6);
+  transition:
+    transform 0.25s cubic-bezier(.4,0,.2,1),
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+contain: layout paint;
+transform: translateZ(0);
+backface-visibility: hidden;
+contain: content;
+}
+.cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.15) 30%,
+    rgba(255,255,255,0.05) 60%,
+    rgba(255,255,255,0.02) 100%
+  );
+  pointer-events: none;
+}
+.cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 20px rgba(255,255,255,0.15),
+    0 0 20px rgba(255,255,255,0.08);
+}
+.region-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16%;
+  box-sizing: border-box;
+}
+.cell:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow:
+    0 18px 35px rgba(0,0,0,0.8),
+    inset 0 2px 2px rgba(255,255,255,0.5),
+    inset 0 -8px 14px rgba(0,0,0,0.45);
+}
+.cell:active {
+  transform: scale(0.97);
+}
+.cell.premium-flash {
+  animation: premiumPulse 0.4s ease;
+  animation-fill-mode: forwards;
+}
+.cell:focus,
+.cell:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+@keyframes premiumPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+.queen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+ animation: queenAppear 0.25s ease;
+}
+.queen svg {
+  width: 75%;
+  height: 75%;
+  color: #ffd700;
+  stroke: #ffffff;
+  stroke-width: 1.2;
+  filter:
+    drop-shadow(0 0 6px rgba(255,255,255,0.9))
+    drop-shadow(0 0 18px rgba(255,215,0,0.8))
+    drop-shadow(0 0 30px rgba(255,215,0,0.6));
+}
+.queen-icon {
+  width: 120%;
+  height: 120%;
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,1))
+    drop-shadow(0 0 22px rgba(255,215,0,0.9))
+    drop-shadow(0 0 45px rgba(255,215,0,0.7));
+}
+@keyframes queenAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.x::before,
+.x::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 42%;
+  height: 2px;
+  background: #111;  
+  border-radius: 2px;
+}
+.x::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.x::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.error {
+  border: 2px solid #ff1744 !important;
+  box-shadow:
+    0 0 18px rgba(255, 0, 60, 0.9),
+    inset 0 0 10px rgba(255, 0, 60, 0.6) !important;
+  animation: pulseError 0.9s infinite ease-in-out;
+}
+@keyframes pulseError {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (max-width: 480px) {
+  .app-info h1 {
+    font-size: 20px;
+  }
+  .app-header {
+    gap: 12px;
+  }
+.app-icon {
+  width: 260px;
+  height: 260px;
+}
+  }
+@keyframes winPulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.win-effect {
+  animation: winPulse 0.6s cubic-bezier(.4,0,.2,1);
+}
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+.cell:focus {
+  outline: none !important;
+}
+.cell:focus-visible {
+  outline: none !important;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.modal-content {
+  background: rgba(25,25,35,0.98);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 30px;
+  border-radius: 28px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  animation: scaleIn 0.35s cubic-bezier(.4,0,.2,1);
+
+  max-height: 85vh;
+  width: min(500px, 90vw);
+  display: flex;
+  flex-direction: column;
+}
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #1565c0;
+  color: white;
+  cursor: pointer;
+}
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes penaltyFlash {
+  0%   { color: #ff5252; transform: scale(1); }
+  40%  { color: #ff1744; transform: scale(1.15); }
+  70%  { color: #ff5252; transform: scale(1.08); }
+100% { color: rgba(255,255,255,0.8); transform: scale(1); }
+}
+@keyframes messageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.timer-penalty {
+  animation: penaltyFlash 1.4s ease;
+}
+.rules-box {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(25,25,35,0.85);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  max-width: 420px;
+  text-align: left;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  animation: fadeInRules 0.4s ease;
+}
+.rules-box h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+.rules-box ul {
+  padding-left: 18px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+@keyframes fadeInRules {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rules-floating {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+/* Hover specifico per logout */
+#logoutFloating:hover {
+  background: rgba(255, 80, 80, 0.25);
+  transform: scale(1.15);
+}
+.rules-floating:hover {
+  transform: scale(1.12);
+  background: rgba(255,255,255,0.15);
+}
+.leaderboard-wrapper {
+  overflow: hidden;
+  width: 320px;
+  max-width: 90vw;
+  margin: 20px auto 0 auto;
+}
+.leaderboard-slider {
+  display: flex;
+  width: 300%;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+}
+.leaderboard-page {
+  width: 33.3333%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.leaderboard-title {
+  font-weight: 700;
+font-size: 17px;
+  margin-bottom: 10px;
+}
+.leaderboard-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+.swipe-indicator {
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+.dots {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #ffd700;
+  transform: scale(1.3);
+}
+#rulesContent {
+  text-align: left;
+overflow-y: auto;
+  flex: 1;
+  margin-bottom: 20px;
+}
+.leaderboard-row.first-place {
+  text-shadow: 0 0 10px rgba(255,215,0,0.7);
+  font-weight: 700;
+}
+.dot {
+  cursor: pointer;
+}
+.player-hud{
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:10px 16px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(8px);
+
+  border:1px solid rgba(255,255,255,0.15);
+
+  max-width:420px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.player-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  font-size:18px;
+  font-weight:700;
+}
+
+#playerDisplay{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+#displayFlag{
+  width:22px;
+  height:auto;
+  border-radius:3px;
+}
+
+.player-timer{
+  font-size:18px;
+  font-weight:700;
+  color:#ff5252;
+  text-shadow:0 0 6px rgba(255,0,0,0.6);
+}
+.timer-complete {
+  color: #ffd700;
+  text-shadow:
+    0 0 10px rgba(255,215,0,0.9),
+    0 0 20px rgba(255,215,0,0.7),
+    0 0 40px rgba(255,215,0,0.4);
+}
+.player-timer span{
+  display:inline-block;
+}
+#timer{
+  font-variant-numeric: tabular-nums;
+}
+@keyframes timerPulse {
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255,0,0,0.6);
+  }
+
+  50% {
+    transform: scale(1.12);
+    text-shadow:
+      0 0 10px rgba(255,0,0,0.9),
+      0 0 20px rgba(255,80,80,0.7);
+  }
+
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255,0,0,0.6);
+  }
+}
+
+.timer-pulse {
+  animation: timerPulse 0.35s ease;
+}
+@keyframes logoFloat {
+
+  0% { transform: translateY(0px); }
+
+  50% { transform: translateY(-8px); }
+
+  100% { transform: translateY(0px); }
+
+}
+@keyframes logoGlow {
+
+  0% { filter:
+    drop-shadow(0 0 12px rgba(255,215,0,0.7))
+    drop-shadow(0 0 30px rgba(255,215,0,0.5));
+  }
+
+  50% { filter:
+    drop-shadow(0 0 18px rgba(255,215,0,0.9))
+    drop-shadow(0 0 45px rgba(255,215,0,0.7));
+  }
+
+  100% { filter:
+    drop-shadow(0 0 12px rgba(255,215,0,0.7))
+    drop-shadow(0 0 30px rgba(255,215,0,0.5));
+  }
+
+}
+</style>
+</head>
+<body>
+<div id="leftFloatingButtons" style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); left:20px; display:flex; gap:10px; z-index:10000;">
+  
+  <div id="installFloating" class="rules-floating" title="Install">
+    📲
+  </div>
+
+  <div id="pushFloating" class="rules-floating" title="Notifications">
+    🔔
+  </div>
+
+</div>
+<div style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); right:20px; display:flex; gap:10px; z-index:10000;">
+  <div id="logoutFloating" class="rules-floating" title="Logout">
+    🔒
+  </div>
+  <div id="rulesFloating" class="rules-floating" title="Rules">?</div>
+</div>
+<div class="app-header">
+  <div style="display:flex; flex-direction:column; align-items:center;">
+    
+    <div class="app-icon">
+      <img src="queens-logo.png" alt="Queens Logo">
+    </div>
+
+
+  </div>
+</div>
+<div id="playerInfo">
+<div class="player-hud">
+
+  <div class="player-left">
+
+    <span style="display:flex; align-items:center;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+      style="filter:
+        drop-shadow(0 0 4px rgba(255,255,255,0.8))
+        drop-shadow(0 0 10px rgba(120,80,255,0.5));">
+
+        <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2"/>
+        <path d="M4 20c2.5-4 5.5-6 8-6s5.5 2 8 6"
+              stroke="#ffffff"
+              stroke-width="2"
+              stroke-linecap="round"/>
+      </svg>
+    </span>
+
+    <span id="playerDisplay">
+      <span id="displayName"></span>
+      <img id="displayFlag">
+    </span>
+
+  </div>
+
+  <div class="player-timer">
+    ⏱ <span id="timer">00:00</span>
+  </div>
+
+</div>
+<button id="startBtn" class="game-btn">▶ Play</button>
+<button id="hintBtn" class="game-btn" disabled style="display:none;">
+  💡 Hint • 3
+</button>
+
+</div>
+<div id="leaderboardModal" style="display:none; margin-top:25px;">
+  <div class="modal-content">
+    <h2>🏆 Leaderboards</h2>
+
+    <div class="leaderboard-wrapper" id="leaderboardWrapper">
+      <div class="leaderboard-slider" id="leaderboardSlider">
+
+        <div class="leaderboard-page">
           <div class="leaderboard-title">⚡ Daily</div>
           <div id="dailyLeaderboard"></div>
         </div>
@@ -1348,6 +2113,2033 @@ message.style.marginTop = "15px";
 message.style.fontWeight = "600";
 message.style.textAlign = "center";
 message.innerText = "You already completed today's puzzle 👑";
+
+const leaderboard = document.getElementById("leaderboardModal");
+leaderboard.parentNode.insertBefore(message, leaderboard);
+
+const [daily, monthly, countries] = await Promise.all([
+  loadTodayLeaderboard(),
+  loadMonthlyLeaderboard(),
+  loadMonthlyCountryLeaderboard()
+]);
+
+renderDailyLeaderboard(daily);
+await renderDailyPosition();
+
+renderMonthlyLeaderboard(monthly);
+renderMonthlyCountryLeaderboard(countries);
+const monthlyPosition = await getMonthlyPlayerPosition();
+
+if (monthlyPosition) {
+  const positionBox = document.createElement("div");
+  positionBox.style.marginTop = "14px";
+  positionBox.style.fontWeight = "700";
+
+  const rank = monthlyPosition.rank;
+  const totalPlayers = monthlyPosition.totalPlayers;
+
+  if (rank === 1) {
+    positionBox.style.color = "#ffd700"; // Oro
+  } else if (rank === 2) {
+    positionBox.style.color = "#cfd8dc"; // Argento
+  } else if (rank === 3) {
+    positionBox.style.color = "#ffb74d"; // Bronzo
+  } else if (rank <= 10) {
+    positionBox.style.color = "#69f0ae"; // Verde premium
+  } else {
+    positionBox.style.color = "#ffffff"; // Bianco
+  }
+
+  let message = "";
+
+  if (rank === 1) {
+    message = "🏆 Monthly Leader";
+  } else if (rank === totalPlayers) {
+    message = "😅 Last place this month";
+  } else {
+    const betterThan = Math.round(
+      ((totalPlayers - rank) / totalPlayers) * 100
+    );
+    message = `Better than ${betterThan}% of this month's players`;
+  }
+
+  positionBox.innerText =
+`You are #${rank} of ${totalPlayers} players · ${message}`;
+
+  document.getElementById("monthlyLeaderboard").appendChild(positionBox);
+}
+
+document.getElementById("leaderboardModal").style.display = "block";
+
+return;
+}
+  if (!todayResult.completed) {
+startBtn.style.display = "none";
+hintBtn.style.display = "inline-block";
+hintsUsed = todayResult.hints_used || 0;
+hintBtn.textContent = `💡 Hint (${maxHints - hintsUsed})`;
+if (hintsUsed >= maxHints) {
+  hintBtn.disabled = true;
+}
+startBtn.disabled = true;
+if (hintsUsed < maxHints) {
+  hintBtn.disabled = false;
+} else {
+  hintBtn.disabled = true;
+}
+    const startedAt = new Date(todayResult.started_at).getTime();
+const penalty = todayResult.penalty_seconds || 0;
+startTime = startedAt - (penalty * 1000);
+   timerInterval = setInterval(() => {
+
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+
+  const timerEl = document.getElementById("timer");
+
+  timerEl.textContent = formatTime(seconds);
+
+  timerEl.classList.remove("timer-pulse");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-pulse");
+
+}, 1000);
+gridElement.style.visibility = "visible";
+gridElement.style.opacity = "1";
+gridElement.style.animation = "boardGlowStart 1.2s ease";
+document.getElementById("rulesBox").style.display = "none";
+document.getElementById("rulesFloating").style.display = "flex";
+    initializeGame();
+  }
+}
+
+function showAuthScreen() {
+  document.getElementById("playerInfo").style.display = "none";
+  document.getElementById("grid").style.display = "none";
+  document.getElementById("authContainer").style.display = "block";
+document.getElementById("logoutFloating").style.display = "none";
+}
+function initializeGame() {
+rows.fill(0);
+  cols.fill(0);
+  regions.fill(0);
+  queens = [];
+  gridElement.innerHTML = "";
+  cells = [];
+
+ for (let row = 0; row < size; row++) {
+  for (let col = 0; col < size; col++) {
+
+      const cell = document.createElement("div");
+
+      cells.push(cell);
+
+
+      cell.classList.add("cell");
+      cell.style.backgroundColor = colors[regionMap[row][col]];
+      cell.dataset.state = "empty";
+const region = regionMap[row][col];
+const borderColor = "rgba(0,0,0,0.8)";
+const borderSize = 2;
+
+const border = document.createElement("div");
+border.classList.add("region-border");
+
+if (row === 0 || regionMap[row-1][col] !== region) {
+  border.style.borderTop = borderSize + "px solid " + borderColor;
+}
+
+if (col === 0 || regionMap[row][col-1] !== region) {
+  border.style.borderLeft = borderSize + "px solid " + borderColor;
+}
+
+if (row === size-1 || regionMap[row+1][col] !== region) {
+  border.style.borderBottom = borderSize + "px solid " + borderColor;
+}
+
+if (col === size-1 || regionMap[row][col+1] !== region) {
+  border.style.borderRight = borderSize + "px solid " + borderColor;
+}
+
+cell.appendChild(border);
+cell.addEventListener("click", async () => {
+  if (document.querySelector(".error")) {
+    const isErrorQueen =
+      cell.dataset.state === "queen" &&
+      cell.classList.contains("error");
+    if (!isErrorQueen) return;
+  }
+  const state = cell.dataset.state;
+  if (state === "empty") {
+    cell.classList.add("x");
+    cell.dataset.state = "x";
+  } else if (state === "x") {
+    cell.classList.remove("x");
+    placeQueen(cell,row,col);
+    recomputeAutoX();
+  } else if (state === "queen") {
+    removeQueen(cell,row,col);
+    cells.forEach(c => c.classList.remove("error"));
+    recomputeAutoX();
+  }
+cell.classList.remove("premium-flash");
+void cell.offsetWidth;
+cell.classList.add("premium-flash");
+const hasConflict = checkConflicts();
+if (checkWin() || !checkIncompleteBoard()) {
+  if (boardErrorTimeout) {
+    clearTimeout(boardErrorTimeout);
+    boardErrorTimeout = null;
+  }
+  clearHintMessage();
+}
+if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
+  if (boardErrorTimeout) clearTimeout(boardErrorTimeout);
+  boardErrorTimeout = setTimeout(() => {
+    if (!checkWin() && checkIncompleteBoard()) {
+      showFixedMessage(
+        "⚠️ The board is full but 10 queens are not placed",
+        "error"
+      );
+    }
+  }, 1200);
+  return;
+}
+if (!hasConflict && checkWin()) {
+    clearInterval(timerInterval);
+document.getElementById("timer").classList.add("timer-complete");
+    const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+    await supabaseClient
+      .from("queens_results")
+      .update({
+        completed: true,
+        time_seconds: totalSeconds
+      })
+      .eq("email", playerEmail)
+      .eq("date", new Date().toISOString().split("T")[0]);
+    startBtn.disabled = true;
+    hintBtn.disabled = true;
+    document.querySelectorAll(".queen").forEach(q => {
+      q.classList.add("win-effect");
+    });
+    launchConfetti();
+    setTimeout(() => {
+      showModal(totalSeconds);
+    }, 1200);
+  }
+});
+      gridElement.appendChild(cell);
+    }
+  }
+}
+
+function toggleAuthMode() {
+
+  // 🔴 RESETTA MODALITÀ RESET
+  isResetMode = false;
+  document.getElementById("authPassword").style.display = "block";
+
+  isRegisterMode = !isRegisterMode;
+
+  const title = document.getElementById("authTitle");
+  const extra = document.getElementById("registerExtra");
+  const mainBtn = document.getElementById("authMainBtn");
+  const switchText = document.getElementById("authSwitchText");
+  const switchLink = document.getElementById("authSwitchLink");
+
+  if (isRegisterMode) {
+    title.textContent = "Register";
+    extra.style.display = "block";
+    mainBtn.textContent = "Register";
+    switchText.textContent = "Already have an account?";
+    switchLink.textContent = "Login";
+} else {
+  title.textContent = "Login";
+  extra.style.display = "none";
+  mainBtn.textContent = "Login";
+  switchText.textContent = "Don't have an account?";
+  switchLink.textContent = "Register";
+}
+  // 👇 AGGIUNGI QUESTO BLOCCO QUI
+  const errorBox = document.getElementById("authErrorBox");
+  if (errorBox) errorBox.remove();
+}
+function placeQueen(cell, row, col) {
+
+  const region = regionMap[row][col];
+
+  rows[row]++;
+  cols[col]++;
+  regions[region]++;
+
+  queens.push({cell,row,col,region});
+
+  const queen = document.createElement("span");
+  queen.className = "queen";
+
+  const img = document.createElement("img");
+  img.src = "queens-logo.png";
+  img.className = "queen-icon";
+
+  queen.appendChild(img);
+  cell.appendChild(queen);
+
+  cell.dataset.state = "queen";
+
+}
+function removeQueen(cell,row,col){
+
+  const region = regionMap[row][col];
+
+  rows[row]--;
+  cols[col]--;
+  regions[region]--;
+
+  queens = queens.filter(q => q.cell !== cell);
+
+  const queen = cell.querySelector(".queen");
+  if (queen) queen.remove();
+
+  cell.dataset.state = "empty";
+
+}
+function showResetForm() {
+
+  isRegisterMode = false;
+  isResetMode = true;
+
+  document.getElementById("authTitle").textContent = "Reset Password";
+  document.getElementById("authPassword").style.display = "none";
+  document.getElementById("registerExtra").style.display = "none";
+  document.getElementById("authMainBtn").textContent = "Send reset link";
+
+  document.getElementById("authSwitchText").textContent = "Back to login?";
+  document.getElementById("authSwitchLink").textContent = "Login";
+
+  const errorBox = document.getElementById("authErrorBox");
+  if (errorBox) errorBox.remove();
+}
+function showAuthError(message) {
+  let errorBox = document.getElementById("authErrorBox");
+
+  if (!errorBox) {
+    errorBox = document.createElement("div");
+    errorBox.id = "authErrorBox";
+    errorBox.style.marginTop = "12px";
+    errorBox.style.fontWeight = "600";
+    errorBox.style.color = "#ff6b6b";
+    document.getElementById("authMainBtn").after(errorBox);
+  }
+
+  errorBox.textContent = message;
+}
+async function handleAuth() {
+
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+// 🔴 RESET PASSWORD
+if (isResetMode) {
+
+  if (!email) {
+    showAuthError("Enter your email.");
+    return;
+  }
+
+  const allowedDomain = "@infineum.com";
+
+  if (!email.toLowerCase().endsWith(allowedDomain)) {
+    showAuthError("Password reset allowed only for @infineum.com email.");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+  redirectTo: window.location.origin + "/Queens/"
+});
+
+  if (error) {
+    showAuthError("Error sending reset email.");
+    return;
+  }
+
+  showAuthError("Reset link sent.  Check your email.");
+  return;
+}
+
+  if (!email || !password) {
+    showAuthError("Enter email and password.");
+    return;
+  }
+
+  // 🔵 LOGIN
+  if (!isRegisterMode) {
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      showAuthError("Invalid email or password.");
+      return;
+    }
+
+    window.location.reload();
+    return;
+  }
+
+  // 🟣 REGISTRAZIONE
+  const name = document.getElementById("authName").value.trim();
+  const country = document.getElementById("authCountry").value;
+
+  if (!name || !country) {
+    showAuthError("Fill in all fields.");
+    return;
+  }
+
+  const allowedDomain = "@infineum.com";
+
+  if (!email.toLowerCase().endsWith(allowedDomain)) {
+    showAuthError("You must use your company email @infineum.com");
+    return;
+  }
+
+  if (password.length < 6) {
+    showAuthError("Password must contain at least 6 characters.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    showAuthError(error.message);
+    return;
+  }
+
+  const user = data.user;
+
+  const { error: profileError } = await supabaseClient
+    .from("players")
+    .insert({
+      id: user.id,
+      email: email,
+      name: name,
+      country_code: country
+    });
+
+  if (profileError) {
+    showAuthError("Error saving profile.");
+    return;
+  }
+
+  window.location.reload();
+}
+
+
+function checkConflicts() {
+
+  let hasError = false;
+
+  queens.forEach(q => {
+
+    if (rows[q.row] > 1) {
+      highlightRow(q.row);
+      hasError = true;
+    }
+
+    if (cols[q.col] > 1) {
+      highlightColumn(q.col);
+      hasError = true;
+    }
+
+    if (regions[q.region] > 1) {
+      highlightRegion(q.region);
+      hasError = true;
+    }
+
+  });
+
+  // controllo adiacenza (unico controllo necessario)
+  const queenMap = new Set(
+    queens.map(q => q.row + "-" + q.col)
+  );
+
+  queens.forEach(q => {
+
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+
+        if (dr === 0 && dc === 0) continue;
+
+        const r = q.row + dr;
+        const c = q.col + dc;
+
+        if (queenMap.has(r + "-" + c)) {
+          q.cell.classList.add("error");
+          hasError = true;
+        }
+
+      }
+    }
+
+  });
+
+  if (hasError && navigator.vibrate) {
+    navigator.vibrate(120);
+  }
+
+  return hasError;
+
+}
+function checkWin() {
+  return queens.length === size;
+}
+function checkIncompleteBoard() {
+
+  let queenCount = 0;
+  let filledCount = 0;
+
+  cells.forEach(cell => {
+    if (cell.dataset.state === "queen") queenCount++;
+
+    if (
+      cell.dataset.state === "queen" ||
+      cell.dataset.state === "x"
+    ) {
+      filledCount++;
+    }
+  });
+
+  return filledCount === size * size && queenCount < size;
+
+}
+function highlightRow(row) {
+  for (let col = 0; col < size; col++) {
+    cells[row * size + col].classList.add("error");
+  }
+}
+function highlightColumn(col) {
+  for (let row = 0; row < size; row++) {
+    cells[row * size + col].classList.add("error");
+  }
+}
+function highlightRegion(region) {
+
+  cells.forEach((cell,i)=>{
+
+    const r=Math.floor(i/size);
+    const c=i%size;
+
+    if(regionMap[r][c]===region){
+      cell.classList.add("error");
+    }
+
+  });
+
+}
+function recomputeAutoX() {
+
+  cells.forEach(cell => {
+    if (cell.dataset.state === "x") {
+      cell.classList.remove("x");
+      cell.dataset.state = "empty";
+    }
+  });
+
+  queens.forEach(q => {
+
+    for (let r = 0; r < size; r++) {
+
+      const indexRow = q.row * size + r;
+      const indexCol = r * size + q.col;
+
+      markX(indexRow);
+      markX(indexCol);
+
+    }
+
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+
+        const r = q.row + i;
+        const c = q.col + j;
+
+        if (r >= 0 && r < size && c >= 0 && c < size) {
+          markX(r * size + c);
+        }
+
+      }
+    }
+
+    cells.forEach((cell,i)=>{
+      const r=Math.floor(i/size);
+      const c=i%size;
+
+      if(regionMap[r][c]===q.region){
+        markX(i);
+      }
+    });
+
+  });
+
+}
+
+function markX(index){
+
+  const cell = cells[index];
+
+  if(cell.dataset.state==="empty"){
+    cell.dataset.state="x";
+    cell.classList.add("x");
+  }
+
+}
+
+function giveHint() {
+  if (!startTime) return;
+  if (hintsUsed >= maxHints) return;
+  if (document.querySelector(".error")) return;
+  const cells = document.querySelectorAll(".cell");
+  for (let row = 0; row < size; row++) {
+    let queenFound = false;
+    let queenCol = null;
+    let queenCell = null;
+    for (let col = 0; col < size; col++) {
+      const index = row * size + col;
+      const cell = cells[index];
+      if (cell.dataset.state === "queen") {
+        queenFound = true;
+        queenCol = col;
+        queenCell = cell;
+        break;
+      }
+    }
+    if (queenFound && queenCol !== solution[row]) {
+      removeQueen(queenCell,row,queenCol);
+      queenCell.classList.add("error");
+      setTimeout(() => {
+        queenCell.classList.remove("error");
+      }, 800);
+      recomputeAutoX();
+      showFixedMessage(
+  `❌ I removed an incorrect Queen from row ${row + 1}. (+30s)`,
+  "error"
+);
+      applyHintPenalty("remove");
+      return;
+    }
+if (!queenFound) {
+  const correctCol = solution[row];
+  let removedRow = null;
+  for (let r = 0; r < size; r++) {
+    if (r === row) continue;
+    const indexCheck = r * size + correctCol;
+    const cellCheck = cells[indexCheck];
+    if (cellCheck.dataset.state === "queen" && solution[r] !== correctCol) {
+      cellCheck.innerHTML = "";
+      cellCheck.dataset.state = "empty";
+      removedRow = r;
+    }
+  }
+  const index = row * size + correctCol;
+  const targetCell = cells[index];
+targetCell.classList.remove("x");
+placeQueen(targetCell,row,correctCol);
+  recomputeAutoX();
+if (removedRow !== null) {
+showFixedMessage(
+  `👑 I inserted the correct Queen in row ${row + 1} and removed the incorrect one from row ${removedRow + 1}. (+60s)`,
+  "success"
+);
+  applyHintPenalty("insert_remove");
+} else {
+showFixedMessage(
+  `👑 I inserted the correct Queen in row ${row + 1}. (+45s)`,
+  "success"
+);
+  applyHintPenalty("insert");
+}
+return;
+}
+  }
+}
+async function applyHintPenalty(type) {
+  let penalty = 45;
+  if (type === "remove") penalty = 30;
+  else if (type === "insert") penalty = 45;
+  else if (type === "insert_remove") penalty = 60;
+  startTime -= penalty * 1000;
+  const today = new Date().toISOString().split("T")[0];
+  const { data } = await supabaseClient
+    .from("queens_results")
+    .select("penalty_seconds, hints_used")
+    .eq("email", playerEmail)
+    .eq("date", today)
+    .maybeSingle();
+  const currentPenalty = data?.penalty_seconds || 0;
+  const currentHints = data?.hints_used || 0;
+  const newHints = currentHints + 1;
+  const { error } = await supabaseClient
+    .from("queens_results")
+    .update({
+      penalty_seconds: currentPenalty + penalty,
+      hints_used: newHints
+    })
+    .eq("email", playerEmail)
+    .eq("date", today);
+  if (error) {
+    console.error(error);
+    return;
+  }
+  hintsUsed = newHints;
+  const timerEl = document.getElementById("timer");
+  timerEl.classList.remove("timer-penalty");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-penalty");
+  hintBtn.textContent = `💡 Hint (${maxHints - hintsUsed})`;
+  if (hintsUsed >= maxHints) {
+    hintBtn.disabled = true;
+  }
+}
+function showHintMessage(text, type = "info") {
+  const oldMsg = document.getElementById("hintMessage");
+  if (oldMsg) oldMsg.remove();
+  const msg = document.createElement("div");
+  msg.id = "hintMessage";
+  msg.style.marginTop = "12px";
+  msg.style.fontWeight = "600";
+  msg.style.transition = "opacity 0.4s ease";
+  if (type === "error") {
+    msg.style.color = "#ff6b6b";
+  } else if (type === "success") {
+    msg.style.color = "#69f0ae";
+  } else {
+    msg.style.color = "#ffffff";
+  }
+  msg.textContent = text;
+  document.getElementById("playerInfo").appendChild(msg);
+  setTimeout(() => {
+    msg.style.opacity = "0";
+    setTimeout(() => msg.remove(), 400);
+  }, 3000);
+}
+function clearHintMessage() {
+  const msg = document.getElementById("hintMessage");
+  if (msg) msg.remove();
+}
+function showRulesModal(message) {
+  const modal = document.getElementById("rulesModal");
+  const messageElement = document.getElementById("rulesContent");
+  const button = document.getElementById("rulesModalBtn");
+  messageElement.innerHTML = message.replace(/\n/g, "<br>");
+  button.onclick = () => {
+    modal.style.display = "none";
+  };
+  modal.style.display = "flex";
+}
+function showModal(time) {
+  const modal = document.getElementById("winModal");
+  const button = document.getElementById("modalBtn");
+const shareBtn = document.createElement("button");
+shareBtn.textContent = "📤 Share result";
+shareBtn.style.marginTop = "10px";
+
+shareBtn.onclick = async () => {
+
+  const result = await getPlayerPosition();
+
+  const text =
+`👑 Queens — ${new Date().toISOString().split("T")[0]}
+
+⏱ ${time}s
+🏆 ${result.rank}/${result.totalPlayers}
+
+Play now:
+${window.location.href}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "Queens Game",
+      text: text
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    showFixedMessage("Result copied to clipboard");
+  }
+
+};
+
+document.querySelector("#winModal .modal-content").appendChild(shareBtn);
+  modal.querySelector("h2").textContent = "👑 Game Completed";
+  document.getElementById("finalTime").textContent =
+    "Time: " + time + " seconds";
+  button.textContent = "Close";
+  button.onclick = closeModal;
+  modal.style.display = "flex";
+}
+async function closeModal() {
+
+  // Chiudi modal vittoria
+  document.getElementById("winModal").style.display = "none";
+
+  // Nascondi griglia
+gridElement.style.display = "none";
+gridElement.style.height = "0";
+gridElement.style.padding = "0";
+gridElement.style.margin = "0";
+gridElement.innerHTML = "";
+
+startBtn.disabled = true;
+hintBtn.disabled = true;
+
+startBtn.innerText = "Already played";
+startBtn.style.display = "none";
+hintBtn.style.display = "none";
+
+  // Messaggio completamento
+  const message = document.createElement("div");
+  message.classList.add("post-game");
+  message.style.marginTop = "15px";
+  message.style.fontWeight = "600";
+  message.innerText = "You already completed today's puzzle 👑";
+  document.getElementById("playerInfo").appendChild(message);
+
+  // Carica classifiche
+const [daily, monthly, countries] = await Promise.all([
+  loadTodayLeaderboard(),
+  loadMonthlyLeaderboard(),
+  loadMonthlyCountryLeaderboard()
+]);
+
+renderDailyLeaderboard(daily);
+await renderDailyPosition();
+
+renderMonthlyLeaderboard(monthly);
+renderMonthlyCountryLeaderboard(countries);
+const monthlyPosition = await getMonthlyPlayerPosition();
+
+if (monthlyPosition) {
+  const positionBox = document.createElement("div");
+  positionBox.style.marginTop = "14px";
+  positionBox.style.fontWeight = "700";
+
+  const rank = monthlyPosition.rank;
+  const totalPlayers = monthlyPosition.totalPlayers;
+
+  if (rank === 1) {
+    positionBox.style.color = "#ffd700"; // Oro
+  } else if (rank === 2) {
+    positionBox.style.color = "#cfd8dc"; // Argento
+  } else if (rank === 3) {
+    positionBox.style.color = "#ffb74d"; // Bronzo
+  } else if (rank <= 10) {
+    positionBox.style.color = "#69f0ae"; // Verde premium
+  } else {
+    positionBox.style.color = "#ffffff"; // Bianco
+  }
+
+  let message = "";
+
+  if (rank === 1) {
+    message = "🏆 Monthly Leader";
+  } else if (rank === totalPlayers) {
+    message = "😅 Last place this month";
+  } else {
+    const betterThan = Math.round(
+      ((totalPlayers - rank) / totalPlayers) * 100
+    );
+    message = `Better than ${betterThan}% of this month's players`;
+  }
+
+  positionBox.innerText =
+    `You are #${rank} of ${totalPlayers} players · ${message}`;
+
+  document.getElementById("monthlyLeaderboard").appendChild(positionBox);
+}
+
+  // Reset slider posizione
+  const slider = document.getElementById("leaderboardSlider");
+  slider.style.transform = "translateX(0%)";
+
+  const dots = document.querySelectorAll(".dot");
+  dots.forEach(dot => dot.classList.remove("active"));
+  if (dots[0]) dots[0].classList.add("active");
+
+  // Apri modal leaderboard
+  document.getElementById("leaderboardModal").style.display = "block";
+}
+function closeLeaderboardModal() {
+  document.getElementById("leaderboardModal").style.display = "none";
+}
+async function showLeaderboardOnly() {
+  const leaderboard = await loadTodayLeaderboard();
+  const leaderboardDiv = document.createElement("div");
+  leaderboardDiv.classList.add("post-game");
+  leaderboardDiv.style.marginTop = "20px";
+  leaderboardDiv.style.padding = "15px";
+leaderboardDiv.style.background = "rgba(25,25,35,0.9)";
+leaderboardDiv.style.border = "1px solid rgba(255,255,255,0.08)";
+leaderboardDiv.style.backdropFilter = "blur(12px)";
+  leaderboardDiv.style.borderRadius = "15px";
+  leaderboardDiv.style.maxWidth = "350px";
+  leaderboardDiv.style.boxShadow = "0 10px 25px rgba(0,0,0,0.15)";
+  const title = document.createElement("h3");
+  title.innerText = "🏆 Today's Leaderboard";
+  title.style.marginBottom = "10px";
+  leaderboardDiv.appendChild(title);
+  leaderboard.forEach((player, index) => {
+    const row = document.createElement("div");
+    row.style.display = "flex";
+    row.style.justifyContent = "space-between";
+    row.style.padding = "6px 0";
+    let medal = "";
+    if (index === 0) medal = "👑";
+    else if (index === 1) medal = "🥈";
+    else if (index === 2) medal = "🥉";
+if (index === 0) {
+  row.style.color = "#ffd700"; // Oro
+} else if (index === 1) {
+  row.style.color = "#cfd8dc"; // Argento
+} else if (index === 2) {
+  row.style.color = "#ffb74d"; // Bronzo
+} else if (index < 10) {
+  row.style.color = "#69f0ae"; 
+} else {
+  row.style.color = "#b0bec5"; 
+}
+if (player.email === playerEmail) {
+  row.style.fontWeight = "700";
+  row.style.textShadow = "0 0 8px rgba(255,255,255,0.4)";
+}
+    row.innerHTML = `
+      <span>${medal} ${index + 1}. ${player.name}</span>
+      <strong>${player.time_seconds}s</strong>
+    `;
+    leaderboardDiv.appendChild(row);
+  });
+  const positionData = await getPlayerPosition();
+  if (positionData) {
+    const positionBox = document.createElement("div");
+    positionBox.style.marginTop = "14px";
+    positionBox.style.fontWeight = "700";
+ if (positionData.rank === 1) {
+  positionBox.style.color = "#ffd700"; // Oro
+} else if (positionData.rank === 2) {
+  positionBox.style.color = "#cfd8dc"; // Argento
+} else if (positionData.rank === 3) {
+  positionBox.style.color = "#ffb74d"; // Bronzo
+} else if (positionData.rank <= 10) {
+  positionBox.style.color = "#69f0ae"; // Verde premium
+} else {
+  positionBox.style.color = "#b0bec5"; // Grigio elegante
+}
+    positionBox.innerText =
+`You are #${positionData.rank} of ${positionData.totalPlayers} players · ${positionData.time}s`;
+    leaderboardDiv.appendChild(positionBox);
+  }
+  document.getElementById("playerInfo").appendChild(leaderboardDiv);
+}
+startBtn.addEventListener("click", async () => {
+startBtn.style.display = "none";
+hintBtn.style.display = "inline-block";
+  hintsUsed = 0;
+  hintBtn.textContent = "💡 Hint • 3";
+  const today = new Date().toISOString().split("T")[0];
+  const { data: existing } = await supabaseClient
+    .from("queens_results")
+    .select("*")
+    .eq("email", playerEmail)
+    .eq("date", today)
+    .maybeSingle();
+if (existing) {
+  if (existing.completed) {
+    startBtn.disabled = true;
+    return;
+  }
+  startBtn.disabled = true;
+  hintsUsed = existing.hints_used || 0;
+  hintBtn.textContent = `💡 Hint (${maxHints - hintsUsed})`;
+  if (hintsUsed < maxHints) {
+    hintBtn.disabled = false;
+  } else {
+    hintBtn.disabled = true;
+  }
+  const startedAt = new Date(existing.started_at).getTime();
+  const penalty = existing.penalty_seconds || 0;
+  startTime = startedAt - (penalty * 1000);
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+
+  const timerEl = document.getElementById("timer");
+
+  timerEl.textContent = formatTime(seconds);
+
+  timerEl.classList.remove("timer-pulse");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-pulse");
+
+}, 1000);
+  gridElement.style.visibility = "visible";
+  gridElement.style.opacity = "1";
+document.getElementById("rulesBox").style.display = "none";
+document.getElementById("rulesFloating").style.display = "flex";
+  initializeGame();
+  return;
+}
+  const { data, error } = await supabaseClient
+    .from("queens_results")
+.insert({
+  date: today,
+  name: playerName,
+  email: playerEmail,
+  country_code: countryCode,
+  completed: false,
+  hints_used: 0,
+  penalty_seconds: 0
+})
+    .select()
+    .single();
+  if (error) {
+    console.log(JSON.stringify(error, null, 2));
+    return;
+  }
+  startTime = new Date(data.started_at).getTime();
+  timerInterval = setInterval(() => {
+
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+
+  const timerEl = document.getElementById("timer");
+
+  timerEl.textContent = formatTime(seconds);
+
+  timerEl.classList.remove("timer-pulse");
+  void timerEl.offsetWidth;
+  timerEl.classList.add("timer-pulse");
+
+}, 1000);
+  gridElement.style.visibility = "visible";
+  gridElement.style.opacity = "1";
+gridElement.style.animation = "boardGlowStart 1.2s ease";
+  startBtn.disabled = true;
+  hintBtn.disabled = false;
+document.getElementById("rulesBox").style.display = "none";
+document.getElementById("rulesFloating").style.display = "flex";
+  initializeGame();
+});
+
+function launchConfetti() {
+  const duration = 1000;
+  const end = Date.now() + duration;
+  const colors = ['#ffd700', '#ff4081', '#40c4ff', '#69f0ae'];
+  (function frame() {
+    confetti({
+      particleCount: 6,
+      angle: 60,
+      spread: 70,
+      origin: { x: 0 },
+      colors: colors
+    });
+    confetti({
+      particleCount: 6,
+      angle: 120,
+      spread: 70,
+      origin: { x: 1 },
+      colors: colors
+    });
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
+hintBtn.addEventListener("click", giveHint);
+document.getElementById("rulesFloating").addEventListener("click", () => {
+  showRulesModal(
+`🧠 QUEENS — PURE STRATEGY
+
+This is not a game of speed.  
+It is a game of clarity.
+
+🎯 OBJECTIVE  
+Place 10 Queens on the 10×10 grid while respecting all constraints.  
+Every move affects the entire structure.
+
+♟️ STRATEGIC CONSTRAINTS  
+• 1 Queen per row  
+• 1 Queen per column  
+• 1 Queen per colored region  
+• Queens cannot touch each other (not even diagonally)
+
+⚡ SMART MECHANICS  
+When you place a Queen, impossible cells are automatically blocked.  
+Look at what remains free — that is where the solution hides.
+
+💡 HINTS (max 3)  
+Hints are tools, not shortcuts.  
+• Remove wrong Queen → +30s  
+• Insert correct Queen → +45s  
+• Combined correction → +60s
+
+⏱️ TIME  
+The timer measures your decision-making ability.  
+The fastest player does not always win.  
+The most precise one does.
+
+📊 MONTHLY SCORING SYSTEM   
+• 🥇 1st place → +15 points  
+• 🥈 2nd place → +10 points  
+• 🥉 3rd place → +7 points  
+• 4th–10th place → +3 points
+• Participation → +1 point 
+
+Even a difficult day contributes to the leaderboard.
+
+🧩 Only one attempt per day.  
+Each game is a final decision.
+
+👑 Queens does not reward luck.  
+It rewards the mind.`
+  );
+});
+// --- SWIPE LEADERBOARD ---
+document.addEventListener("DOMContentLoaded", () => {
+
+  const wrapper = document.getElementById("leaderboardWrapper");
+  const slider = document.getElementById("leaderboardSlider");
+
+  if (!wrapper || !slider) return;
+
+  let startX = 0;
+  let currentPage = 0;
+
+  wrapper.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  wrapper.addEventListener("touchend", (e) => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = endX - startX;
+
+    if (Math.abs(diff) < 50) return;
+
+if (diff < 0 && currentPage < 2) {
+  currentPage++;
+} else if (diff > 0 && currentPage > 0) {
+  currentPage--;
+}
+
+    slider.style.transform = `translateX(-${currentPage * 33.3333}%)`;
+
+    const dots = document.querySelectorAll(".dot");
+    if (dots.length > 0) {
+      dots.forEach(dot => dot.classList.remove("active"));
+      dots[currentPage]?.classList.add("active");
+    }
+  });
+// --- CLICK DOTS ---
+const dots = document.querySelectorAll(".dot");
+
+dots.forEach((dot, index) => {
+  dot.addEventListener("click", () => {
+    currentPage = index;
+    slider.style.transform = `translateX(-${currentPage * 33.3333}%)`;
+
+    dots.forEach(d => d.classList.remove("active"));
+    dot.classList.add("active");
+  });
+});
+}); 
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutFloating");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.reload();
+    });
+  }
+});
+function showNewPasswordForm() {
+
+  document.getElementById("playerInfo").style.display = "none";
+  document.getElementById("grid").style.display = "none";
+  document.getElementById("authContainer").style.display = "block";
+  document.getElementById("logoutFloating").style.display = "none";
+
+  document.getElementById("authTitle").textContent = "New Password";
+  document.getElementById("authPassword").style.display = "block";
+  document.getElementById("authPassword").value = "";
+  document.getElementById("authMainBtn").textContent = "Update Password";
+
+  isResetMode = false;
+  isRegisterMode = false;
+
+  document.getElementById("authMainBtn").onclick = async () => {
+
+    const newPassword = document.getElementById("authPassword").value.trim();
+
+    if (newPassword.length < 6) {
+      showAuthError("Minimum 6 characters.");
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      showAuthError("Error updating password.");
+      return;
+    }
+
+    showAuthError("Password updated successfully.");
+
+    setTimeout(() => {
+      window.location.href = window.location.origin + "/Queens/";
+    }, 1500);
+  };
+}
+
+
+function setupFloatingButtons() {
+
+  const installBtn = document.getElementById("installFloating");
+  const pushBtn = document.getElementById("pushFloating");
+
+  const installed = isAppInstalled();
+
+  // default: nascondiamo tutto
+if (installBtn) installBtn.style.display = "none";
+if (pushBtn) pushBtn.style.display = "none";
+  // se l'app NON è installata → mostra install
+if (!installed && installBtn) {
+  installBtn.style.display = "flex";
+} else if (installed && playerEmail && 'Notification' in window && Notification.permission !== "granted") {
+  if (pushBtn) pushBtn.style.display = "flex";
+}
+  // se app installata ma NON loggato → niente
+if (!playerEmail || playerEmail === null) {
+  return;
+}
+
+}
+// --- RESET BADGE E NOTIFICHE ALL'APERTURA APP ---
+
+if ('serviceWorker' in navigator) {
+
+  navigator.serviceWorker.getRegistration().then(reg => {
+    if (reg) {
+
+      reg.getNotifications().then(notifications => {
+        notifications.forEach(n => n.close());
+      });
+
+    }
+  });
+
+}
+
+if ('clearAppBadge' in navigator) {
+  navigator.clearAppBadge();
+}
+function formatTime(seconds) {
+
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+
+  return (
+    String(m).padStart(2, "0") +
+    ":" +
+    String(s).padStart(2, "0")
+  );
+
+}
+initializePage();
+setupFloatingButtons();
+
+</script>
+<div id="winModal" class="modal">
+  <div class="modal-content">
+    <h2>👑 Game Completed</h2>
+    <p id="finalTime"></p>
+    <button id="modalBtn">Close</button>
+  </div>
+</div>
+<div id="rulesModal" class="modal">
+  <div class="modal-content">
+    <h2>📜 Queens Rules</h2>
+    <p id="rulesContent"></p>
+    <button id="rulesModalBtn">Close</button>
+  </div>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+  .then(() => console.log("Service Worker registered"))
+  .catch(err => console.log("Service Worker error:", err));
+}
+</script>
+<script>
+
+let deferredPrompt;
+const installBtn = document.getElementById("installFloating");
+
+if (!installBtn) {
+  console.warn("installFloating non trovato");
+} else {
+
+  if (isAppInstalled()) {
+    installBtn.style.display = "none";
+  }
+
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    installBtn.style.display = "none";
+  }
+
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+if (isAppInstalled()) return;
+
+
+  e.preventDefault();
+
+  deferredPrompt = e;
+
+ if (installBtn && !isAppInstalled()) installBtn.style.display = "flex";
+showFixedMessage("📲 Install Queens for faster access");
+
+});
+
+if (installBtn) {
+  installBtn.addEventListener("click", async () => {
+
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+
+  const choice = await deferredPrompt.userChoice;
+
+  if (choice.outcome === "accepted") {
+    installBtn.style.display = "none";
+  }
+
+  deferredPrompt = null;
+
+});
+}
+
+window.addEventListener("appinstalled", () => {
+
+  localStorage.setItem("queens_installed", "true");
+
+const installBtn = document.getElementById("installFloating");
+if (installBtn) installBtn.style.display = "none";
+
+});
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+function isAppInstalled() {
+
+  // Android / Chrome / Edge
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    return true;
+  }
+
+  // iOS Safari
+  if (window.navigator.standalone === true) {
+    return true;
+  }
+
+  // fallback salvato dopo installazione
+  if (localStorage.getItem("queens_installed") === "true") {
+    return true;
+  }
+
+  return false;
+}
+if (isIOS() && !window.navigator.standalone) {
+
+  const installBtn = document.getElementById("installFloating");
+
+  if (installBtn) {
+    if (!isAppInstalled()) installBtn.style.display = "flex";
+
+    installBtn.addEventListener("click", () => {
+
+      showFixedMessage(
+        "On iPhone tap Share → Add to Home Screen",
+        "info",
+        8000
+      );
+
+    });
+  }
+
+}
+function urlBase64ToUint8Array(base64String) {
+
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+
+  return outputArray;
+
+}
+async function enablePush() {
+if (!playerEmail) {
+    showFixedMessage("Please login first");
+    return;
+  }
+ if (!('serviceWorker' in navigator)) {
+    showFixedMessage("Push notifications are not supported on this browser");
+    return;
+  }
+if (!('Notification' in window)) {
+  showFixedMessage("Notifications not supported on this browser");
+  return;
+}
+
+const permission = await Notification.requestPermission();
+
+  if (permission !== "granted") {
+    showFixedMessage("❌ Notifications not enabled");
+    return;
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+
+let subscription = await registration.pushManager.getSubscription();
+
+if (!subscription) {
+  subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array("BFm84EXzesmdcYIg-Mvd1mb1RAK0qeESiS8h3NCxf2R70aBx1gaxf2bY27FXOTlZ_zN9NgRxk9UcWoN9rsWlcUM")
+  });
+}
+
+  const { error } = await supabaseClient
+    .from("push_subscriptions")
+    .upsert({
+      email: playerEmail,
+      subscription: subscription
+    });
+
+  if (error) {
+    console.error(error);
+    showFixedMessage("Error enabling notifications");
+    return;
+  }
+
+showFixedMessage("🔔 Notifications enabled");
+
+const btn = document.getElementById("pushFloating");
+if (btn) btn.style.display = "none";
+
+}
+
+const pushBtn = document.getElementById("pushFloating");
+if (pushBtn) {
+  pushBtn.addEventListener("click", enablePush);
+}
+</script>
+</body>
+</html></div>
+          <div id="dailyLeaderboard"></div>
+        </div>
+
+        <div class="leaderboard-page">
+          <div class="leaderboard-title">📊 Monthly (Individual)</div>
+          <div id="monthlyLeaderboard"></div>
+        </div>
+<div class="leaderboard-page">
+  <div class="leaderboard-title">🌍 Monthly by Country (Top 3 Players)</div>
+  <div id="countryLeaderboard"></div>
+</div>
+
+      </div>
+    </div>
+
+    <div class="dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+<span class="dot"></span>
+    </div>
+
+  </div>
+</div>
+<div id="rulesBox" class="rules-box" style="display:none;">
+<h3>👑 Queens — Official Rules</h3>
+<p><strong>🎯 Objective</strong><br>
+Place 10 Queens on the 10×10 grid.</p>
+
+<p><strong>♟️ Constraints</strong><br>
+• 1 Queen per row<br>
+• 1 Queen per column<br>
+• 1 Queen per colored region<br>
+• Queens cannot touch each other, not even diagonally</p>
+
+<p><strong>💡 Hints</strong> (max 3)<br>
++30s Remove Queen<br>
++45s Insert Queen<br>
++60s Full correction</p>
+
+<p><strong>🏆</strong> One attempt per day.<br>
+Lowest time wins.</p>
+</div>
+<div id="fixedMessageBox" style="
+  height: 22px;
+  margin-top: 15px;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+"></div>
+<div id="authContainer" style="display:none; margin-top:40px; width:100%; max-width:420px;">
+  <div style="
+    background: rgba(255,255,255,0.05);
+    padding:30px;
+    border-radius:28px;
+    backdrop-filter: blur(18px);
+    border:1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  ">
+
+    <h2 id="authTitle" style="margin-bottom:20px;">Login</h2>
+
+    <input id="authEmail" type="email" placeholder="Email"
+      style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
+
+    <input id="authPassword" type="password" placeholder="Password"
+      style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
+
+    <!-- Campi solo registrazione -->
+    <div id="registerExtra" style="display:none;">
+      <input id="authName" placeholder="Name"
+        style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
+
+<select id="authCountry"
+  style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:none;">
+ <option value="">Select Country</option>
+
+  <option value="BR">Brazil</option>
+  <option value="CN">China</option>
+  <option value="KR">South Korea</option>
+  <option value="FR">France</option>
+  <option value="DE">Germany</option>
+  <option value="JP">Japan</option>
+  <option value="IN">India</option>
+  <option value="GB">United Kingdom</option>
+  <option value="IT">Italy</option>
+  <option value="SG">Singapore</option>
+  <option value="ES">Spain</option>
+  <option value="US">United States</option>
+
+</select>
+    </div>
+
+    <button id="authMainBtn" class="game-btn" onclick="handleAuth()">
+      Login
+    </button>
+<div style="margin-top:12px; font-size:13px;">
+  <span 
+    style="color:#ffd700; cursor:pointer;"
+    onclick="showResetForm()">
+    Forgot password?
+  </span>
+</div>
+
+    <div style="margin-top:15px; font-size:14px; opacity:0.8;">
+      <span id="authSwitchText">Don't have an account?</span>
+      <span 
+        id="authSwitchLink" 
+        style="color:#ffd700; cursor:pointer; font-weight:600;"
+        onclick="toggleAuthMode()">
+        Register
+      </span>
+    </div>
+
+  </div>
+</div>
+<div id="grid"></div>
+<script>
+const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZWF4enRrZmRydWZnbmlteGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjA0MTksImV4cCI6MjA4NzY5NjQxOX0.nylDg56BcUzcq6Ag35N8zBDe5zXDCHC-iGwPcZ-ERYk";
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+const size = 10;
+const rows = new Array(size).fill(0);
+const cols = new Array(size).fill(0);
+const regions = new Array(size).fill(0);
+
+let queens = [];
+let cells = [];
+const gridElement = document.getElementById("grid");
+const startBtn = document.getElementById("startBtn");
+const hintBtn = document.getElementById("hintBtn");
+let hintsUsed = 0;
+const maxHints = 3;
+let isDragging = false;
+let dragMode = null; 
+let solution = [];
+let regionMap = [];
+let startTime = null;
+let timerInterval = null;
+let boardErrorTimeout = null;
+let playerEmail = null;
+let playerName = null;
+let countryCode = null;
+let isRegisterMode = false;
+let isResetMode = false;
+const colors = [
+  "rgba(255, 0, 0, 0.9)",  	// Rosso
+  "rgba(181, 181, 181, 0.9)",   // Arancione
+  "rgba(255, 255, 0, 1.0)",   // Giallo
+  "rgba(22, 163, 74, 0.9)",   // Verde smeraldo
+  "rgba(0, 245, 255, 0.9)",   // Azzurro
+  "rgba(244, 114, 182, 0.9)", // Rosa luminoso
+  "rgba(124, 58, 237, 0.9)",  // Viola intenso
+  "rgba(127, 255, 0 , 1.2)",   // Verde Fluo
+  "rgba(205, 133, 63, 0.9)",   // Slate scuro
+  "rgba(0, 0, 139, 0.9)"   // Verde acqua acceso
+];
+async function loadDailyPuzzle() {
+  const today = new Date().toISOString().split("T")[0];
+  console.log("Searching puzzle date:", today);
+
+  const { data, error } = await supabaseClient
+    .from("queens_puzzles")
+    .select("*")
+    .eq("date", today);
+
+  console.log("Query result:", data);
+  console.log("Error:", error);
+
+  if (!data || data.length === 0) {
+    console.log("Puzzle not found");
+    return false;
+  }
+
+  solution = data[0].solution;
+  regionMap = data[0].region_map;
+  return true;
+}
+async function getTodayResult() {
+  const today = new Date().toISOString().split("T")[0];
+  const { data } = await supabaseClient
+    .from("queens_results")
+    .select("*")
+    .eq("email", playerEmail)
+    .eq("date", today)
+    .maybeSingle();
+  return data;
+}
+async function loadTodayLeaderboard() {
+  const today = new Date().toISOString().split("T")[0];
+  const { data, error } = await supabaseClient
+ .from("queens_results")
+.select("name, email, time_seconds, country_code")
+.eq("date", today)
+.order("time_seconds", { ascending: true })
+.limit(10);
+  if (error) {
+    console.error("Leaderboard error", error);
+    return [];
+  }
+  return data;
+}
+async function loadMonthlyLeaderboard() {
+const now = new Date();
+const currentMonth =
+  now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+
+  const { data, error } = await supabaseClient
+    .from("queens_monthly_scores")
+    .select("name, email, points, country_code")
+    .eq("month", currentMonth)
+    .order("points", { ascending: false })
+    .limit(10);
+console.log("Monthly leaderboard query:", data, error);
+
+  if (error) {
+    console.error("Monthly leaderboard error:", error);
+    return [];
+  }
+
+  return data;
+}
+async function loadMonthlyCountryLeaderboard() {
+  const now = new Date();
+  const currentMonth =
+    now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+
+  const { data, error } = await supabaseClient
+    .from("queens_monthly_country_scores")
+    .select("country_code, total_points")
+    .eq("month", currentMonth)
+    .order("total_points", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Country leaderboard error:", error);
+    return [];
+  }
+
+  return data;
+}
+function showFixedMessage(text, type = "info", DURATION = 2500) {
+  const box = document.getElementById("fixedMessageBox");
+
+  if (type === "error") box.style.color = "#ff6b6b";
+  else if (type === "success") box.style.color = "#69f0ae";
+  else box.style.color = "#ffffff";
+
+  box.textContent = text;
+
+  box.style.opacity = "0";
+  box.style.transform = "translateY(6px)";
+
+  requestAnimationFrame(() => {
+    box.style.opacity = "1";
+    box.style.transform = "translateY(0)";
+  });
+
+  setTimeout(() => {
+    box.style.opacity = "0";
+    box.style.transform = "translateY(-4px)";
+  }, DURATION);
+}
+function renderDailyLeaderboard(data) {
+  const container = document.getElementById("dailyLeaderboard");
+  container.innerHTML = "";
+
+  data.forEach((player, index) => {
+    const row = document.createElement("div");
+    row.className = "leaderboard-row";
+
+    let medal = "";
+    let color = "#ffffff";
+
+    if (index === 0) {
+row.classList.add("first-place");
+      medal = "👑";
+      color = "#ffd700";
+    } else if (index === 1) {
+      medal = "🥈";
+      color = "#cfd8dc";
+    } else if (index === 2) {
+      medal = "🥉";
+      color = "#ffb74d";
+    } else if (index < 10) {
+      color = "#69f0ae";
+    }
+
+row.innerHTML = `
+  <span style="color:${color}; font-weight:600;">
+ ${medal} ${index + 1}. 
+${player.name}
+<img 
+  src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
+  style="width:20px; height:auto; margin-left:6px; vertical-align:middle; border-radius:2px;"
+>
+  </span>
+  <strong style="color:#ffffff;">
+    ${player.time_seconds}s
+  </strong>
+`;
+
+
+
+    container.appendChild(row);
+  });
+}
+
+function renderMonthlyLeaderboard(data) {
+  const container = document.getElementById("monthlyLeaderboard");
+  container.innerHTML = "";
+
+  data.forEach((player, index) => {
+    const row = document.createElement("div");
+    row.className = "leaderboard-row";
+
+    let medal = "";
+    let color = "#ffffff";
+
+    if (index === 0) {
+row.classList.add("first-place");
+      medal = "👑";
+      color = "#ffd700";
+    } else if (index === 1) {
+      medal = "🥈";
+      color = "#cfd8dc";
+    } else if (index === 2) {
+      medal = "🥉";
+      color = "#ffb74d";
+    } else if (index < 10) {
+      color = "#69f0ae";
+    }
+
+row.innerHTML = `
+  <span style="color:${color}; font-weight:600;">
+${medal} ${index + 1}. 
+${player.name}
+<img 
+  src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
+  style="width:20px; height:auto; margin-left:6px; vertical-align:middle; border-radius:2px;"
+>
+  </span>
+  <strong style="color:#ffffff;">
+    ${player.points} pt
+  </strong>
+`;
+
+
+    container.appendChild(row);
+  });
+}
+const countryNames = {
+  BR: "Brazil",
+  CN: "China",
+  KR: "South Korea",
+  FR: "France",
+  DE: "Germany",
+  JP: "Japan",
+  IN: "India",
+  GB: "United Kingdom",
+  IT: "Italy",
+  SG: "Singapore",
+  ES: "Spain",
+  US: "United States"
+};
+function renderMonthlyCountryLeaderboard(data) {
+  const container = document.getElementById("countryLeaderboard");
+  container.innerHTML = "";
+
+  data.forEach((country, index) => {
+    const row = document.createElement("div");
+    row.className = "leaderboard-row";
+
+    let medal = "";
+    let color = "#ffffff";
+
+    if (index === 0) {
+      row.classList.add("first-place");
+      medal = "👑";
+      color = "#ffd700";
+    } else if (index === 1) {
+      medal = "🥈";
+      color = "#cfd8dc";
+    } else if (index === 2) {
+      medal = "🥉";
+      color = "#ffb74d";
+    } else if (index < 10) {
+      color = "#69f0ae";
+    }
+
+row.innerHTML = `
+  <span style="color:${color}; font-weight:600;">
+    ${medal} ${index + 1}.
+    <img 
+      src="https://flagcdn.com/24x18/${(country.country_code || "un").toLowerCase()}.png"
+      style="width:20px; height:auto; margin-right:6px; vertical-align:middle; border-radius:2px;"
+    >
+    ${countryNames[country.country_code] || country.country_code}
+  </span>
+  <strong style="color:#ffffff;">
+    ${country.total_points} pt
+  </strong>
+`;
+
+    container.appendChild(row);
+  });
+}
+
+async function getPlayerPosition() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data, error } = await supabaseClient
+    .from("queens_results")
+    .select("name, email, time_seconds")
+    .eq("date", today)
+    .order("time_seconds", { ascending: true });
+
+  if (error || !data) return null;
+
+  const position = data.findIndex(p => p.email === playerEmail);
+  if (position === -1) return null;
+
+  const totalPlayers = data.length;
+  const rank = position + 1;
+  const percent = Math.round((rank / totalPlayers) * 100);
+
+  return {
+    rank,
+    totalPlayers,
+    percent,
+    time: data[position].time_seconds
+  };
+}
+async function renderDailyPosition() {
+  const dailyPosition = await getPlayerPosition();
+  if (!dailyPosition) return;
+
+  const positionBox = document.createElement("div");
+  positionBox.style.marginTop = "14px";
+  positionBox.style.fontWeight = "700";
+
+  const rank = dailyPosition.rank;
+  const totalPlayers = dailyPosition.totalPlayers;
+
+  // 🎨 Colori posizione
+  if (rank === 1) {
+    positionBox.style.color = "#ffd700"; // Oro
+  } else if (rank === 2) {
+    positionBox.style.color = "#cfd8dc"; // Argento
+  } else if (rank === 3) {
+    positionBox.style.color = "#ffb74d"; // Bronzo
+  } else if (rank <= 10) {
+    positionBox.style.color = "#69f0ae"; // Verde premium
+  } else {
+    positionBox.style.color = "#ffffff";
+  }
+
+  // 🧠 Nuova logica percentuale intelligente
+  let message = "";
+
+  if (rank === 1) {
+    message = "🏆 Today's Leader";
+  } else if (rank === totalPlayers) {
+    message = "😅 Last place today";
+  } else {
+    const betterThan = Math.round(
+      ((totalPlayers - rank) / totalPlayers) * 100
+    );
+    message = `Better than ${betterThan}% of today's players`;
+  }
+
+ positionBox.innerText =
+`You are #${rank} of ${totalPlayers} players · ${message}`;
+
+  document.getElementById("dailyLeaderboard").appendChild(positionBox);
+}
+async function getMonthlyPlayerPosition() {
+  const now = new Date();
+  const currentMonth =
+    now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+
+  const { data, error } = await supabaseClient
+    .from("queens_monthly_scores")
+    .select("name, email, points, country_code")
+    .eq("month", currentMonth)
+    .order("points", { ascending: false });
+
+  if (error || !data) return null;
+
+  const position = data.findIndex(p => p.email === playerEmail);
+  if (position === -1) return null;
+
+  const totalPlayers = data.length;
+  const rank = position + 1;
+  const percent = Math.round((rank / totalPlayers) * 100);
+
+  return {
+    rank,
+    totalPlayers,
+    percent,
+    points: data[position].points
+  };
+}
+async function initializePage() {
+const hash = window.location.hash;
+
+if (hash && hash.includes("type=recovery")) {
+  showNewPasswordForm();
+  return;
+}
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+if (!session) {
+  showAuthScreen();
+  return;
+}
+
+const user = session.user;
+
+const { data, error } = await supabaseClient
+  .from("players")
+  .select("*")
+  .eq("id", user.id)
+  .maybeSingle();
+
+if (error || !data) {
+  showAuthScreen();
+  return;
+}
+
+// 👇 METTILO QUI, NON PRIMA
+document.getElementById("logoutFloating").style.display = "flex";
+
+
+  playerEmail = data.email;
+  playerName = data.name;
+  countryCode = data.country_code;
+setupFloatingButtons();
+
+  document.getElementById("displayName").textContent = playerName;
+document.getElementById("displayFlag").src =
+  `https://flagcdn.com/24x18/${(countryCode || "un").toLowerCase()}.png`;
+
+
+// Da qui in poi è il tuo flusso normale
+
+const puzzleLoaded = await loadDailyPuzzle();
+if (!puzzleLoaded) return;
+
+const todayResult = await getTodayResult();
+
+if (!todayResult) {
+  // nessuna partita iniziata oggi
+  startBtn.style.display = "inline-block";
+  return;
+}
+
+  // lasci tutto il resto della logica che avevi
+
+if (todayResult.completed) {
+document.getElementById("rulesBox").style.display = "none";
+document.getElementById("rulesFloating").style.display = "flex";
+
+hintBtn.disabled = true;
+hintBtn.style.display = "none";
+
+startBtn.disabled = true;
+startBtn.innerText = "Already played";
+startBtn.style.display = "none";
+
+  document.getElementById("timer").textContent =
+  formatTime(todayResult.time_seconds);
+const timerEl = document.getElementById("timer");
+timerEl.classList.add("timer-complete");
+
+const message = document.createElement("div");
+message.style.marginTop = "15px";
+message.style.fontWeight = "600";
+message.style.textAlign = "center";
+message.innerText = "You already solved today’s puzzle 👑";
 
 const leaderboard = document.getElementById("leaderboardModal");
 leaderboard.parentNode.insertBefore(message, leaderboard);
