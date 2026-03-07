@@ -753,7 +753,7 @@ overflow-y: auto;
       </svg>
     </span>
 
-    <span id="playerDisplay">
+    <span id="playerDisplay" onclick="openPlayerProfile()" style="cursor:pointer;">
       <span id="displayName"></span>
       <img id="displayFlag">
     </span>
@@ -2085,6 +2085,111 @@ function showRulesModal(message) {
   };
   modal.style.display = "flex";
 }
+function openPlayerModal() {
+
+  const modal = document.getElementById("playerModal");
+  modal.style.display = "flex";
+
+}
+
+function closePlayerModal() {
+
+  const modal = document.getElementById("playerModal");
+  modal.style.display = "none";
+
+}
+async function openPlayerProfile() {
+
+  const modal = document.getElementById("playerModal");
+  const statsBox = document.getElementById("playerStats");
+
+  modal.style.display = "flex";
+  statsBox.innerHTML = "Loading statistics...";
+
+  const { data, error } = await supabaseClient
+    .from("queens_results")
+    .select("time_seconds, date, hints_used, completed")
+    .eq("email", playerEmail)
+    .eq("completed", true);
+
+  if (error || !data || data.length === 0) {
+    statsBox.innerHTML = "No statistics yet.";
+    return;
+  }
+
+  const games = data.length;
+
+  // puzzles solved
+  const puzzlesSolved = games;
+
+  // best time
+  let bestTime = Infinity;
+  let bestDate = null;
+
+  data.forEach(g => {
+    if (g.time_seconds < bestTime) {
+      bestTime = g.time_seconds;
+      bestDate = g.date;
+    }
+  });
+
+  // average time
+  const totalTime = data.reduce((sum, g) => sum + g.time_seconds, 0);
+  const avgTime = Math.round(totalTime / games);
+
+  // hint usage
+  const gamesWithHints = data.filter(g => g.hints_used > 0).length;
+  const hintUsage = Math.round((gamesWithHints / games) * 100);
+
+  // consistency
+  let consistency = "—";
+
+  if (games >= 3) {
+
+    const deviations = data.map(g =>
+      Math.abs(g.time_seconds - avgTime)
+    );
+
+    const avgDeviation =
+      deviations.reduce((a,b)=>a+b,0) / deviations.length;
+
+    let score =
+      100 - Math.round((avgDeviation / avgTime) * 100);
+
+    if (score < 0) score = 0;
+    if (score > 100) score = 100;
+
+    consistency = score + "%";
+  }
+
+statsBox.innerHTML = `
+
+<div style="
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:10px;
+">
+
+  ${playerName}
+
+  <img 
+    src="https://flagcdn.com/24x18/${(countryCode || "un").toLowerCase()}.png"
+    style="width:20px; border-radius:2px;"
+  >
+
+</div>
+
+<div>🧩 <b>Puzzles solved:</b> ${puzzlesSolved}</div>
+<div>⚡ <b>Best time:</b> ${formatTime(bestTime)} — ${bestDate}</div>
+<div>📈 <b>Average time:</b> ${formatTime(avgTime)}</div>
+<div>💡 <b>Hint usage:</b> ${hintUsage}%</div>
+<div>🧠 <b>Consistency:</b> ${consistency}</div>
+
+`;
+}
 function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
@@ -2618,6 +2723,22 @@ initializePage();
     <h2>📜 Queens Rules</h2>
     <p id="rulesContent"></p>
     <button id="rulesModalBtn">Close</button>
+  </div>
+</div>
+<div id="playerModal" class="modal">
+  <div class="modal-content">
+
+    <h2>👤 Player Profile</h2>
+
+    <div id="playerStats" style="
+      margin-top:15px;
+      text-align:left;
+      font-size:15px;
+      line-height:1.6;
+    "></div>
+
+    <button onclick="closePlayerModal()">Close</button>
+
   </div>
 </div>
 <script>
