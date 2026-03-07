@@ -51,6 +51,9 @@ body {
 max-width: 100vw;
   height: auto;
   object-fit: contain;
+animation:
+  logoFloat 4s ease-in-out infinite,
+  logoGlow 3s ease-in-out infinite;
 filter:
   drop-shadow(0 0 12px rgba(255,215,0,0.8))
   drop-shadow(0 0 30px rgba(255,215,0,0.6))
@@ -384,8 +387,8 @@ contain: content;
     gap: 12px;
   }
 .app-icon {
-  width: 140px;
-  height: 140px;
+  width: 260px;
+  height: 260px;
 }
   }
 @keyframes winPulse {
@@ -531,6 +534,7 @@ contain: content;
 }
 .leaderboard-title {
   font-weight: 700;
+font-size: 17px;
   margin-bottom: 10px;
 }
 .leaderboard-row {
@@ -657,6 +661,33 @@ overflow-y: auto;
 .timer-pulse {
   animation: timerPulse 0.35s ease;
 }
+@keyframes logoFloat {
+
+  0% { transform: translateY(0px); }
+
+  50% { transform: translateY(-8px); }
+
+  100% { transform: translateY(0px); }
+
+}
+@keyframes logoGlow {
+
+  0% { filter:
+    drop-shadow(0 0 12px rgba(255,215,0,0.7))
+    drop-shadow(0 0 30px rgba(255,215,0,0.5));
+  }
+
+  50% { filter:
+    drop-shadow(0 0 18px rgba(255,215,0,0.9))
+    drop-shadow(0 0 45px rgba(255,215,0,0.7));
+  }
+
+  100% { filter:
+    drop-shadow(0 0 12px rgba(255,215,0,0.7))
+    drop-shadow(0 0 30px rgba(255,215,0,0.5));
+  }
+
+}
 </style>
 </head>
 <body>
@@ -691,11 +722,26 @@ overflow-y: auto;
 <div class="player-hud">
 
   <div class="player-left">
-    <span style="font-size:22px;">👤</span>
+
+    <span style="display:flex; align-items:center;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+      style="filter:
+        drop-shadow(0 0 4px rgba(255,255,255,0.8))
+        drop-shadow(0 0 10px rgba(120,80,255,0.5));">
+
+        <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2"/>
+        <path d="M4 20c2.5-4 5.5-6 8-6s5.5 2 8 6"
+              stroke="#ffffff"
+              stroke-width="2"
+              stroke-linecap="round"/>
+      </svg>
+    </span>
+
     <span id="playerDisplay">
       <span id="displayName"></span>
       <img id="displayFlag">
     </span>
+
   </div>
 
   <div class="player-timer">
@@ -1302,7 +1348,7 @@ const message = document.createElement("div");
 message.style.marginTop = "15px";
 message.style.fontWeight = "600";
 message.style.textAlign = "center";
-message.innerText = "You already completed today's puzzle 👑";
+message.innerText = "You already solved today’s puzzle 👑";
 
 const leaderboard = document.getElementById("leaderboardModal");
 leaderboard.parentNode.insertBefore(message, leaderboard);
@@ -1487,7 +1533,7 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
   boardErrorTimeout = setTimeout(() => {
     if (!checkWin() && checkIncompleteBoard()) {
       showFixedMessage(
-        "⚠️ The board is full but there are not 10 Queens",
+        "⚠️ The board is full but 10 queens are not placed",
         "error"
       );
     }
@@ -2092,7 +2138,7 @@ hintBtn.style.display = "none";
   message.classList.add("post-game");
   message.style.marginTop = "15px";
   message.style.fontWeight = "600";
-  message.innerText = "You already completed today's puzzle 👑";
+  message.innerText = "You already solved today’s puzzle 👑";
   document.getElementById("playerInfo").appendChild(message);
 
   // Carica classifiche
@@ -2692,7 +2738,7 @@ if (!playerEmail) {
     return;
   }
  if (!('serviceWorker' in navigator)) {
-    showFixedMessage("Push notifications not supported on this browser");
+    showFixedMessage("Push notifications are not supported on this browser");
     return;
   }
 if (!('Notification' in window)) {
