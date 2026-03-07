@@ -572,18 +572,19 @@ overflow-y: auto;
 
 </div>
 <div id="playerInfo">
-
-<div style="margin-top:14px; color:white; font-size:20px; font-weight:700; text-shadow:0 0 6px rgba(255,255,255,0.35);">
-<span style="font-size:22px;">👤</span>
-<span id="playerDisplay" style="display:inline-flex; align-items:center; gap:8px;">
-<span id="displayName"></span>
-<img id="displayFlag" style="width:22px; height:auto; border-radius:3px;">
-</span>
+<div><strong>Email:</strong> <span id="displayEmail"></span></div>
+  <div>
+  <strong>Giocatore:</strong> 
+  <span id="playerDisplay" style="display:inline-flex; align-items:center; gap:6px;">
+    <span id="displayName"></span>
+    <img id="displayFlag" style="width:20px; height:auto; border-radius:2px;">
+  </span>
 </div>
 
 
-<div style="margin-top:14px; color:red; font-size:20px; font-weight:700; text-shadow:0 0 6px rgba(255,0,0,0.5);">
-<span style="font-size:22px;">⏱</span> <span id="timer">0s</span>
+  <div style="margin-top:10px;">
+  ⏱ <span style="color:red;">Tempo:</span> 
+  <span id="timer" style="color:red;">0s</span>
 </div>
 <button id="startBtn" class="game-btn">▶ Gioca</button>
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
