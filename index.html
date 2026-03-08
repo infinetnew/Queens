@@ -2498,51 +2498,50 @@ special: {
   ]
 },
 
-  logic: {
-    title: "🧠 Logic Mastery",
-    badges: [
-      { code: "no_hint_1", name: "Pure Mind" },
-      { code: "no_hint_15", name: "Clean Solver" },
-      { code: "no_hint_25", name: "Strategist" },
-      { code: "no_hint_50", name: "Grandmaster" },
-      { code: "no_hint_100", name: "Absolute Clarity" }
-    ]
-  },
+ logic: {
+  title: "🧠 Logic Mastery",
+  badges: [
+    { code:"no_hint_1", name:"Pure Mind", description:"Solve a puzzle with no hints" },
+    { code:"no_hint_15", name:"Clean Solver", description:"Solve 15 puzzles without using hints" },
+    { code:"no_hint_25", name:"Strategist", description:"Solve 25 puzzles without using hints" },
+    { code:"no_hint_50", name:"Grandmaster", description:"Solve 50 puzzles without using hints" },
+    { code:"no_hint_100", name:"Absolute Clarity", description:"Solve 100 puzzles without using hints" }
+  ]
+},
 
-  consistency: {
-    title: "🔥 Consistency",
-    badges: [
-      { code: "streak_3", name: "Daily Player" },
-      { code: "streak_7", name: "On Fire" },
-      { code: "streak_14", name: "Unstoppable" },
-      { code: "streak_30", name: "Queens Devotee" },
-      { code: "streak_60", name: "Legendary Streak" }
-    ]
-  },
+consistency: {
+  title: "🔥 Consistency",
+  badges: [
+    { code:"streak_3", name:"Daily Player", description:"Solve puzzles 3 days in a row" },
+    { code:"streak_7", name:"On Fire", description:"Solve puzzles 7 days in a row" },
+    { code:"streak_14", name:"Unstoppable", description:"Solve puzzles 14 days in a row" },
+    { code:"streak_30", name:"Queens Devotee", description:"Solve puzzles 30 days in a row" },
+    { code:"streak_60", name:"Legendary Streak", description:"Solve puzzles 60 days in a row" }
+  ]
+},
 
-  competitive: {
-    title: "🏆 Competitive",
-    badges: [
-      { code: "podium_1", name: "First Podium" },
-      { code: "podium_5", name: "Top Competitor" },
-      { code: "podium_10", name: "Podium Collector" },
-      { code: "win_1", name: "Daily Champion" },
-      { code: "win_5", name: "Dominant Player" },
-      { code: "monthly_1", name: "Monthly Champion" }
-    ]
-  },
+competitive: {
+  title: "🏆 Competitive",
+  badges: [
+    { code:"podium_1", name:"First Podium", description:"Finish in the Top 3 of the daily leaderboard" },
+    { code:"podium_5", name:"Top Competitor", description:"Reach the daily Top 3 five times" },
+    { code:"podium_10", name:"Podium Collector", description:"Reach the daily Top 3 ten times" },
+    { code:"win_1", name:"Daily Champion", description:"Finish 1st in the daily leaderboard" },
+    { code:"win_5", name:"Dominant Player", description:"Win the daily leaderboard five times" },
+    { code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" }
+  ]
+},
 
-  experience: {
-    title: "🎯 Experience",
-    badges: [
-      { code: "puzzle_1", name: "First Queen" },
-      { code: "puzzle_10", name: "Puzzle Apprentice" },
-      { code: "puzzle_50", name: "Puzzle Warrior" },
-      { code: "puzzle_100", name: "Puzzle Master" },
-      { code: "puzzle_250", name: "Queens Legend" }
-    ]
-  }
-
+experience: {
+  title: "🎯 Experience",
+  badges: [
+    { code:"puzzle_1", name:"First Queen", description:"Solve your first puzzle" },
+    { code:"puzzle_10", name:"Puzzle Apprentice", description:"Solve 10 puzzles" },
+    { code:"puzzle_50", name:"Puzzle Warrior", description:"Solve 50 puzzles" },
+    { code:"puzzle_100", name:"Puzzle Master", description:"Solve 100 puzzles" },
+    { code:"puzzle_250", name:"Queens Legend", description:"Solve 250 puzzles" }
+  ]
+}
 };
 
 async function openBadgeProfile() {
@@ -2585,24 +2584,13 @@ async function openBadgeProfile() {
           </div>
 
           <div style="font-size:11px;opacity:0.7;">
-            ${isUnlocked ? "Unlocked" : badge.description}
+            ${badge.description}
           </div>
 
         </div>
       `;
 
     });
-
-    html += `
-        </div>
-      </div>
-    `;
-
-  });
-
-  container.innerHTML = html;
-
-}
 
     html += `
         </div>
