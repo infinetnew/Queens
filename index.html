@@ -1621,7 +1621,18 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
 if (!hasConflict && checkWin()) {
     clearInterval(timerInterval);
 document.getElementById("timer").classList.add("timer-complete");
-    const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const rawSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+const today = new Date().toISOString().split("T")[0];
+
+const { data: penaltyRow } = await supabaseClient
+  .from("queens_results")
+  .select("penalty_seconds")
+  .eq("email", playerEmail)
+  .eq("date", today)
+  .maybeSingle();
+
+const totalSeconds = rawSeconds + (penaltyRow?.penalty_seconds || 0);
    await supabaseClient
   .from("queens_results")
   .update({
