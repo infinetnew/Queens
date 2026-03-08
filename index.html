@@ -753,7 +753,64 @@ overflow-y: auto;
   }
 
 }
+.badge-category{
+  margin-top:20px;
+}
 
+.badge-title{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.badge-row{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.badge-row::-webkit-scrollbar{
+  height:6px;
+}
+
+.badge-row::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,0.25);
+  border-radius:10px;
+}
+
+.badge-card{
+  min-width:110px;
+  flex:0 0 auto;
+
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+
+  border-radius:14px;
+
+  padding:12px 8px;
+
+  text-align:center;
+
+  font-size:13px;
+
+  backdrop-filter:blur(10px);
+
+  transition:transform 0.2s ease, opacity 0.2s ease;
+}
+
+.badge-card.unlocked{
+  opacity:1;
+}
+
+.badge-card.locked{
+  opacity:0.35;
+}
+
+.badge-icon{
+  font-size:26px;
+  margin-bottom:6px;
+}
 </style>
 </head>
 <body>
@@ -2326,33 +2383,37 @@ async function openBadgeProfile() {
 
   Object.values(BADGE_CATEGORIES).forEach(category => {
 
-    html += `<h3 style="margin-top:18px">${category.title}</h3>`;
+    html += `
+      <div class="badge-category">
+        <div class="badge-title">${category.title}</div>
+        <div class="badge-row">
+    `;
 
     category.badges.forEach(badge => {
 
       const isUnlocked = unlocked.includes(badge.code);
 
       html += `
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          padding:6px 0;
-          border-bottom:1px solid rgba(255,255,255,0.08);
-          opacity:${isUnlocked ? 1 : 0.35};
-        ">
-          <span>${badge.name}</span>
-          <span>${isUnlocked ? "🏅" : "🔒"}</span>
+        <div class="badge-card ${isUnlocked ? "unlocked" : "locked"}">
+          <div class="badge-icon">
+            ${isUnlocked ? "🏅" : "🔒"}
+          </div>
+          <div>${badge.name}</div>
         </div>
       `;
 
     });
+
+    html += `
+        </div>
+      </div>
+    `;
 
   });
 
   container.innerHTML = html;
 
 }
-
 
 function closePlayerModal() {
 
