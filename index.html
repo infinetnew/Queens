@@ -2296,8 +2296,8 @@ async function openPublicBadges(email,name,country){
 let totalBadges = 0;
 Object.values(BADGE_CATEGORIES).forEach(category => {
   totalBadges += category.badges.length;
-const percent = Math.round((totalUnlocked / totalBadges) * 100);
 });
+const percent = Math.round((totalUnlocked / totalBadges) * 100);
   title.innerHTML = `
   <div style="display:flex;align-items:center;gap:8px;">
     <span style="font-weight:700;font-size:20px;">
