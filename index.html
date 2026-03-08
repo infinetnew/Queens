@@ -4,10 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Queens Game</title>
 <link rel="manifest" href="manifest.json">
-
 <link rel="icon" type="image/png" href="queens-icon-192.png">
 <link rel="apple-touch-icon" href="queens-icon-192.png">
-
 <meta name="theme-color" content="#2b1055">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -86,52 +84,35 @@ filter:
   font-weight: 600;
 }
 .game-btn {
-
   margin-top:20px;
-
   padding:14px 38px;
-
   border-radius:30px;
   border:none;
-
   background:linear-gradient(135deg,#5b2be0,#ff4f8b);
-
   color:white;
-
   font-weight:700;
   font-size:16px;
   letter-spacing:1px;
-
   cursor:pointer;
-
   transition:all 0.25s ease;
-
   box-shadow:
     0 12px 30px rgba(0,0,0,0.8),
     0 0 18px rgba(255,255,255,0.12);
-
 }
 .game-btn:hover:not(:disabled){
-
   transform:translateY(-4px) scale(1.05);
-
   box-shadow:
     0 20px 50px rgba(0,0,0,0.9),
     0 0 25px rgba(255,255,255,0.18);
-
 }
 .game-btn:active{
-
   transform:scale(0.94);
-
 }
 .game-btn:disabled{
-
   opacity:0.45;
   cursor:not-allowed;
   transform:none;
   box-shadow:none;
-
 }
 #grid {
   display: grid;
@@ -151,7 +132,6 @@ background: rgba(0,0,0,0.45);
 backdrop-filter: blur(8px);
   border-radius: 28px;
 border: 3px solid rgba(255,255,255,0.35);
-
 box-shadow:
 inset 0 2px 6px rgba(0,0,0,0.55),
   0 0 0 2px rgba(120,80,255,0.35),
@@ -171,7 +151,6 @@ position: relative;
   transform: translateX(-50%);
   width: 85%;
   height: 80px;
-
   background: radial-gradient(
     ellipse at center,
     rgba(120,80,255,0.35) 0%,
@@ -179,7 +158,6 @@ position: relative;
     rgba(120,80,255,0.05) 60%,
     transparent 80%
   );
-
   filter: blur(40px);
   z-index: -1;
   pointer-events: none;
@@ -190,13 +168,11 @@ position: relative;
     transform: translateY(40px) scale(0.92);
     filter: blur(10px);
   }
-
   60% {
     opacity: 1;
     transform: translateY(-4px) scale(1.02);
     filter: blur(0);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -213,7 +189,6 @@ position: relative;
       0 0 30px rgba(120,80,255,0.08),
       0 0 10px rgba(255,255,255,0.02);
   }
-
   60% {
     box-shadow:
       0 0 0 2px rgba(120,80,255,0.45),
@@ -223,7 +198,6 @@ position: relative;
       0 0 120px rgba(120,80,255,0.35),
       0 0 50px rgba(255,255,255,0.1);
   }
-
   100% {
     box-shadow:
       0 0 0 2px rgba(120,80,255,0.35),
@@ -284,7 +258,6 @@ contain: content;
     inset 0 0 12px rgba(255,255,255,0.12),
     inset 0 0 4px rgba(0,0,0,0.25);
 }
-
 .cell:hover {
   box-shadow:
     0 6px 12px rgba(0,0,0,0.5),
@@ -331,30 +304,24 @@ contain: content;
   width: 120%;
   height: 120%;
   object-fit: contain;
-
   filter:
     drop-shadow(0 0 10px rgba(255,255,255,1))
     drop-shadow(0 0 22px rgba(255,215,0,0.9))
     drop-shadow(0 0 45px rgba(255,215,0,0.7));
 }
 @keyframes queenAppear {
-
   0% {
     opacity: 0;
     transform: scale(0.5) rotate(-8deg);
   }
-
   60% {
     opacity: 1;
     transform: scale(1.08) rotate(2deg);
   }
-
   100% {
     transform: scale(1) rotate(0deg);
   }
-
 }
-
 .x::before,
 .x::after {
   content: "";
@@ -368,7 +335,6 @@ contain: content;
   transform-origin: center;
   z-index: 5;
 }
-
 .x::before {
   transform: translate(-50%, -50%) rotate(45deg);
 }
@@ -441,13 +407,11 @@ contain: content;
   text-align: center;
   box-shadow: 0 30px 80px rgba(0,0,0,0.8);
   animation: scaleIn 0.35s cubic-bezier(.4,0,.2,1);
-
   max-height: 85vh;
   width: min(500px, 90vw);
   display: flex;
   flex-direction: column;
 }
-
 .stats-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -470,13 +434,11 @@ contain: content;
   transform:translateY(-2px);
   box-shadow:0 12px 25px rgba(0,0,0,0.45);
 }
-
 .stat-title{
   font-size:12px;
   opacity:0.7;
   margin-bottom:4px;
 }
-
 .stat-value{
   font-size:22px;
   font-weight:800;
@@ -604,7 +566,6 @@ font-size: 17px;
   justify-content: center;
   gap: 8px;
 }
-
 .dot {
   width: 8px;
   height: 8px;
@@ -612,7 +573,6 @@ font-size: 17px;
   background: rgba(255,255,255,0.3);
   transition: all 0.3s ease;
 }
-
 .dot.active {
   background: #ffd700;
   transform: scale(1.3);
@@ -635,42 +595,32 @@ overflow-y: auto;
   display:flex;
   justify-content:space-between;
   align-items:center;
-
   padding:10px 16px;
-
   border-radius:16px;
-
   background:rgba(255,255,255,0.06);
   backdrop-filter:blur(8px);
-
   border:1px solid rgba(255,255,255,0.15);
-
   max-width:420px;
   margin-left:auto;
   margin-right:auto;
 }
-
 .player-left{
   display:flex;
   align-items:center;
   gap:8px;
-
   font-size:18px;
   font-weight:700;
 }
-
 #playerDisplay{
   display:flex;
   align-items:center;
   gap:6px;
 }
-
 #displayFlag{
   width:22px;
   height:auto;
   border-radius:3px;
 }
-
 .player-timer{
   font-size:18px;
   font-weight:700;
@@ -681,12 +631,10 @@ overflow-y: auto;
   color:#69f0ae;
   text-shadow:0 0 10px rgba(105,240,174,0.8);
 }
-
 .timer-yellow{
   color:#ffd740;
   text-shadow:0 0 10px rgba(255,215,0,0.8);
 }
-
 .timer-red{
   color:#ff5252;
   text-shadow:0 0 10px rgba(255,0,0,0.8);
@@ -709,104 +657,78 @@ overflow-y: auto;
     transform: scale(1);
     text-shadow: 0 0 6px rgba(255,0,0,0.6);
   }
-
   50% {
     transform: scale(1.12);
     text-shadow:
       0 0 10px rgba(255,0,0,0.9),
       0 0 20px rgba(255,80,80,0.7);
   }
-
   100% {
     transform: scale(1);
     text-shadow: 0 0 6px rgba(255,0,0,0.6);
   }
 }
-
 .timer-pulse {
   animation: timerPulse 0.35s ease;
 }
 @keyframes logoFloat {
-
   0% { transform: translateY(0px); }
-
   50% { transform: translateY(-8px); }
-
   100% { transform: translateY(0px); }
-
 }
 @keyframes logoGlow {
-
   0% { filter:
     drop-shadow(0 0 12px rgba(255,215,0,0.7))
     drop-shadow(0 0 30px rgba(255,215,0,0.5));
   }
-
   50% { filter:
     drop-shadow(0 0 18px rgba(255,215,0,0.9))
     drop-shadow(0 0 45px rgba(255,215,0,0.7));
   }
-
   100% { filter:
     drop-shadow(0 0 12px rgba(255,215,0,0.7))
     drop-shadow(0 0 30px rgba(255,215,0,0.5));
   }
-
 }
 .badge-category{
   margin-top:20px;
 }
-
 .badge-title{
   font-size:16px;
   font-weight:700;
   margin-bottom:10px;
 }
-
 .badge-row{
   display:flex;
   gap:12px;
   overflow-x:auto;
   padding-bottom:8px;
 }
-
 .badge-row::-webkit-scrollbar{
   height:6px;
 }
-
 .badge-row::-webkit-scrollbar-thumb{
   background:rgba(255,255,255,0.25);
   border-radius:10px;
 }
-
 .badge-card{
   min-width:140px;
   flex:0 0 auto;
-
   background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.12);
-
   border-radius:14px;
-
   padding:12px 8px;
-
   text-align:center;
-
   font-size:13px;
-
   backdrop-filter:blur(10px);
-
   transition:transform 0.2s ease, opacity 0.2s ease;
 }
-
 .badge-card.unlocked{
   opacity:1;
 }
-
 .badge-card.locked{
   opacity:0.35;
 }
-
 .badge-icon{
   font-size:26px;
   margin-bottom:6px;
@@ -825,7 +747,6 @@ overflow-y: auto;
   margin-top:6px;
   overflow:hidden;
 }
-
 .badge-progress-fill{
   height:100%;
   background:linear-gradient(90deg,#ffd700,#ff9800);
@@ -834,34 +755,27 @@ overflow-y: auto;
 .badge-progress-fill.almost{
   animation:badgeGlow 1.6s ease-in-out infinite;
 }
-
 @keyframes badgeGlow{
-
   0%{
     filter:
       drop-shadow(0 0 2px rgba(255,215,0,0.6));
   }
-
   50%{
     filter:
       drop-shadow(0 0 8px rgba(255,215,0,0.9))
       drop-shadow(0 0 16px rgba(255,215,0,0.6));
   }
-
   100%{
     filter:
       drop-shadow(0 0 2px rgba(255,215,0,0.6));
   }
-
 }
-
 /* badge sbloccato */
 .badge-card.unlocked .badge-img{
   filter:
     drop-shadow(0 0 6px rgba(255,215,0,0.9))
     drop-shadow(0 0 12px rgba(255,215,0,0.6));
 }
-
 /* badge bloccato */
 .badge-card.locked .badge-img{
   filter: grayscale(100%) brightness(0.45) blur(0.4px);
@@ -870,15 +784,13 @@ overflow-y: auto;
 </head>
 <body>
 <div id="leftFloatingButtons" style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); left:20px; display:flex; gap:10px; z-index:10000;">
-  
+ 
   <div id="installFloating" class="rules-floating" title="Install">
     📲
   </div>
-
   <div id="pushFloating" class="rules-floating" title="Notifications">
     🔔
   </div>
-
 </div>
 <div style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); right:20px; display:flex; gap:10px; z-index:10000;">
   <div id="logoutFloating" class="rules-floating" title="Logout">
@@ -888,19 +800,15 @@ overflow-y: auto;
 </div>
 <div class="app-header">
   <div style="display:flex; flex-direction:column; align-items:center;">
-    
+   
     <div class="app-icon">
       <img src="queens-logo.png" alt="Queens Logo">
     </div>
-
-
   </div>
 </div>
 <div id="playerInfo">
 <div class="player-hud">
-
   <div class="player-left">
-
  <span 
   style="display:flex; align-items:center; cursor:pointer;"
   onclick="openPlayerProfile()"
@@ -909,7 +817,6 @@ overflow-y: auto;
   style="filter:
     drop-shadow(0 0 4px rgba(255,255,255,0.8))
     drop-shadow(0 0 10px rgba(120,80,255,0.5));">
-
         <circle cx="12" cy="8" r="4" stroke="#ffffff" stroke-width="2"/>
         <path d="M4 20c2.5-4 5.5-6 8-6s5.5 2 8 6"
               stroke="#ffffff"
@@ -917,20 +824,14 @@ overflow-y: auto;
               stroke-linecap="round"/>
       </svg>
     </span>
-
 <span id="playerDisplay">
-
   <span id="displayName"
         style="cursor:pointer"
         onclick="openBadgeProfile()">
   </span>
-
   <img id="displayFlag">
-
 </span>
-
   </div>
-
 <div class="player-timer">
   ⏱ <span id="timer">00:00</span>
   <span id="challengeTarget" style="
@@ -940,26 +841,21 @@ overflow-y: auto;
     color:#ffd700;
   "></span>
 </div>
-
 </div>
 <button id="startBtn" class="game-btn">▶ Play</button>
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
   💡 Hint • 3
 </button>
-
 </div>
 <div id="leaderboardModal" style="display:none; margin-top:25px;">
   <div class="modal-content">
     <h2>🏆 Leaderboards</h2>
-
     <div class="leaderboard-wrapper" id="leaderboardWrapper">
       <div class="leaderboard-slider" id="leaderboardSlider">
-
         <div class="leaderboard-page">
           <div class="leaderboard-title">⚡ Daily</div>
           <div id="dailyLeaderboard"></div>
         </div>
-
         <div class="leaderboard-page">
           <div class="leaderboard-title">📊 Monthly (Individual)</div>
           <div id="monthlyLeaderboard"></div>
@@ -968,34 +864,28 @@ overflow-y: auto;
   <div class="leaderboard-title">🌍 Monthly by Country (Top 3 Players)</div>
   <div id="countryLeaderboard"></div>
 </div>
-
       </div>
     </div>
-
     <div class="dots">
       <span class="dot active"></span>
       <span class="dot"></span>
 <span class="dot"></span>
     </div>
-
   </div>
 </div>
 <div id="rulesBox" class="rules-box" style="display:none;">
 <h3>👑 Queens — Official Rules</h3>
 <p><strong>🎯 Objective</strong><br>
 Place 10 Queens on the 10×10 grid.</p>
-
 <p><strong>♟️ Constraints</strong><br>
 • 1 Queen per row<br>
 • 1 Queen per column<br>
 • 1 Queen per colored region<br>
 • Queens cannot touch each other, not even diagonally</p>
-
 <p><strong>💡 Hints</strong> (max 3)<br>
 +30s Remove Queen<br>
 +45s Insert Queen<br>
 +60s Full correction</p>
-
 <p><strong>🏆</strong> One attempt per day.<br>
 Lowest time wins.</p>
 </div>
@@ -1018,24 +908,18 @@ Lowest time wins.</p>
     border:1px solid rgba(255,255,255,0.1);
     box-shadow: 0 30px 80px rgba(0,0,0,0.7);
   ">
-
     <h2 id="authTitle" style="margin-bottom:20px;">Login</h2>
-
     <input id="authEmail" type="email" placeholder="Email"
       style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
-
     <input id="authPassword" type="password" placeholder="Password"
       style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
-
     <!-- Campi solo registrazione -->
     <div id="registerExtra" style="display:none;">
       <input id="authName" placeholder="Name"
         style="width:100%; padding:12px; margin-bottom:10px; border-radius:12px; border:none;">
-
 <select id="authCountry"
   style="width:100%; padding:12px; margin-bottom:20px; border-radius:12px; border:none;">
  <option value="">Select Country</option>
-
   <option value="BR">Brazil</option>
   <option value="CN">China</option>
   <option value="KR">South Korea</option>
@@ -1048,10 +932,8 @@ Lowest time wins.</p>
   <option value="SG">Singapore</option>
   <option value="ES">Spain</option>
   <option value="US">United States</option>
-
 </select>
     </div>
-
     <button id="authMainBtn" class="game-btn" onclick="handleAuth()">
       Login
     </button>
@@ -1062,7 +944,6 @@ Lowest time wins.</p>
     Forgot password?
   </span>
 </div>
-
     <div style="margin-top:15px; font-size:14px; opacity:0.8;">
       <span id="authSwitchText">Don't have an account?</span>
       <span 
@@ -1072,7 +953,6 @@ Lowest time wins.</p>
         Register
       </span>
     </div>
-
   </div>
 </div>
 <div id="grid"></div>
@@ -1087,7 +967,6 @@ const size = 10;
 const rows = new Array(size).fill(0);
 const cols = new Array(size).fill(0);
 const regions = new Array(size).fill(0);
-
 let queens = [];
 let cells = [];
 const gridElement = document.getElementById("grid");
@@ -1124,20 +1003,16 @@ const colors = [
 async function loadDailyPuzzle() {
   const today = new Date().toISOString().split("T")[0];
   console.log("Searching puzzle date:", today);
-
   const { data, error } = await supabaseClient
     .from("queens_puzzles")
     .select("*")
     .eq("date", today);
-
   console.log("Query result:", data);
   console.log("Error:", error);
-
   if (!data || data.length === 0) {
     console.log("Puzzle not found");
     return false;
   }
-
   solution = data[0].solution;
   regionMap = data[0].region_map;
   return true;
@@ -1170,7 +1045,6 @@ async function loadMonthlyLeaderboard() {
 const now = new Date();
 const currentMonth =
   now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
-
   const { data, error } = await supabaseClient
     .from("queens_monthly_scores")
     .select("name, email, points, country_code")
@@ -1178,50 +1052,40 @@ const currentMonth =
     .order("points", { ascending: false })
     .limit(10);
 console.log("Monthly leaderboard query:", data, error);
-
   if (error) {
     console.error("Monthly leaderboard error:", error);
     return [];
   }
-
   return data;
 }
 async function loadMonthlyCountryLeaderboard() {
   const now = new Date();
   const currentMonth =
     now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
-
   const { data, error } = await supabaseClient
     .from("queens_monthly_country_scores")
     .select("country_code, total_points")
     .eq("month", currentMonth)
     .order("total_points", { ascending: false })
     .limit(10);
-
   if (error) {
     console.error("Country leaderboard error:", error);
     return [];
   }
-
   return data;
 }
 function showFixedMessage(text, type = "info", DURATION = 2500) {
   const box = document.getElementById("fixedMessageBox");
-
   if (type === "error") box.style.color = "#ff6b6b";
   else if (type === "success") box.style.color = "#69f0ae";
   else box.style.color = "#ffffff";
-
   box.textContent = text;
-
   box.style.opacity = "0";
   box.style.transform = "translateY(6px)";
-
   requestAnimationFrame(() => {
     box.style.opacity = "1";
     box.style.transform = "translateY(0)";
   });
-
   setTimeout(() => {
     box.style.opacity = "0";
     box.style.transform = "translateY(-4px)";
@@ -1230,14 +1094,11 @@ function showFixedMessage(text, type = "info", DURATION = 2500) {
 function renderDailyLeaderboard(data) {
   const container = document.getElementById("dailyLeaderboard");
   container.innerHTML = "";
-
   data.forEach((player, index) => {
     const row = document.createElement("div");
     row.className = "leaderboard-row";
-
     let medal = "";
     let color = "#ffffff";
-
     if (index === 0) {
 row.classList.add("first-place");
       medal = "👑";
@@ -1251,7 +1112,6 @@ row.classList.add("first-place");
     } else if (index < 10) {
       color = "#69f0ae";
     }
-
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
  ${medal} ${index + 1}. 
@@ -1265,24 +1125,17 @@ ${player.name}
     ${player.time_seconds}s
   </strong>
 `;
-
-
-
     container.appendChild(row);
   });
 }
-
 function renderMonthlyLeaderboard(data) {
   const container = document.getElementById("monthlyLeaderboard");
   container.innerHTML = "";
-
   data.forEach((player, index) => {
     const row = document.createElement("div");
     row.className = "leaderboard-row";
-
     let medal = "";
     let color = "#ffffff";
-
     if (index === 0) {
 row.classList.add("first-place");
       medal = "👑";
@@ -1296,7 +1149,6 @@ row.classList.add("first-place");
     } else if (index < 10) {
       color = "#69f0ae";
     }
-
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
 ${medal} ${index + 1}. 
@@ -1310,8 +1162,6 @@ ${player.name}
     ${player.points} pt
   </strong>
 `;
-
-
     container.appendChild(row);
   });
 }
@@ -1332,14 +1182,11 @@ const countryNames = {
 function renderMonthlyCountryLeaderboard(data) {
   const container = document.getElementById("countryLeaderboard");
   container.innerHTML = "";
-
   data.forEach((country, index) => {
     const row = document.createElement("div");
     row.className = "leaderboard-row";
-
     let medal = "";
     let color = "#ffffff";
-
     if (index === 0) {
       row.classList.add("first-place");
       medal = "👑";
@@ -1353,7 +1200,6 @@ function renderMonthlyCountryLeaderboard(data) {
     } else if (index < 10) {
       color = "#69f0ae";
     }
-
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
     ${medal} ${index + 1}.
@@ -1367,29 +1213,22 @@ row.innerHTML = `
     ${country.total_points} pt
   </strong>
 `;
-
     container.appendChild(row);
   });
 }
-
 async function getPlayerPosition() {
   const today = new Date().toISOString().split("T")[0];
-
   const { data, error } = await supabaseClient
     .from("queens_results")
     .select("name, email, time_seconds")
     .eq("date", today)
     .order("time_seconds", { ascending: true });
-
   if (error || !data) return null;
-
   const position = data.findIndex(p => p.email === playerEmail);
   if (position === -1) return null;
-
   const totalPlayers = data.length;
   const rank = position + 1;
   const percent = Math.round((rank / totalPlayers) * 100);
-
   return {
     rank,
     totalPlayers,
@@ -1397,18 +1236,14 @@ async function getPlayerPosition() {
     time: data[position].time_seconds
   };
 }
-
 async function renderDailyPosition() {
   const dailyPosition = await getPlayerPosition();
   if (!dailyPosition) return;
-
   const positionBox = document.createElement("div");
   positionBox.style.marginTop = "14px";
   positionBox.style.fontWeight = "700";
-
   const rank = dailyPosition.rank;
   const totalPlayers = dailyPosition.totalPlayers;
-
   // 🎨 Colori posizione
   if (rank === 1) {
     positionBox.style.color = "#ffd700"; // Oro
@@ -1421,10 +1256,8 @@ async function renderDailyPosition() {
   } else {
     positionBox.style.color = "#ffffff";
   }
-
   // 🧠 Nuova logica percentuale intelligente
   let message = "";
-
   if (rank === 1) {
     message = "🏆 Today's Leader";
   } else if (rank === totalPlayers) {
@@ -1435,32 +1268,25 @@ async function renderDailyPosition() {
     );
     message = `Better than ${betterThan}% of today's players`;
   }
-
  positionBox.innerText =
 `You are #${rank} of ${totalPlayers} players · ${message}`;
-
   document.getElementById("dailyLeaderboard").appendChild(positionBox);
 }
 async function getMonthlyPlayerPosition() {
   const now = new Date();
   const currentMonth =
     now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
-
   const { data, error } = await supabaseClient
     .from("queens_monthly_scores")
     .select("name, email, points, country_code")
     .eq("month", currentMonth)
     .order("points", { ascending: false });
-
   if (error || !data) return null;
-
   const position = data.findIndex(p => p.email === playerEmail);
   if (position === -1) return null;
-
   const totalPlayers = data.length;
   const rank = position + 1;
   const percent = Math.round((rank / totalPlayers) * 100);
-
   return {
     rank,
     totalPlayers,
@@ -1470,40 +1296,31 @@ async function getMonthlyPlayerPosition() {
 }
 async function initializePage() {
 const hash = window.location.hash;
-
 if (hash && hash.includes("type=recovery")) {
   showNewPasswordForm();
   return;
 }
   const { data: { session } } = await supabaseClient.auth.getSession();
-
 if (!session) {
   showAuthScreen();
   return;
 }
-
 const user = session.user;
-
 const { data, error } = await supabaseClient
   .from("players")
   .select("*")
   .eq("id", user.id)
   .maybeSingle();
-
 if (error || !data) {
   showAuthScreen();
   return;
 }
-
 // 👇 METTILO QUI, NON PRIMA
 document.getElementById("logoutFloating").style.display = "flex";
-
-
   playerEmail = data.email;
   playerName = data.name;
   countryCode = data.country_code;
 setupFloatingButtons();
-
   document.getElementById("displayName").textContent = playerName;
 document.getElementById("displayFlag").src =
   `https://flagcdn.com/24x18/${(countryCode || "un").toLowerCase()}.png`;
@@ -1511,69 +1328,51 @@ if (challengeTargetTime) {
   const target = document.getElementById("challengeTarget");
   target.textContent = "Beat " + formatTime(challengeTargetTime);
 }
-
-
 // Da qui in poi è il tuo flusso normale
-
 const puzzleLoaded = await loadDailyPuzzle();
 if (!puzzleLoaded) return;
-
 const todayResult = await getTodayResult();
-
 if (!todayResult) {
   // nessuna partita iniziata oggi
   startBtn.style.display = "inline-block";
   return;
 }
-
   // lasci tutto il resto della logica che avevi
-
 if (todayResult.completed) {
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
-
 hintBtn.disabled = true;
 hintBtn.style.display = "none";
-
 startBtn.disabled = true;
 startBtn.innerText = "Already played";
 startBtn.style.display = "none";
-
   document.getElementById("timer").textContent =
   formatTime(todayResult.time_seconds);
 const timerEl = document.getElementById("timer");
 timerEl.classList.add("timer-complete");
-
 const message = document.createElement("div");
 message.style.marginTop = "15px";
 message.style.fontWeight = "600";
 message.style.textAlign = "center";
 message.innerText = "You already solved today’s puzzle 👑";
-
 const leaderboard = document.getElementById("leaderboardModal");
 leaderboard.parentNode.insertBefore(message, leaderboard);
-
 const [daily, monthly, countries] = await Promise.all([
   loadTodayLeaderboard(),
   loadMonthlyLeaderboard(),
   loadMonthlyCountryLeaderboard()
 ]);
-
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
-
 renderMonthlyLeaderboard(monthly);
 renderMonthlyCountryLeaderboard(countries);
 const monthlyPosition = await getMonthlyPlayerPosition();
-
 if (monthlyPosition) {
   const positionBox = document.createElement("div");
   positionBox.style.marginTop = "14px";
   positionBox.style.fontWeight = "700";
-
   const rank = monthlyPosition.rank;
   const totalPlayers = monthlyPosition.totalPlayers;
-
   if (rank === 1) {
     positionBox.style.color = "#ffd700"; // Oro
   } else if (rank === 2) {
@@ -1585,9 +1384,7 @@ if (monthlyPosition) {
   } else {
     positionBox.style.color = "#ffffff"; // Bianco
   }
-
   let message = "";
-
   if (rank === 1) {
     message = "🏆 Monthly Leader";
   } else if (rank === totalPlayers) {
@@ -1598,13 +1395,10 @@ if (monthlyPosition) {
     );
     message = `Better than ${betterThan}% of this month's players`;
   }
-
   positionBox.innerText =
 `You are #${rank} of ${totalPlayers} players · ${message}`;
-
   document.getElementById("monthlyLeaderboard").appendChild(positionBox);
 }
-
 document.getElementById("leaderboardModal").style.display = "block";
 
 return;
@@ -1627,18 +1421,13 @@ if (hintsUsed < maxHints) {
 const penalty = todayResult.penalty_seconds || 0;
 startTime = startedAt - (penalty * 1000);
    timerInterval = setInterval(() => {
-
   const seconds = Math.floor((Date.now() - startTime) / 1000);
-
   const timerEl = document.getElementById("timer");
-
   timerEl.textContent = formatTime(seconds);
 updateChallengeColor(seconds);
-
   timerEl.classList.remove("timer-pulse");
   void timerEl.offsetWidth;
   timerEl.classList.add("timer-pulse");
-
 }, 1000);
 gridElement.style.visibility = "visible";
 gridElement.style.opacity = "1";
@@ -1648,7 +1437,6 @@ document.getElementById("rulesFloating").style.display = "flex";
     initializeGame();
   }
 }
-
 function showAuthScreen() {
   document.getElementById("playerInfo").style.display = "none";
   document.getElementById("grid").style.display = "none";
@@ -1663,38 +1451,27 @@ rows.fill(0);
   gridElement.innerHTML = "";
   cells = [];
 errorsMade = 0;
-
  for (let row = 0; row < size; row++) {
   for (let col = 0; col < size; col++) {
-
       const cell = document.createElement("div");
-
       cells.push(cell);
-
-
       cell.classList.add("cell");
       cell.style.backgroundColor = colors[regionMap[row][col]];
       cell.dataset.state = "empty";
 const region = regionMap[row][col];
-
-
 if (row === 0 || regionMap[row-1][col] !== region) {
   cell.style.borderTop = "3px solid rgba(0,0,0,0.65)";
 }
-
 if (col === 0 || regionMap[row][col-1] !== region) {
   cell.style.borderLeft = "3px solid rgba(0,0,0,0.65)";
 }
-
 if (row === size-1 || regionMap[row+1][col] !== region) {
   cell.style.borderBottom = "3px solid rgba(0,0,0,0.65)";
 }
-
 if (col === size-1 || regionMap[row][col+1] !== region) {
   cell.style.borderRight = "3px solid rgba(0,0,0,0.65)";
 }
 cell.addEventListener("click", async () => {
-
   if (document.querySelector(".error")) {
     const isErrorQueen =
       cell.dataset.state === "queen" &&
@@ -1743,22 +1520,18 @@ document.getElementById("timer").classList.add("timer-complete");
     const rawSeconds = Math.round((Date.now() - startTime) / 1000);
 const totalSeconds = rawSeconds;
 // --- SPECIAL BADGES ---
-
 // ⚡ Clutch Victory (usa tutti e 3 gli hint)
 if (hintsUsed === 3) {
   unlockBadge("clutch_win");
 }
-
 // 🧠 Perfect Game (no hint + zero errori)
 if (hintsUsed === 0 && errorsMade === 0) {
   unlockBadge("perfect_game");
 }
-
 // 👑 Challenge King (batte un challenge link)
 if (challengeTargetTime && totalSeconds < challengeTargetTime) {
   unlockBadge("challenge_king");
 }
-
    await supabaseClient
   .from("queens_results")
   .update({
@@ -1769,7 +1542,6 @@ if (challengeTargetTime && totalSeconds < challengeTargetTime) {
       .eq("email", playerEmail)
       .eq("date", new Date().toISOString().split("T")[0]);
 // --- UPDATE PLAYER STATS ---
-
 const { data: playerStats } = await supabaseClient
   .from("players")
   .select(`
@@ -1784,41 +1556,29 @@ const { data: playerStats } = await supabaseClient
   `)
   .eq("email", playerEmail)
   .single();
-
 if (playerStats) {
-
   const today = new Date().toISOString().split("T")[0];
-
   let newStreak = 1;
-
   if (playerStats.last_played_date) {
-
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-
     const lastDate = new Date(playerStats.last_played_date);
-
     if (lastDate.toISOString().split("T")[0] === yesterday.toISOString().split("T")[0]) {
       newStreak = (playerStats.current_streak || 0) + 1;
     }
-
   }
-
   const bestStreak = Math.max(newStreak, playerStats.best_streak || 0);
 // --- CONSISTENCY BADGES (STREAK) ---
-
 if (newStreak >= 3) unlockBadge("streak_3");
 if (newStreak >= 7) unlockBadge("streak_7");
 if (newStreak >= 14) unlockBadge("streak_14");
 if (newStreak >= 30) unlockBadge("streak_30");
 if (newStreak >= 60) unlockBadge("streak_60");
-
   const bestTime =
     playerStats.best_time === null ||
     totalSeconds < playerStats.best_time
       ? totalSeconds
       : playerStats.best_time;
-
   await supabaseClient
     .from("players")
     .update({
@@ -1834,49 +1594,28 @@ no_hint_wins:
       last_played_date: today
     })
     .eq("email", playerEmail);
-
 }
 // --- EXPERIENCE BADGES (PUZZLES SOLVED) ---
-
 const newSolved = ((playerStats?.puzzles_solved) || 0) + 1;
-
 if (newSolved >= 1) unlockBadge("puzzle_1");
-
 if (newSolved >= 10) unlockBadge("puzzle_10");
-
 if (newSolved >= 50) unlockBadge("puzzle_50");
-
 if (newSolved >= 100) unlockBadge("puzzle_100");
-
 if (newSolved >= 250) unlockBadge("puzzle_250");
 // --- SPEED BADGES ---
-
 if (totalSeconds < 180) unlockBadge("speed_180");
-
 if (totalSeconds < 120) unlockBadge("speed_120");
-
 if (totalSeconds < 60) unlockBadge("speed_60");
-
 if (totalSeconds < 45) unlockBadge("speed_45");
-
 if (totalSeconds < 30) unlockBadge("speed_30");
-
 if (totalSeconds < 20) unlockBadge("speed_20");
-
 // --- LOGIC BADGES (NO HINT) ---
-
 if (hintsUsed === 0) {
-
   const newNoHintWins = (playerStats.no_hint_wins || 0) + 1;
-
   if (newNoHintWins >= 1) unlockBadge("no_hint_1");
-
   if (newNoHintWins >= 15) unlockBadge("no_hint_15");
-
   if (newNoHintWins >= 25) unlockBadge("no_hint_25");
-
   if (newNoHintWins >= 50) unlockBadge("no_hint_50");
-
   if (newNoHintWins >= 100) unlockBadge("no_hint_100");
 
 }
@@ -1885,42 +1624,18 @@ if (hintsUsed === 0) {
     document.querySelectorAll(".queen").forEach(q => {
       q.classList.add("win-effect");
     });
-
-
-// 🌍 COUNTRY PRIDE BADGE
-
-const countries = await loadMonthlyCountryLeaderboard();
-
-if (countries && countries.length > 0) {
-
-  const topCountry = countries[0].country_code;
-
-  if (topCountry === countryCode) {
-    unlockBadge("country_pride");
-  }
-
-}
 // 🏆 MONTHLY CHAMPION BADGE
-
 const monthly = await loadMonthlyLeaderboard();
-
 if (monthly && monthly.length > 0) {
-
   const leader = monthly[0].email;
-
   if (leader === playerEmail) {
     unlockBadge("monthly_1");
   }
-
 }
-
 launchConfetti();
-
 setTimeout(() => {
-
   showModal(totalSeconds);
   showUnlockedBadges();
-
 }, 1200);
   }
 });
@@ -1928,21 +1643,16 @@ setTimeout(() => {
     }
   }
 }
-
 function toggleAuthMode() {
-
   // 🔴 RESETTA MODALITÀ RESET
   isResetMode = false;
   document.getElementById("authPassword").style.display = "block";
-
   isRegisterMode = !isRegisterMode;
-
   const title = document.getElementById("authTitle");
   const extra = document.getElementById("registerExtra");
   const mainBtn = document.getElementById("authMainBtn");
   const switchText = document.getElementById("authSwitchText");
   const switchLink = document.getElementById("authSwitchLink");
-
   if (isRegisterMode) {
     title.textContent = "Register";
     extra.style.display = "block";
@@ -1961,63 +1671,44 @@ function toggleAuthMode() {
   if (errorBox) errorBox.remove();
 }
 function placeQueen(cell, row, col) {
-
   const region = regionMap[row][col];
-
   rows[row]++;
   cols[col]++;
   regions[region]++;
-
   queens.push({cell,row,col,region});
-
   const queen = document.createElement("span");
   queen.className = "queen";
-
   const img = document.createElement("img");
   img.src = "queens-logo.png";
   img.className = "queen-icon";
-
   queen.appendChild(img);
   cell.appendChild(queen);
-
   cell.dataset.state = "queen";
-
 }
 function removeQueen(cell,row,col){
-
   const region = regionMap[row][col];
-
   rows[row]--;
   cols[col]--;
   regions[region]--;
-
   queens = queens.filter(q => q.cell !== cell);
-
   const queen = cell.querySelector(".queen");
   if (queen) queen.remove();
-
   cell.dataset.state = "empty";
-
 }
 function showResetForm() {
-
   isRegisterMode = false;
   isResetMode = true;
-
   document.getElementById("authTitle").textContent = "Reset Password";
   document.getElementById("authPassword").style.display = "none";
   document.getElementById("registerExtra").style.display = "none";
   document.getElementById("authMainBtn").textContent = "Send reset link";
-
   document.getElementById("authSwitchText").textContent = "Back to login?";
   document.getElementById("authSwitchLink").textContent = "Login";
-
   const errorBox = document.getElementById("authErrorBox");
   if (errorBox) errorBox.remove();
 }
 function showAuthError(message) {
   let errorBox = document.getElementById("authErrorBox");
-
   if (!errorBox) {
     errorBox = document.createElement("div");
     errorBox.id = "authErrorBox";
@@ -2026,96 +1717,74 @@ function showAuthError(message) {
     errorBox.style.color = "#ff6b6b";
     document.getElementById("authMainBtn").after(errorBox);
   }
-
   errorBox.textContent = message;
 }
 async function handleAuth() {
-
   const email = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value.trim();
 // 🔴 RESET PASSWORD
 if (isResetMode) {
-
   if (!email) {
     showAuthError("Enter your email.");
     return;
   }
-
   const allowedDomain = "@infineum.com";
-
   if (!email.toLowerCase().endsWith(allowedDomain)) {
     showAuthError("Password reset allowed only for @infineum.com email.");
     return;
   }
-
   const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
   redirectTo: window.location.origin + "/Queens/"
 });
-
   if (error) {
     showAuthError("Error sending reset email.");
     return;
   }
-
   showAuthError("Reset link sent.  Check your email.");
   return;
 }
-
   if (!email || !password) {
     showAuthError("Enter email and password.");
     return;
   }
-
   // 🔵 LOGIN
   if (!isRegisterMode) {
-
     const { error } = await supabaseClient.auth.signInWithPassword({
       email,
       password
     });
-
     if (error) {
       showAuthError("Invalid email or password.");
       return;
     }
-
     window.location.reload();
     return;
   }
-
   // 🟣 REGISTRAZIONE
   const name = document.getElementById("authName").value.trim();
   const country = document.getElementById("authCountry").value;
-
   if (!name || !country) {
     showAuthError("Fill in all fields.");
     return;
   }
-
   const allowedDomain = "@infineum.com";
-
   if (!email.toLowerCase().endsWith(allowedDomain)) {
     showAuthError("You must use your company email @infineum.com");
     return;
   }
-
   if (password.length < 6) {
     showAuthError("Password must contain at least 6 characters.");
     return;
   }
-
   const { data, error } = await supabaseClient.auth.signUp({
     email,
     password
   });
-
   if (error) {
     showAuthError(error.message);
     return;
   }
-
   const user = data.user;
-
   const { error: profileError } = await supabaseClient
     .from("players")
     .insert({
@@ -2124,62 +1793,44 @@ if (isResetMode) {
       name: name,
       country_code: country
     });
-
   if (profileError) {
     showAuthError("Error saving profile.");
     return;
   }
-
   window.location.reload();
 }
-
-
 function checkConflicts() {
-
   let hasError = false;
-
   queens.forEach(q => {
-
     if (rows[q.row] > 1) {
       highlightRow(q.row);
       hasError = true;
     }
-
     if (cols[q.col] > 1) {
       highlightColumn(q.col);
       hasError = true;
     }
-
     if (regions[q.region] > 1) {
       highlightRegion(q.region);
       hasError = true;
     }
-
   });
-
   // controllo adiacenza (unico controllo necessario)
   const queenMap = new Set(
     queens.map(q => q.row + "-" + q.col)
   );
-
   queens.forEach(q => {
-
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
-
         if (dr === 0 && dc === 0) continue;
-
         const r = q.row + dr;
         const c = q.col + dc;
-
         if (queenMap.has(r + "-" + c)) {
           q.cell.classList.add("error");
           hasError = true;
         }
-
       }
     }
-
   });
 if (hasError) {
   errorsMade++;
@@ -2187,21 +1838,16 @@ if (hasError) {
   if (hasError && navigator.vibrate) {
     navigator.vibrate(120);
   }
-
   return hasError;
-
 }
 function checkWin() {
   return queens.length === size;
 }
 function checkIncompleteBoard() {
-
   let queenCount = 0;
   let filledCount = 0;
-
   cells.forEach(cell => {
     if (cell.dataset.state === "queen") queenCount++;
-
     if (
       cell.dataset.state === "queen" ||
       cell.dataset.state === "x"
@@ -2209,9 +1855,7 @@ function checkIncompleteBoard() {
       filledCount++;
     }
   });
-
   return filledCount === size * size && queenCount < size;
-
 }
 function highlightRow(row) {
   for (let col = 0; col < size; col++) {
@@ -2224,77 +1868,53 @@ function highlightColumn(col) {
   }
 }
 function highlightRegion(region) {
-
   cells.forEach((cell,i)=>{
-
     const r=Math.floor(i/size);
     const c=i%size;
-
     if(regionMap[r][c]===region){
       cell.classList.add("error");
     }
-
   });
-
 }
 function recomputeAutoX() {
-
   cells.forEach(cell => {
     if (cell.dataset.state === "x") {
       cell.classList.remove("x");
       cell.dataset.state = "empty";
     }
   });
-
   queens.forEach(q => {
-
     for (let r = 0; r < size; r++) {
-
       const indexRow = q.row * size + r;
       const indexCol = r * size + q.col;
-
       markX(indexRow);
       markX(indexCol);
-
     }
-
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
-
         const r = q.row + i;
         const c = q.col + j;
-
         if (r >= 0 && r < size && c >= 0 && c < size) {
           markX(r * size + c);
         }
-
       }
     }
-
     cells.forEach((cell,i)=>{
       const r=Math.floor(i/size);
       const c=i%size;
-
       if(regionMap[r][c]===q.region){
         markX(i);
       }
     });
-
   });
-
 }
-
 function markX(index){
-
   const cell = cells[index];
-
   if(cell.dataset.state==="empty"){
     cell.dataset.state="x";
     cell.classList.add("x");
   }
-
 }
-
 function giveHint() {
   if (!startTime) return;
   if (hintsUsed >= maxHints) return;
@@ -2438,13 +2058,10 @@ function showRulesModal(message) {
   modal.style.display = "flex";
 }
 function openPlayerModal() {
-
   const modal = document.getElementById("playerModal");
   modal.style.display = "flex";
-
 }
 const BADGE_CATEGORIES = {
-
 speed: {
   title: "⚡ Speed",
   badges: [
@@ -2466,7 +2083,6 @@ special: {
     { code:"country_pride", name:"Country Pride", description:"Your country is #1 in the monthly ranking" }
   ]
 },
-
 logic: {
   title: "🧠 Logic Mastery",
   badges: [
@@ -2477,7 +2093,6 @@ logic: {
     { code:"no_hint_100", name:"Absolute Clarity", description:"Solve 100 puzzles without using hints", goal:100 }
   ]
 },
-
 consistency: {
   title: "🔥 Consistency",
   badges: [
@@ -2488,7 +2103,6 @@ consistency: {
     { code:"streak_60", name:"Legendary Streak", description:"Solve puzzles 60 days in a row", goal:60 }
   ]
 },
-
 competitive: {
   title: "🏆 Competitive",
   badges: [
@@ -2500,7 +2114,6 @@ competitive: {
     { code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" }
   ]
 },
-
 experience: {
   title: "🎯 Experience",
   badges: [
@@ -2512,52 +2125,37 @@ experience: {
   ]
 }
 };
-
 async function openBadgeProfile() {
-
   const modal = document.getElementById("badgeModal");
   const container = document.getElementById("badgeContainer");
-
   modal.style.display = "flex";
-
   const { data: badges } = await supabaseClient
     .from("player_badges")
     .select("badge_code")
     .eq("email", playerEmail);
-
   const unlocked = badges ? badges.map(b => b.badge_code) : [];
 const { data: stats } = await supabaseClient
   .from("players")
   .select("puzzles_solved,no_hint_wins,current_streak")
   .eq("email", playerEmail)
   .single();
-
   let html = "";
-
   Object.values(BADGE_CATEGORIES).forEach(category => {
-
     html += `
       <div class="badge-category">
         <div class="badge-title">${category.title}</div>
         <div class="badge-row">
     `;
-
     category.badges.forEach(badge => {
-
       const isUnlocked = unlocked.includes(badge.code);
 let progressHTML = "";
-
 if (badge.goal && !isUnlocked && stats) {
-
   let current = 0;
-
   if (badge.code.startsWith("puzzle_")) current = stats.puzzles_solved || 0;
   if (badge.code.startsWith("no_hint_")) current = stats.no_hint_wins || 0;
   if (badge.code.startsWith("streak_")) current = stats.current_streak || 0;
-
   const percent = Math.min(100, (current / badge.goal) * 100);
 const almost = percent >= 90 ? "almost" : "";
-
   progressHTML = `
   <div class="badge-progress">
     <div class="badge-progress-fill ${almost}" style="width:${percent}%"></div>
@@ -2567,79 +2165,53 @@ const almost = percent >= 90 ? "almost" : "";
   </div>
   `;
 }
-
       html += `
         <div class="badge-card ${isUnlocked ? "unlocked" : "locked"}">
-
           <div class="badge-icon">
   <img src="badges/${badge.code}.png" class="badge-img">
 </div>
-
           <div style="font-weight:600;">
             ${badge.name}
           </div>
-
           <div style="font-size:11px;opacity:0.7;">
             ${badge.description}
           </div>
 ${progressHTML}
-
         </div>
       `;
-
     });
-
     html += `
         </div>
       </div>
     `;
-
   });
-
   container.innerHTML = html;
-
 }
-
 function closePlayerModal() {
-
   const modal = document.getElementById("playerModal");
   modal.style.display = "none";
-
 }
 function closeBadgeModal() {
-
   const modal = document.getElementById("badgeModal");
   modal.style.display = "none";
-
 }
 function closeBadgeUnlockModal(){
-
   const modal = document.getElementById("badgeUnlockModal");
-
   modal.style.display = "none";
-
   unlockedBadgesThisGame = [];
-
 }
 function showUnlockedBadges(){
-
   if (unlockedBadgesThisGame.length === 0) return;
-
   const modal = document.getElementById("badgeUnlockModal");
   const list = document.getElementById("badgeUnlockList");
-
   let html = "";
-
   unlockedBadgesThisGame.forEach(code => {
-
     let badgeName = code;
-
     Object.values(BADGE_CATEGORIES).forEach(category => {
       category.badges.forEach(b => {
         if (b.code === code) badgeName = b.name;
       });
     });
-
    html += `
 <div style="
 display:flex;
@@ -2657,22 +2229,15 @@ filter: drop-shadow(0 0 6px rgba(255,215,0,0.8));
 ${badgeName}
 </div>
 `;
-
   });
-
   list.innerHTML = html;
-
   modal.style.display = "flex";
-
 }
 async function openPlayerProfile() {
-
   const modal = document.getElementById("playerModal");
   const statsBox = document.getElementById("playerStats");
-
   modal.style.display = "flex";
   statsBox.innerHTML = "Loading statistics...";
-
 const { data, error } = await supabaseClient
   .from("queens_results")
   .select("time_seconds, date, hints_used, completed")
@@ -2680,161 +2245,114 @@ const { data, error } = await supabaseClient
   .eq("completed", true)
   .order("date", { ascending: true });
 // --- LOAD PLAYER BADGES ---
-
 const { data: badges } = await supabaseClient
   .from("player_badges")
   .select("badge_code")
   .eq("email", playerEmail);
-
 console.log("Player badges:", badges);
 // --- PODIUM COUNT (until yesterday) ---
-
 let podiums = 0;
-
 const today = new Date().toISOString().split("T")[0];
-
 const { data: allResults } = await supabaseClient
   .from("queens_results")
   .select("email, date, time_seconds")
   .lt("date", today)
   .order("date", { ascending: true });
-
 if (allResults) {
-
   const grouped = {};
-
   allResults.forEach(r => {
     if (!grouped[r.date]) grouped[r.date] = [];
     grouped[r.date].push(r);
   });
-
   Object.values(grouped).forEach(day => {
-
     day.sort((a,b)=>a.time_seconds - b.time_seconds);
-
     const top3 = day.slice(0,3);
-
     if (top3.some(p => p.email === playerEmail)) {
       podiums++;
     }
-
   });
-
 }
-
   if (error || !data || data.length === 0) {
     statsBox.innerHTML = "No statistics yet.";
     return;
   }
-
   const games = data.length;
 const monthNames = [
   "January","February","March","April","May","June",
   "July","August","September","October","November","December"
 ];
-
 const monthNumber = data.length
   ? parseInt(data[0].date.split("-")[1],10) - 1
   : new Date().getMonth();
 const monthName = monthNames[monthNumber];
-
 document.getElementById("profileTitle").textContent =
   `📊 Statistics — ${monthName}`;
-
   // puzzles solved
   const puzzlesSolved = games;
 // --- STREAK CALCULATION ---
-
 let currentStreak = 0;
 let bestStreak = 0;
 let streak = 0;
-
 const dates = data.map(g => g.date);
-
 for (let i = 0; i < dates.length; i++) {
-
   const current = new Date(dates[i]);
   const prev = new Date(dates[i-1]);
-
   if (i === 0) {
     streak = 1;
   } else {
-
     const diff =
       (current - prev) / (1000*60*60*24);
-
     if (diff === 1) {
       streak++;
     } else {
       streak = 1;
     }
-
   }
-
   if (streak > bestStreak) bestStreak = streak;
-
 }
-
 const todayDate = new Date().toISOString().split("T")[0];
 const lastDate = dates[dates.length - 1];
-
 const diffToday =
   (new Date(todayDate) - new Date(lastDate)) / (1000*60*60*24);
-
 if (diffToday <= 1) {
   currentStreak = streak;
 } else {
   currentStreak = 0;
 }
-
   // best time
   let bestTime = Infinity;
   let bestDate = null;
-
   data.forEach(g => {
     if (g.time_seconds < bestTime) {
       bestTime = g.time_seconds;
       bestDate = g.date;
     }
   });
-
   // average time
   const totalTime = data.reduce((sum, g) => sum + g.time_seconds, 0);
   const avgTime = Math.round(totalTime / games);
-
   // hint usage
   const gamesWithHints = data.filter(g => g.hints_used > 0).length;
   const hintUsage = Math.round((gamesWithHints / games) * 100);
-
   // consistency
  let rating = "—";
-
 if (games >= 3) {
-
   const deviations = data.map(g =>
     Math.abs(g.time_seconds - avgTime)
   );
-
   const avgDeviation =
     deviations.reduce((a,b)=>a+b,0) / deviations.length;
-
   let score =
     100 - Math.round((avgDeviation / avgTime) * 100);
-
   if (score < 0) score = 0;
   if (score > 100) score = 100;
-
   let label = "Unstable ⚠️";
-
   if (score >= 90) label = "Elite 👑";
   else if (score >= 70) label = "Strong 💎";
   else if (score >= 50) label = "Solid 👍";
-
   rating = `${label} (${score}%)`;
 }
-
 statsBox.innerHTML = `
-
 <div style="
   display:flex;
   align-items:center;
@@ -2843,23 +2361,17 @@ statsBox.innerHTML = `
   font-weight:700;
   margin-bottom:12px;
 ">
-
 ${playerName}
-
 <img 
   src="https://flagcdn.com/24x18/${(countryCode || "un").toLowerCase()}.png"
   style="width:20px;border-radius:2px;"
 >
-
 </div>
-
 <div class="stats-grid">
-
 <div class="stat-card">
 <div class="stat-title">🧩 Puzzles solved</div>
 <div class="stat-value">${puzzlesSolved}</div>
 </div>
-
 <div class="stat-card">
 <div class="stat-title">⚡ Best time</div>
 <div class="stat-value">${formatTime(bestTime)}</div>
@@ -2867,12 +2379,10 @@ ${playerName}
 Day ${bestDate.split("-")[2]}
 </div>
 </div>
-
 <div class="stat-card">
 <div class="stat-title">📈 Average time</div>
 <div class="stat-value">${formatTime(avgTime)}</div>
 </div>
-
 <div class="stat-card">
 <div class="stat-title">💡 Hint usage</div>
 <div class="stat-value">${hintUsage}%</div>
@@ -2881,22 +2391,18 @@ Day ${bestDate.split("-")[2]}
 <div class="stat-title">🏆 Podiums</div>
 <div class="stat-value">${podiums}</div>
 </div>
-
 <div class="stat-card">
 <div class="stat-title">🔥 Current streak</div>
 <div class="stat-value">${currentStreak}</div>
 </div>
-
 <div class="stat-card">
 <div class="stat-title">👑 Best streak</div>
 <div class="stat-value">${bestStreak}</div>
 </div>
-
 <div class="stat-card">
 <div class="stat-title">🧠 Rating</div>
 <div class="stat-value">${rating}</div>
 </div>
-
 </div>
 `;
 }
@@ -2904,33 +2410,23 @@ function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
 let shareBtn = document.getElementById("shareBtn");
-
 if (!shareBtn) {
   shareBtn = document.createElement("button");
   shareBtn.id = "shareBtn";
 }
 shareBtn.textContent = "📤 Share result";
 shareBtn.style.marginTop = "10px";
-
 shareBtn.onclick = async () => {
-
   const result = await getPlayerPosition() || { rank: "?", totalPlayers: "?" };
 const challengeLink =
 `${window.location.origin}/Queens/?challenge=${time}&player=${encodeURIComponent(playerName)}`;
-
 const text =
 `🔥 Queens Challenge
-
 Solved in ${formatTime(time)}.
-
 🏆 Rank ${result.rank}/${result.totalPlayers}
-
 Can you do better?
-
 Or is this too hard for you?
-
 ${challengeLink}`;
-
   if (navigator.share) {
     navigator.share({
       title: "Queens Game",
@@ -2940,12 +2436,9 @@ ${challengeLink}`;
     navigator.clipboard.writeText(text);
     showFixedMessage("Result copied to clipboard");
   }
-
 };
-
 const modalContent = document.querySelector("#winModal .modal-content");
 const closeBtn = document.getElementById("modalBtn");
-
 modalContent.insertBefore(shareBtn, closeBtn);
   modal.querySelector("h2").textContent = "👑 Game Completed";
   document.getElementById("finalTime").textContent =
@@ -2955,24 +2448,19 @@ modalContent.insertBefore(shareBtn, closeBtn);
   modal.style.display = "flex";
 }
 async function closeModal() {
-
   // Chiudi modal vittoria
   document.getElementById("winModal").style.display = "none";
-
   // Nascondi griglia
 gridElement.style.display = "none";
 gridElement.style.height = "0";
 gridElement.style.padding = "0";
 gridElement.style.margin = "0";
 gridElement.innerHTML = "";
-
 startBtn.disabled = true;
 hintBtn.disabled = true;
-
 startBtn.innerText = "Already played";
 startBtn.style.display = "none";
 hintBtn.style.display = "none";
-
   // Messaggio completamento
   const message = document.createElement("div");
   message.classList.add("post-game");
@@ -2980,29 +2468,23 @@ hintBtn.style.display = "none";
   message.style.fontWeight = "600";
   message.innerText = "You already solved today’s puzzle 👑";
   document.getElementById("playerInfo").appendChild(message);
-
   // Carica classifiche
 const [daily, monthly, countries] = await Promise.all([
   loadTodayLeaderboard(),
   loadMonthlyLeaderboard(),
   loadMonthlyCountryLeaderboard()
 ]);
-
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
-
 renderMonthlyLeaderboard(monthly);
 renderMonthlyCountryLeaderboard(countries);
 const monthlyPosition = await getMonthlyPlayerPosition();
-
 if (monthlyPosition) {
   const positionBox = document.createElement("div");
   positionBox.style.marginTop = "14px";
   positionBox.style.fontWeight = "700";
-
   const rank = monthlyPosition.rank;
   const totalPlayers = monthlyPosition.totalPlayers;
-
   if (rank === 1) {
     positionBox.style.color = "#ffd700"; // Oro
   } else if (rank === 2) {
@@ -3014,9 +2496,7 @@ if (monthlyPosition) {
   } else {
     positionBox.style.color = "#ffffff"; // Bianco
   }
-
   let message = "";
-
   if (rank === 1) {
     message = "🏆 Monthly Leader";
   } else if (rank === totalPlayers) {
@@ -3027,21 +2507,16 @@ if (monthlyPosition) {
     );
     message = `Better than ${betterThan}% of this month's players`;
   }
-
   positionBox.innerText =
     `You are #${rank} of ${totalPlayers} players · ${message}`;
-
   document.getElementById("monthlyLeaderboard").appendChild(positionBox);
 }
-
   // Reset slider posizione
   const slider = document.getElementById("leaderboardSlider");
   slider.style.transform = "translateX(0%)";
-
   const dots = document.querySelectorAll(".dot");
   dots.forEach(dot => dot.classList.remove("active"));
   if (dots[0]) dots[0].classList.add("active");
-
   // Apri modal leaderboard
   document.getElementById("leaderboardModal").style.display = "block";
 }
@@ -3146,18 +2621,13 @@ if (existing) {
   startTime = startedAt - (penalty * 1000);
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-
   const seconds = Math.floor((Date.now() - startTime) / 1000);
-
   const timerEl = document.getElementById("timer");
-
   timerEl.textContent = formatTime(seconds);
 updateChallengeColor(seconds);
-
   timerEl.classList.remove("timer-pulse");
   void timerEl.offsetWidth;
   timerEl.classList.add("timer-pulse");
-
 }, 1000);
   gridElement.style.visibility = "visible";
   gridElement.style.opacity = "1";
@@ -3185,18 +2655,13 @@ document.getElementById("rulesFloating").style.display = "flex";
   }
   startTime = new Date(data.started_at).getTime();
   timerInterval = setInterval(() => {
-
   const seconds = Math.floor((Date.now() - startTime) / 1000);
-
   const timerEl = document.getElementById("timer");
-
   timerEl.textContent = formatTime(seconds);
 updateChallengeColor(seconds);
-
   timerEl.classList.remove("timer-pulse");
   void timerEl.offsetWidth;
   timerEl.classList.add("timer-pulse");
-
 }, 1000);
   gridElement.style.visibility = "visible";
   gridElement.style.opacity = "1";
@@ -3207,7 +2672,6 @@ document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
   initializeGame();
 });
-
 function launchConfetti() {
   const duration = 1000;
   const end = Date.now() + duration;
@@ -3271,45 +2735,34 @@ The most precise one does.
 • 🥉 3rd place → +7 points  
 • 4th–10th place → +3 points
 • Participation → +1 point 
-
 Even a difficult day contributes to the leaderboard.
 
 🧩 Only one attempt per day.  
 Each game is a final decision.
-
 👑 Queens does not reward luck.  
 It rewards the mind.`
   );
 });
 // --- SWIPE LEADERBOARD ---
 document.addEventListener("DOMContentLoaded", () => {
-
   const wrapper = document.getElementById("leaderboardWrapper");
   const slider = document.getElementById("leaderboardSlider");
-
   if (!wrapper || !slider) return;
-
   let startX = 0;
   let currentPage = 0;
-
   wrapper.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
   });
-
   wrapper.addEventListener("touchend", (e) => {
     const endX = e.changedTouches[0].clientX;
     const diff = endX - startX;
-
     if (Math.abs(diff) < 50) return;
-
 if (diff < 0 && currentPage < 2) {
   currentPage++;
 } else if (diff > 0 && currentPage > 0) {
   currentPage--;
 }
-
     slider.style.transform = `translateX(-${currentPage * 33.3333}%)`;
-
     const dots = document.querySelectorAll(".dot");
     if (dots.length > 0) {
       dots.forEach(dot => dot.classList.remove("active"));
@@ -3318,12 +2771,10 @@ if (diff < 0 && currentPage < 2) {
   });
 // --- CLICK DOTS ---
 const dots = document.querySelectorAll(".dot");
-
 dots.forEach((dot, index) => {
   dot.addEventListener("click", () => {
     currentPage = index;
     slider.style.transform = `translateX(-${currentPage * 33.3333}%)`;
-
     dots.forEach(d => d.classList.remove("active"));
     dot.classList.add("active");
   });
@@ -3339,54 +2790,39 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 function showNewPasswordForm() {
-
   document.getElementById("playerInfo").style.display = "none";
   document.getElementById("grid").style.display = "none";
   document.getElementById("authContainer").style.display = "block";
   document.getElementById("logoutFloating").style.display = "none";
-
   document.getElementById("authTitle").textContent = "New Password";
   document.getElementById("authPassword").style.display = "block";
   document.getElementById("authPassword").value = "";
   document.getElementById("authMainBtn").textContent = "Update Password";
-
   isResetMode = false;
   isRegisterMode = false;
-
   document.getElementById("authMainBtn").onclick = async () => {
-
     const newPassword = document.getElementById("authPassword").value.trim();
-
     if (newPassword.length < 6) {
       showAuthError("Minimum 6 characters.");
       return;
     }
-
     const { error } = await supabaseClient.auth.updateUser({
       password: newPassword
     });
-
     if (error) {
       showAuthError("Error updating password.");
       return;
     }
-
     showAuthError("Password updated successfully.");
-
     setTimeout(() => {
       window.location.href = window.location.origin + "/Queens/";
     }, 1500);
   };
 }
-
-
 function setupFloatingButtons() {
-
   const installBtn = document.getElementById("installFloating");
   const pushBtn = document.getElementById("pushFloating");
-
   const installed = isAppInstalled();
-
   // default: nascondiamo tutto
 if (installBtn) installBtn.style.display = "none";
 if (pushBtn) pushBtn.style.display = "none";
@@ -3400,69 +2836,50 @@ if (!installed && installBtn) {
 if (!playerEmail || playerEmail === null) {
   return;
 }
-
 }
 // --- RESET BADGE E NOTIFICHE ALL'APERTURA APP ---
-
 if ('serviceWorker' in navigator) {
-
   navigator.serviceWorker.getRegistration().then(reg => {
     if (reg) {
-
       reg.getNotifications().then(notifications => {
         notifications.forEach(n => n.close());
       });
-
     }
   });
-
 }
-
 if ('clearAppBadge' in navigator) {
   navigator.clearAppBadge();
 }
 let unlockedBadgesThisGame = [];
 async function unlockBadge(badgeCode){
-
   if (unlockedBadgesThisGame.includes(badgeCode)) return;
-
   const { error } = await supabaseClient
     .from("player_badges")
     .insert({
       email: playerEmail,
       badge_code: badgeCode
     });
-
   if (!error) {
     unlockedBadgesThisGame.push(badgeCode);
   }
-
 }
 function formatTime(seconds) {
-
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
-
   return (
     String(m).padStart(2, "0") +
     ":" +
     String(s).padStart(2, "0")
   );
-
 }
-
 function updateChallengeColor(seconds){
-
   if(!challengeTargetTime) return;
-
   const timerEl = document.getElementById("timer");
-
   timerEl.classList.remove(
     "timer-green",
     "timer-yellow",
     "timer-red"
   );
-
   const ratio = seconds / challengeTargetTime;
 
   if (ratio < 0.7){
@@ -3474,20 +2891,15 @@ function updateChallengeColor(seconds){
   else{
     timerEl.classList.add("timer-red");
   }
-
 }
 // --- CHALLENGE LINK ---
-
 const params = new URLSearchParams(window.location.search);
-
 const challengeTime = params.get("challenge");
 const challengePlayer = params.get("player");
 if (challengeTime) {
   challengeTargetTime = parseInt(challengeTime);
 }
-
 if (challengeTime) {
-
   if (challengePlayer) {
     showFixedMessage(
       `🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTime)}`,
@@ -3501,15 +2913,11 @@ if (challengeTime) {
       6000
     );
   }
-
 }
 if (challengeTime) {
   history.replaceState({}, "", window.location.pathname);
 }
 initializePage();
-
-
-
 </script>
 <div id="winModal" class="modal">
   <div class="modal-content">
@@ -3527,25 +2935,19 @@ initializePage();
 </div>
 <div id="playerModal" class="modal">
   <div class="modal-content">
-
     <h2 id="profileTitle">📊 Statistics</h2>
-
     <div id="playerStats" style="
       margin-top:15px;
       text-align:left;
       font-size:15px;
       line-height:1.6;
     "></div>
-
     <button onclick="closePlayerModal()">Close</button>
-
   </div>
 </div>
 <div id="badgeModal" class="modal">
   <div class="modal-content">
-
     <h2>👑 Achievements</h2>
-
   <div id="badgeContainer" style="
   margin-top:15px;
   text-align:left;
@@ -3555,25 +2957,19 @@ initializePage();
   flex:1;
 ">
 </div>
-
     <button onclick="closeBadgeModal()">Close</button>
-
   </div>
 </div>
 <div id="badgeUnlockModal" class="modal">
   <div class="modal-content">
-
     <h2>🏅 Achievements Unlocked</h2>
-
     <div id="badgeUnlockList" style="
       margin-top:15px;
       text-align:left;
       font-size:16px;
       line-height:1.8;
     "></div>
-
     <button onclick="closeBadgeUnlockModal()">Close</button>
-
   </div>
 </div>
 <script>
@@ -3584,96 +2980,66 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <script>
-
 let deferredPrompt;
 const installBtn = document.getElementById("installFloating");
-
 if (!installBtn) {
   console.warn("installFloating non trovato");
 } else {
-
   if (isAppInstalled()) {
     installBtn.style.display = "none";
   }
-
   if (window.matchMedia('(display-mode: standalone)').matches) {
     installBtn.style.display = "none";
   }
-
 }
-
 window.addEventListener('beforeinstallprompt', (e) => {
 if (isAppInstalled()) return;
-
-
   e.preventDefault();
-
   deferredPrompt = e;
-
  if (installBtn && !isAppInstalled()) installBtn.style.display = "flex";
 if (typeof showFixedMessage === "function") {
   showFixedMessage("📲 Install Queens for faster access");
 }
-
 });
-
 if (installBtn) {
   installBtn.addEventListener("click", async () => {
-
   if (!deferredPrompt) return;
-
   deferredPrompt.prompt();
-
   const choice = await deferredPrompt.userChoice;
-
   if (choice.outcome === "accepted") {
     installBtn.style.display = "none";
   }
-
   deferredPrompt = null;
-
 });
 }
-
 window.addEventListener("appinstalled", () => {
-
   localStorage.setItem("queens_installed", "true");
-
 const installBtn = document.getElementById("installFloating");
 if (installBtn) installBtn.style.display = "none";
-
 });
 function isIOS() {
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
 function isAppInstalled() {
-
   // Android / Chrome / Edge
   if (window.matchMedia('(display-mode: standalone)').matches) {
     return true;
   }
-
   // iOS Safari
   if (window.navigator.standalone === true) {
     return true;
   }
-
   // fallback salvato dopo installazione
   if (localStorage.getItem("queens_installed") === "true") {
     return true;
   }
-
   return false;
 }
 if (isIOS() && !window.navigator.standalone) {
-
   const installBtn = document.getElementById("installFloating");
-
   if (installBtn) {
     if (!isAppInstalled()) installBtn.style.display = "flex";
-
     installBtn.addEventListener("click", () => {
-
       showFixedMessage(
         "On iPhone tap Share → Add to Home Screen",
         "info",
@@ -3682,24 +3048,18 @@ if (isIOS() && !window.navigator.standalone) {
 
     });
   }
-
 }
 function urlBase64ToUint8Array(base64String) {
-
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding)
     .replace(/-/g, '+')
     .replace(/_/g, '/');
-
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
-
   for (let i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.charCodeAt(i);
   }
-
   return outputArray;
-
 }
 async function enablePush() {
 if (!playerEmail) {
@@ -3714,45 +3074,34 @@ if (!('Notification' in window)) {
   showFixedMessage("Notifications not supported on this browser");
   return;
 }
-
 const permission = await Notification.requestPermission();
-
   if (permission !== "granted") {
     showFixedMessage("❌ Notifications not enabled");
     return;
   }
-
   const registration = await navigator.serviceWorker.ready;
-
 let subscription = await registration.pushManager.getSubscription();
-
 if (!subscription) {
   subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array("BFm84EXzesmdcYIg-Mvd1mb1RAK0qeESiS8h3NCxf2R70aBx1gaxf2bY27FXOTlZ_zN9NgRxk9UcWoN9rsWlcUM")
   });
 }
-
   const { error } = await supabaseClient
     .from("push_subscriptions")
     .upsert({
       email: playerEmail,
       subscription: subscription
     });
-
   if (error) {
     console.error(error);
     showFixedMessage("Error enabling notifications");
     return;
   }
-
 showFixedMessage("🔔 Notifications enabled");
-
 const btn = document.getElementById("pushFloating");
 if (btn) btn.style.display = "none";
-
 }
-
 const pushBtn = document.getElementById("pushFloating");
 if (pushBtn) {
   pushBtn.addEventListener("click", enablePush);
