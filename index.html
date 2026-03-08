@@ -2275,34 +2275,34 @@ async function openPublicBadges(email,name,country){
     .from("player_badges")
     .select("badge_code")
     .eq("email", email);
+  const unlocked = data ? data.map(b => b.badge_code) : [];
+  const totalUnlocked = unlocked.length;
+  title.innerHTML = `
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="font-weight:700;font-size:20px;">
+      👤 ${name}
+    </span>
+    <img 
+      src="https://flagcdn.com/24x18/${(country || "un").toLowerCase()}.png"
+      style="width:20px;border-radius:2px;"
+    >
+  </div>
+  <div style="
+    margin-top:8px;
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    opacity:0.95;
+    color:#ffd700;
+    text-shadow:0 0 6px rgba(255,215,0,0.6);
+  ">
+  🏆 ${totalUnlocked} Achievements unlocked
+  </div>
+  `;
   if (!data || data.length === 0){
     container.innerHTML = "No achievements yet.";
     return;
   }
-  const unlocked = data.map(b => b.badge_code);
-const totalUnlocked = unlocked.length;
-title.innerHTML = `
-<div style="display:flex;align-items:center;gap:8px;">
-  <span style="font-weight:700;font-size:20px;">
-    👤 ${name}
-  </span>
-  <img 
-    src="https://flagcdn.com/24x18/${(country || "un").toLowerCase()}.png"
-    style="width:20px;border-radius:2px;"
-  >
-</div>
-<div style="
-  margin-top:8px;
-  font-size:16px;
-  font-weight:700;
-  letter-spacing:0.5px;
-  opacity:0.95;
-  color:#ffd700;
-  text-shadow:0 0 6px rgba(255,215,0,0.6);
-">
-🏆 ${totalUnlocked} Achievements unlocked
-</div>
-`;
   let html = "";
   Object.values(BADGE_CATEGORIES).forEach(category => {
     const visibleBadges = category.badges.filter(b => unlocked.includes(b.code));
