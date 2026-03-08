@@ -2560,27 +2560,64 @@ async function openBadgeProfile() {
 
   let html = "";
 
+async function openBadgeProfile() {
+
+  const modal = document.getElementById("badgeModal");
+  const container = document.getElementById("badgeContainer");
+
+  modal.style.display = "flex";
+
+  const { data: badges } = await supabaseClient
+    .from("player_badges")
+    .select("badge_code")
+    .eq("email", playerEmail);
+
+  const unlocked = badges ? badges.map(b => b.badge_code) : [];
+
+  let html = "";
+
   Object.values(BADGE_CATEGORIES).forEach(category => {
 
-html += `
-  <div class="badge-card ${isUnlocked ? "unlocked" : "locked"}">
-    
-    <div class="badge-icon">
-      ${isUnlocked ? "🏅" : "🔒"}
-    </div>
+    html += `
+      <div class="badge-category">
+        <div class="badge-title">${category.title}</div>
+        <div class="badge-row">
+    `;
 
-    <div style="font-weight:600;">
-      ${badge.name}
-    </div>
+    category.badges.forEach(badge => {
 
-    <div style="font-size:11px;opacity:0.7;">
-      ${isUnlocked ? "Unlocked" : badge.description}
-    </div>
+      const isUnlocked = unlocked.includes(badge.code);
 
-  </div>
-`;
+      html += `
+        <div class="badge-card ${isUnlocked ? "unlocked" : "locked"}">
+
+          <div class="badge-icon">
+            ${isUnlocked ? "🏅" : "🔒"}
+          </div>
+
+          <div style="font-weight:600;">
+            ${badge.name}
+          </div>
+
+          <div style="font-size:11px;opacity:0.7;">
+            ${isUnlocked ? "Unlocked" : badge.description}
+          </div>
+
+        </div>
+      `;
 
     });
+
+    html += `
+        </div>
+      </div>
+    `;
+
+  });
+
+  container.innerHTML = html;
+
+}
 
     html += `
         </div>
@@ -3586,7 +3623,9 @@ if (isAppInstalled()) return;
   deferredPrompt = e;
 
  if (installBtn && !isAppInstalled()) installBtn.style.display = "flex";
-showFixedMessage("📲 Install Queens for faster access");
+if (typeof showFixedMessage === "function") {
+  showFixedMessage("📲 Install Queens for faster access");
+}
 
 });
 
