@@ -1115,7 +1115,11 @@ row.classList.add("first-place");
 row.innerHTML = `
   <span style="color:${color}; font-weight:600;">
  ${medal} ${index + 1}. 
+<span class="leaderboard-player"
+onclick="openPublicBadges('${player.email}','${player.name}','${player.country_code}')"
+style="cursor:pointer;text-decoration:underline;">
 ${player.name}
+</span>
 <img 
   src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
   style="width:20px; height:auto; margin-left:6px; vertical-align:middle; border-radius:2px;"
