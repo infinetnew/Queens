@@ -806,10 +806,16 @@ overflow-y: auto;
       </svg>
     </span>
 
-   <span id="playerDisplay">
-      <span id="displayName"></span>
-      <img id="displayFlag">
-    </span>
+<span id="playerDisplay">
+
+  <span id="displayName"
+        style="cursor:pointer"
+        onclick="openBadgeProfile()">
+  </span>
+
+  <img id="displayFlag">
+
+</span>
 
   </div>
 
@@ -2243,6 +2249,21 @@ function openPlayerModal() {
 
 }
 
+
+// --- BADGE PROFILE ---
+
+async function openBadgeProfile() {
+
+  const { data: badges } = await supabaseClient
+    .from("player_badges")
+    .select("badge_code")
+    .eq("email", playerEmail);
+
+  console.log("Player badges:", badges);
+
+}
+
+
 function closePlayerModal() {
 
   const modal = document.getElementById("playerModal");
@@ -2263,6 +2284,14 @@ const { data, error } = await supabaseClient
   .eq("email", playerEmail)
   .eq("completed", true)
   .order("date", { ascending: true });
+// --- LOAD PLAYER BADGES ---
+
+const { data: badges } = await supabaseClient
+  .from("player_badges")
+  .select("badge_code")
+  .eq("email", playerEmail);
+
+console.log("Player badges:", badges);
 // --- PODIUM COUNT (until yesterday) ---
 
 let podiums = 0;
