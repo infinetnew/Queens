@@ -270,10 +270,8 @@ contain: content;
     rgba(255,255,255,0.04) 70%,
     rgba(255,255,255,0.01) 100%
   );
-  mix-blend-mode: normal;
-  opacity: 0.6;
-}
   mix-blend-mode: soft-light;
+  opacity: 0.6;
 }
 .cell::after {
   content: "";
@@ -2169,6 +2167,40 @@ async function openPlayerProfile() {
     .select("time_seconds, date, hints_used, completed")
     .eq("email", playerEmail)
     .eq("completed", true);
+// --- PODIUM COUNT (until yesterday) ---
+
+let podiums = 0;
+
+const today = new Date().toISOString().split("T")[0];
+
+const { data: allResults } = await supabaseClient
+  .from("queens_results")
+  .select("email, date, time_seconds")
+  .lt("date", today)
+  .order("date", { ascending: true });
+
+if (allResults) {
+
+  const grouped = {};
+
+  allResults.forEach(r => {
+    if (!grouped[r.date]) grouped[r.date] = [];
+    grouped[r.date].push(r);
+  });
+
+  Object.values(grouped).forEach(day => {
+
+    day.sort((a,b)=>a.time_seconds - b.time_seconds);
+
+    const top3 = day.slice(0,3);
+
+    if (top3.some(p => p.email === playerEmail)) {
+      podiums++;
+    }
+
+  });
+
+}
 
   if (error || !data || data.length === 0) {
     statsBox.innerHTML = "No statistics yet.";
@@ -2280,7 +2312,10 @@ Day ${bestDate.split("-")[2]}
 <div class="stat-title">💡 Hint usage</div>
 <div class="stat-value">${hintUsage}%</div>
 </div>
-
+<div class="stat-card">
+<div class="stat-title">🏆 Podiums</div>
+<div class="stat-value">${podiums}</div>
+</div>
 <div class="stat-card" style="grid-column:1 / span 2;">
 <div class="stat-title">🧠 Rating</div>
 <div class="stat-value">${rating}</div>
@@ -2292,20 +2327,25 @@ Day ${bestDate.split("-")[2]}
 function showModal(time) {
   const modal = document.getElementById("winModal");
   const button = document.getElementById("modalBtn");
-const shareBtn = document.createElement("button");
+let shareBtn = document.getElementById("shareBtn");
+
+if (!shareBtn) {
+  shareBtn = document.createElement("button");
+  shareBtn.id = "shareBtn";
+}
 shareBtn.textContent = "📤 Share result";
 shareBtn.style.marginTop = "10px";
 
 shareBtn.onclick = async () => {
 
-  const result = await getPlayerPosition();
+  const result = await getPlayerPosition() || { rank: "?", totalPlayers: "?" };
 const challengeLink =
 `${window.location.origin}/Queens/?challenge=${time}&player=${encodeURIComponent(playerName)}`;
 
 const text =
 `🔥 Queens Challenge
 
-Solved in ${time}s.
+Solved in ${formatTime(time)}.
 
 🏆 Rank ${result.rank}/${result.totalPlayers}
 
@@ -2327,7 +2367,10 @@ ${challengeLink}`;
 
 };
 
-document.querySelector("#winModal .modal-content").appendChild(shareBtn);
+const modalContent = document.querySelector("#winModal .modal-content");
+const closeBtn = document.getElementById("modalBtn");
+
+modalContent.insertBefore(shareBtn, closeBtn);
   modal.querySelector("h2").textContent = "👑 Game Completed";
   document.getElementById("finalTime").textContent =
     "Time: " + time + " seconds";
@@ -2860,7 +2903,7 @@ if (challengeTime) {
     );
   } else {
     showFixedMessage(
-      `🔥 Challenge: beat ${challengeTime}s`,
+     `🔥 Challenge: beat ${formatTime(challengeTime)}`
       "info",
       6000
     );
