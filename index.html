@@ -1684,8 +1684,24 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
 if (!hasConflict && checkWin()) {
     clearInterval(timerInterval);
 document.getElementById("timer").classList.add("timer-complete");
-    const rawSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const rawSeconds = Math.round((Date.now() - startTime) / 1000);
 const totalSeconds = rawSeconds;
+// --- SPECIAL BADGES ---
+
+// ⚡ Clutch Victory (usa tutti e 3 gli hint)
+if (hintsUsed === 3) {
+  unlockBadge("clutch_win");
+}
+
+// 🧠 Perfect Game (no hint + zero errori)
+if (hintsUsed === 0 && errorsMade === 0) {
+  unlockBadge("perfect_game");
+}
+
+// 👑 Challenge King (batte un challenge link)
+if (challengeTargetTime && totalSeconds < challengeTargetTime) {
+  unlockBadge("challenge_king");
+}
 
    await supabaseClient
   .from("queens_results")
@@ -1733,6 +1749,13 @@ if (playerStats) {
   }
 
   const bestStreak = Math.max(newStreak, playerStats.best_streak || 0);
+// --- CONSISTENCY BADGES (STREAK) ---
+
+if (newStreak >= 3) unlockBadge("streak_3");
+if (newStreak >= 7) unlockBadge("streak_7");
+if (newStreak >= 14) unlockBadge("streak_14");
+if (newStreak >= 30) unlockBadge("streak_30");
+if (newStreak >= 60) unlockBadge("streak_60");
 
   const bestTime =
     playerStats.best_time === null ||
@@ -1757,33 +1780,179 @@ no_hint_wins:
     .eq("email", playerEmail);
 
 }
-// --- BADGE: FIRST QUEEN ---
+// --- EXPERIENCE BADGES (PUZZLES SOLVED) ---
 
-const newSolved = (playerStats.puzzles_solved || 0) + 1;
+const newSolved = ((playerStats?.puzzles_solved) || 0) + 1;
 
-if (newSolved >= 1) {
-  unlockBadge("puzzle_1");
-}
-// --- BADGE: SPEED RUNNER (< 2 minutes) ---
+if (newSolved >= 1) unlockBadge("puzzle_1");
 
-if (totalSeconds < 120) {
-  unlockBadge("speed_120");
-}
+if (newSolved >= 10) unlockBadge("puzzle_10");
 
-// --- BADGE: PURE MIND (no hints) ---
+if (newSolved >= 50) unlockBadge("puzzle_50");
+
+if (newSolved >= 100) unlockBadge("puzzle_100");
+
+if (newSolved >= 250) unlockBadge("puzzle_250");
+// --- SPEED BADGES ---
+
+if (totalSeconds < 180) unlockBadge("speed_180");
+
+if (totalSeconds < 120) unlockBadge("speed_120");
+
+if (totalSeconds < 60) unlockBadge("speed_60");
+
+if (totalSeconds < 45) unlockBadge("speed_45");
+
+if (totalSeconds < 30) unlockBadge("speed_30");
+
+if (totalSeconds < 20) unlockBadge("speed_20");
+
+// --- LOGIC BADGES (NO HINT) ---
 
 if (hintsUsed === 0) {
-  unlockBadge("no_hint_1");
+
+  const newNoHintWins = (playerStats.no_hint_wins || 0) + 1;
+
+  if (newNoHintWins >= 1) unlockBadge("no_hint_1");
+
+  if (newNoHintWins >= 15) unlockBadge("no_hint_15");
+
+  if (newNoHintWins >= 25) unlockBadge("no_hint_25");
+
+  if (newNoHintWins >= 50) unlockBadge("no_hint_50");
+
+  if (newNoHintWins >= 100) unlockBadge("no_hint_100");
+
 }
     startBtn.disabled = true;
     hintBtn.disabled = true;
     document.querySelectorAll(".queen").forEach(q => {
       q.classList.add("win-effect");
     });
-    launchConfetti();
-    setTimeout(() => {
-      showModal(totalSeconds);
-    }, 1200);
+// --- COMPETITIVE BADGES (DAILY RANK) ---
+
+const position = await getPlayerPosition();
+
+if (position) {
+
+  const rank = position.rank;
+
+  if (rank <= 3) unlockBadge("podium_1");
+
+  if (rank === 1) unlockBadge("win_1");
+
+  // 🔥 COMEBACK BADGE
+  if (hintsUsed === 3 && rank <= 10) {
+    unlockBadge("comeback");
+  }
+
+}
+
+// 🌍 COUNTRY PRIDE BADGE
+
+const countries = await loadMonthlyCountryLeaderboard();
+
+if (countries && countries.length > 0) {
+
+  const topCountry = countries[0].country_code;
+
+  if (topCountry === countryCode) {
+    unlockBadge("country_pride");
+  }
+
+}
+// 🏆 MONTHLY CHAMPION BADGE
+
+const monthly = await loadMonthlyLeaderboard();
+
+if (monthly && monthly.length > 0) {
+
+  const leader = monthly[0].email;
+
+  if (leader === playerEmail) {
+    unlockBadge("monthly_1");
+  }
+
+}
+
+// --- COMPETITIVE BADGES (TOTAL PODIUMS) ---
+
+const today = new Date().toISOString().split("T")[0];
+
+const { data: allResults } = await supabaseClient
+  .from("queens_results")
+  .select("email, date, time_seconds")
+  .lt("date", today)
+  .order("date", { ascending: true });
+
+let podiums = 0;
+
+if (allResults) {
+
+  const grouped = {};
+
+  allResults.forEach(r => {
+    if (!grouped[r.date]) grouped[r.date] = [];
+    grouped[r.date].push(r);
+  });
+
+  Object.values(grouped).forEach(day => {
+
+    day.sort((a,b)=>a.time_seconds - b.time_seconds);
+
+    const top3 = day.slice(0,3);
+
+    if (top3.some(p => p.email === playerEmail)) {
+      podiums++;
+    }
+
+  });
+
+}
+
+// --- PODIUM BADGES ---
+
+if (podiums >= 5) unlockBadge("podium_5");
+
+if (podiums >= 10) unlockBadge("podium_10");
+// --- WIN BADGES (TOTAL VICTORIES) ---
+
+let wins = 0;
+
+if (allResults) {
+
+  const groupedWins = {};
+
+  allResults.forEach(r => {
+    if (!groupedWins[r.date]) groupedWins[r.date] = [];
+    groupedWins[r.date].push(r);
+  });
+
+  Object.values(groupedWins).forEach(day => {
+
+    day.sort((a,b)=>a.time_seconds - b.time_seconds);
+
+    const winner = day[0];
+
+    if (winner && winner.email === playerEmail) {
+      wins++;
+    }
+
+  });
+
+}
+
+// --- WIN BADGE ---
+
+if (wins >= 5) unlockBadge("win_5");
+launchConfetti();
+
+setTimeout(() => {
+
+  showModal(totalSeconds);
+  showUnlockedBadges();
+
+}, 1200);
   }
 });
       gridElement.appendChild(cell);
@@ -2425,6 +2594,43 @@ function closeBadgeModal() {
 
   const modal = document.getElementById("badgeModal");
   modal.style.display = "none";
+
+}
+function closeBadgeUnlockModal(){
+
+  const modal = document.getElementById("badgeUnlockModal");
+
+  modal.style.display = "none";
+
+  unlockedBadgesThisGame = [];
+
+}
+function showUnlockedBadges(){
+
+  if (unlockedBadgesThisGame.length === 0) return;
+
+  const modal = document.getElementById("badgeUnlockModal");
+  const list = document.getElementById("badgeUnlockList");
+
+  let html = "";
+
+  unlockedBadgesThisGame.forEach(code => {
+
+    let badgeName = code;
+
+    Object.values(BADGE_CATEGORIES).forEach(category => {
+      category.badges.forEach(b => {
+        if (b.code === code) badgeName = b.name;
+      });
+    });
+
+    html += `<div>🏅 ${badgeName}</div>`;
+
+  });
+
+  list.innerHTML = html;
+
+  modal.style.display = "flex";
 
 }
 async function openPlayerProfile() {
@@ -3183,7 +3389,8 @@ if ('serviceWorker' in navigator) {
 if ('clearAppBadge' in navigator) {
   navigator.clearAppBadge();
 }
-async function unlockBadge(badgeCode) {
+let unlockedBadgesThisGame = [];
+async function unlockBadge(badgeCode){
 
   const { error } = await supabaseClient
     .from("player_badges")
@@ -3192,9 +3399,8 @@ async function unlockBadge(badgeCode) {
       badge_code: badgeCode
     });
 
-  // se il badge esiste già, Supabase ignorerà l'inserimento
-  if (error && !error.message.includes("duplicate")) {
-    console.log("Badge error:", error);
+  if (!error) {
+    unlockedBadgesThisGame.push(badgeCode);
   }
 
 }
@@ -3317,6 +3523,22 @@ initializePage();
 </div>
 
     <button onclick="closeBadgeModal()">Close</button>
+
+  </div>
+</div>
+<div id="badgeUnlockModal" class="modal">
+  <div class="modal-content">
+
+    <h2>🏅 Achievements Unlocked</h2>
+
+    <div id="badgeUnlockList" style="
+      margin-top:15px;
+      text-align:left;
+      font-size:16px;
+      line-height:1.8;
+    "></div>
+
+    <button onclick="closeBadgeUnlockModal()">Close</button>
 
   </div>
 </div>
