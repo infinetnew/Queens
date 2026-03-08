@@ -2253,13 +2253,6 @@ async function openBadgeProfile() {
   const modal = document.getElementById("badgeModal");
   modal.style.display = "flex";
 
-}
-
-
-// --- BADGE PROFILE ---
-
-async function openBadgeProfile() {
-
   const { data: badges } = await supabaseClient
     .from("player_badges")
     .select("badge_code")
