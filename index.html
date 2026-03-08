@@ -1701,6 +1701,17 @@ const newSolved = (playerStats.puzzles_solved || 0) + 1;
 if (newSolved >= 1) {
   unlockBadge("puzzle_1");
 }
+// --- BADGE: SPEED RUNNER (< 2 minutes) ---
+
+if (totalSeconds < 120) {
+  unlockBadge("speed_120");
+}
+
+// --- BADGE: PURE MIND (no hints) ---
+
+if (hintsUsed === 0) {
+  unlockBadge("no_hint_1");
+}
     startBtn.disabled = true;
     hintBtn.disabled = true;
     document.querySelectorAll(".queen").forEach(q => {
