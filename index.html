@@ -2293,6 +2293,11 @@ async function openPublicBadges(email,name,country){
     .eq("email", email);
   const unlocked = data ? data.map(b => b.badge_code) : [];
   const totalUnlocked = unlocked.length;
+let totalBadges = 0;
+Object.values(BADGE_CATEGORIES).forEach(category => {
+  totalBadges += category.badges.length;
+const percent = Math.round((totalUnlocked / totalBadges) * 100);
+});
   title.innerHTML = `
   <div style="display:flex;align-items:center;gap:8px;">
     <span style="font-weight:700;font-size:20px;">
@@ -2312,7 +2317,7 @@ async function openPublicBadges(email,name,country){
     color:#ffd700;
     text-shadow:0 0 6px rgba(255,215,0,0.6);
   ">
-  🏆 ${totalUnlocked} Achievements unlocked
+  🏆 ${totalUnlocked} / ${totalBadges} Achievements unlocked (${percent}%)
   </div>
   `;
   if (!data || data.length === 0){
