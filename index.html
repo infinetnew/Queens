@@ -978,6 +978,7 @@ const hintBtn = document.getElementById("hintBtn");
 let hintsUsed = 0;
 const maxHints = 3;
 let isDragging = false;
+let errorsMade = 0;
 let dragMode = null; 
 let solution = [];
 let regionMap = [];
@@ -1542,6 +1543,7 @@ rows.fill(0);
   queens = [];
   gridElement.innerHTML = "";
   cells = [];
+errorsMade = 0;
 
  for (let row = 0; row < size; row++) {
   for (let col = 0; col < size; col++) {
@@ -1620,12 +1622,13 @@ if (!hasConflict && checkWin()) {
     clearInterval(timerInterval);
 document.getElementById("timer").classList.add("timer-complete");
     const totalSeconds = Math.floor((Date.now() - startTime) / 1000);
-    await supabaseClient
-      .from("queens_results")
-      .update({
-        completed: true,
-        time_seconds: totalSeconds
-      })
+   await supabaseClient
+  .from("queens_results")
+  .update({
+    completed: true,
+    time_seconds: totalSeconds,
+    errors_made: errorsMade
+  })
       .eq("email", playerEmail)
       .eq("date", new Date().toISOString().split("T")[0]);
 // --- UPDATE PLAYER STATS ---
@@ -1955,7 +1958,9 @@ function checkConflicts() {
     }
 
   });
-
+if (hasError) {
+  errorsMade++;
+}
   if (hasError && navigator.vibrate) {
     navigator.vibrate(120);
   }
