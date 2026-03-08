@@ -21,7 +21,6 @@ body {
   align-items: stretch;
   min-height: 100dvh;
   margin: 0;
-  overflow-x: hidden;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   background: radial-gradient(circle at 20% 20%, #2b1055, #0f0c29 70%);
@@ -534,8 +533,6 @@ contain: content;
   width: 100%;
   max-width: 320px;
   margin: 20px auto 0 auto;
-  padding: 0 10px;
-  box-sizing: border-box;
 }
 .leaderboard-slider {
   display: flex;
@@ -544,6 +541,7 @@ contain: content;
 }
 .leaderboard-page {
   width: 33.3333%;
+  padding: 0 10px;
   box-sizing: border-box;
 }
 .leaderboard-title {
