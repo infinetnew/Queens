@@ -2223,7 +2223,9 @@ const monthNames = [
   "July","August","September","October","November","December"
 ];
 
-const monthNumber = parseInt(data[0].date.split("-")[1],10) - 1;
+const monthNumber = data.length
+  ? parseInt(data[0].date.split("-")[1],10) - 1
+  : new Date().getMonth();
 const monthName = monthNames[monthNumber];
 
 document.getElementById("profileTitle").textContent =
@@ -2263,11 +2265,11 @@ for (let i = 0; i < dates.length; i++) {
 
 }
 
-const today = new Date().toISOString().split("T")[0];
+const todayDate = new Date().toISOString().split("T")[0];
 const lastDate = dates[dates.length - 1];
 
 const diffToday =
-  (new Date(today) - new Date(lastDate)) / (1000*60*60*24);
+  (new Date(todayDate) - new Date(lastDate)) / (1000*60*60*24);
 
 if (diffToday <= 1) {
   currentStreak = streak;
