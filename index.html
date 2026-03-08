@@ -2476,17 +2476,27 @@ function openPlayerModal() {
 }
 const BADGE_CATEGORIES = {
 
-  speed: {
-    title: "⚡ Speed",
-    badges: [
-      { code: "speed_180", name: "First Blood" },
-      { code: "speed_120", name: "Speed Runner" },
-      { code: "speed_60", name: "Lightning Mind" },
-      { code: "speed_45", name: "Sub-45" },
-      { code: "speed_30", name: "World Class" },
-      { code: "speed_20", name: "Perfect Lightning" }
-    ]
-  },
+speed: {
+  title: "⚡ Speed",
+  badges: [
+    { code:"speed_180", name:"First Blood", description:"Solve a puzzle under 3 minutes" },
+    { code:"speed_120", name:"Speed Runner", description:"Solve a puzzle under 2 minutes" },
+    { code:"speed_60", name:"Lightning Mind", description:"Solve a puzzle under 60 seconds" },
+    { code:"speed_45", name:"Sub-45", description:"Solve a puzzle under 45 seconds" },
+    { code:"speed_30", name:"World Class", description:"Solve a puzzle under 30 seconds" },
+    { code:"speed_20", name:"Perfect Lightning", description:"Solve a puzzle under 20 seconds" }
+  ]
+},
+special: {
+  title: "⭐ Special",
+  badges: [
+    { code:"perfect_game", name:"Perfect Game", description:"Solve a puzzle with no hints and no errors" },
+    { code:"clutch_win", name:"Clutch Victory", description:"Solve a puzzle using all 3 hints" },
+    { code:"comeback", name:"Comeback", description:"Use all hints and still finish in the Top 10" },
+    { code:"challenge_king", name:"Challenge King", description:"Beat a challenge time from another player" },
+    { code:"country_pride", name:"Country Pride", description:"Your country is #1 in the monthly ranking" }
+  ]
+},
 
   logic: {
     title: "🧠 Logic Mastery",
@@ -2552,24 +2562,23 @@ async function openBadgeProfile() {
 
   Object.values(BADGE_CATEGORIES).forEach(category => {
 
-    html += `
-      <div class="badge-category">
-        <div class="badge-title">${category.title}</div>
-        <div class="badge-row">
-    `;
+html += `
+  <div class="badge-card ${isUnlocked ? "unlocked" : "locked"}">
+    
+    <div class="badge-icon">
+      ${isUnlocked ? "🏅" : "🔒"}
+    </div>
 
-    category.badges.forEach(badge => {
+    <div style="font-weight:600;">
+      ${badge.name}
+    </div>
 
-      const isUnlocked = unlocked.includes(badge.code);
+    <div style="font-size:11px;opacity:0.7;">
+      ${isUnlocked ? "Unlocked" : badge.description}
+    </div>
 
-      html += `
-        <div class="badge-card ${isUnlocked ? "unlocked" : "locked"}">
-          <div class="badge-icon">
-            ${isUnlocked ? "🏅" : "🔒"}
-          </div>
-          <div>${badge.name}</div>
-        </div>
-      `;
+  </div>
+`;
 
     });
 
