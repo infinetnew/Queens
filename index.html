@@ -455,7 +455,8 @@ contain: content;
   margin-top:15px;
 }
 .stat-card{
-  background:rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.05);
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
   backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,0.12);
   border-radius:14px;
@@ -465,6 +466,10 @@ contain: content;
     inset 0 1px 0 rgba(255,255,255,0.08),
     0 10px 20px rgba(0,0,0,0.35);
 }
+.stat-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 25px rgba(0,0,0,0.45);
+}
 
 .stat-title{
   font-size:12px;
@@ -473,8 +478,10 @@ contain: content;
 }
 
 .stat-value{
-  font-size:18px;
-  font-weight:700;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:0.5px;
+  text-shadow:0 0 6px rgba(255,255,255,0.25);
 }
 .modal-content button {
   margin-top: 20px;
@@ -2164,11 +2171,12 @@ async function openPlayerProfile() {
   modal.style.display = "flex";
   statsBox.innerHTML = "Loading statistics...";
 
-  const { data, error } = await supabaseClient
-    .from("queens_results")
-    .select("time_seconds, date, hints_used, completed")
-    .eq("email", playerEmail)
-    .eq("completed", true);
+const { data, error } = await supabaseClient
+  .from("queens_results")
+  .select("time_seconds, date, hints_used, completed")
+  .eq("email", playerEmail)
+  .eq("completed", true)
+  .order("date", { ascending: true });
 // --- PODIUM COUNT (until yesterday) ---
 
 let podiums = 0;
@@ -2223,6 +2231,49 @@ document.getElementById("profileTitle").textContent =
 
   // puzzles solved
   const puzzlesSolved = games;
+// --- STREAK CALCULATION ---
+
+let currentStreak = 0;
+let bestStreak = 0;
+let streak = 0;
+
+const dates = data.map(g => g.date);
+
+for (let i = 0; i < dates.length; i++) {
+
+  const current = new Date(dates[i]);
+  const prev = new Date(dates[i-1]);
+
+  if (i === 0) {
+    streak = 1;
+  } else {
+
+    const diff =
+      (current - prev) / (1000*60*60*24);
+
+    if (diff === 1) {
+      streak++;
+    } else {
+      streak = 1;
+    }
+
+  }
+
+  if (streak > bestStreak) bestStreak = streak;
+
+}
+
+const today = new Date().toISOString().split("T")[0];
+const lastDate = dates[dates.length - 1];
+
+const diffToday =
+  (new Date(today) - new Date(lastDate)) / (1000*60*60*24);
+
+if (diffToday <= 1) {
+  currentStreak = streak;
+} else {
+  currentStreak = 0;
+}
 
   // best time
   let bestTime = Infinity;
@@ -2318,7 +2369,18 @@ Day ${bestDate.split("-")[2]}
 <div class="stat-title">🏆 Podiums</div>
 <div class="stat-value">${podiums}</div>
 </div>
-<div class="stat-card" style="grid-column:1 / span 2;">
+
+<div class="stat-card">
+<div class="stat-title">🔥 Current streak</div>
+<div class="stat-value">${currentStreak}</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">👑 Best streak</div>
+<div class="stat-value">${bestStreak}</div>
+</div>
+
+<div class="stat-card">
 <div class="stat-title">🧠 Rating</div>
 <div class="stat-value">${rating}</div>
 </div>
