@@ -1684,6 +1684,8 @@ if (playerStats) {
       games_played: (playerStats.games_played || 0) + 1,
       total_time: (playerStats.total_time || 0) + totalSeconds,
       total_hints_used: (playerStats.total_hints_used || 0) + hintsUsed,
+no_hint_wins:
+  (playerStats.no_hint_wins || 0) + (hintsUsed === 0 ? 1 : 0),
       best_time: bestTime,
       current_streak: newStreak,
       best_streak: bestStreak,
