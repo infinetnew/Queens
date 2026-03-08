@@ -1554,6 +1554,15 @@ if (hintsUsed === 3) {
 if (hintsUsed === 0 && errorsMade === 0) {
   unlockBadge("perfect_game");
 }
+// --- FLAWLESS BADGES ---
+if (hintsUsed === 0 && errorsMade === 0) {
+
+  const newFlawless = (playerStats.flawless_wins || 0) + 1;
+
+  if (newFlawless >= 5) unlockBadge("flawless_5");
+  if (newFlawless >= 15) unlockBadge("flawless_15");
+
+}
 // 👑 Challenge King (batte un challenge link)
 if (challengeTargetTime && totalSeconds < challengeTargetTime) {
   unlockBadge("challenge_king");
@@ -1612,6 +1621,8 @@ if (newStreak >= 60) unlockBadge("streak_60");
       games_played: (playerStats.games_played || 0) + 1,
       total_time: (playerStats.total_time || 0) + totalSeconds,
       total_hints_used: (playerStats.total_hints_used || 0) + hintsUsed,
+flawless_wins:
+      (playerStats.flawless_wins || 0) + ((hintsUsed === 0 && errorsMade === 0) ? 1 : 0),
 no_hint_wins:
   (playerStats.no_hint_wins || 0) + (hintsUsed === 0 ? 1 : 0),
       best_time: bestTime,
@@ -1635,6 +1646,8 @@ if (totalSeconds < 60) unlockBadge("speed_60");
 if (totalSeconds < 45) unlockBadge("speed_45");
 if (totalSeconds < 30) unlockBadge("speed_30");
 if (totalSeconds < 20) unlockBadge("speed_20");
+if (totalSeconds < 15) unlockBadge("speed_15");
+if (totalSeconds < 10) unlockBadge("speed_10");
 // --- LOGIC BADGES (NO HINT) ---
 if (hintsUsed === 0) {
   const newNoHintWins = (playerStats.no_hint_wins || 0) + 1;
@@ -2096,7 +2109,9 @@ speed: {
     { code:"speed_60", name:"Lightning Mind", description:"Solve a puzzle under 60 seconds" },
     { code:"speed_45", name:"Sub-45", description:"Solve a puzzle under 45 seconds" },
     { code:"speed_30", name:"World Class", description:"Solve a puzzle under 30 seconds" },
-    { code:"speed_20", name:"Perfect Lightning", description:"Solve a puzzle under 20 seconds" }
+    { code:"speed_20", name:"Perfect Lightning", description:"Solve a puzzle under 20 seconds" },
+{ code:"speed_15", name:"Quantum Solver", description:"Solve a puzzle under 15 seconds" },
+{ code:"speed_10", name:"Impossible Mind", description:"Solve a puzzle under 10 seconds" }
   ]
 },
 special: {
@@ -2116,7 +2131,9 @@ logic: {
     { code:"no_hint_15", name:"Clean Solver", description:"Solve 15 puzzles without using hints", goal:15 },
     { code:"no_hint_25", name:"Strategist", description:"Solve 25 puzzles without using hints", goal:25 },
     { code:"no_hint_50", name:"Grandmaster", description:"Solve 50 puzzles without using hints", goal:50 },
-    { code:"no_hint_100", name:"Absolute Clarity", description:"Solve 100 puzzles without using hints", goal:100 }
+    { code:"no_hint_100", name:"Absolute Clarity", description:"Solve 100 puzzles without using hints", goal:100 },
+{ code:"flawless_5", name:"Flawless Mind", description:"Solve 5 puzzles with no hints and no errors", goal:5 },
+{ code:"flawless_15", name:"Crystal Brain", description:"Solve 15 puzzles with no hints and no errors", goal:15 }
   ]
 },
 consistency: {
@@ -2180,6 +2197,7 @@ if (badge.goal && !isUnlocked && stats) {
   if (badge.code.startsWith("puzzle_")) current = stats.puzzles_solved || 0;
   if (badge.code.startsWith("no_hint_")) current = stats.no_hint_wins || 0;
   if (badge.code.startsWith("streak_")) current = stats.current_streak || 0;
+if (badge.code.startsWith("flawless_")) current = stats.flawless_wins || 0;
   const percent = Math.min(100, (current / badge.goal) * 100);
 const almost = percent >= 90 ? "almost" : "";
   progressHTML = `
