@@ -2248,6 +2248,66 @@ function openPlayerModal() {
   modal.style.display = "flex";
 
 }
+const BADGE_CATEGORIES = {
+
+  speed: {
+    title: "⚡ Speed",
+    badges: [
+      { code: "speed_180", name: "First Blood" },
+      { code: "speed_120", name: "Speed Runner" },
+      { code: "speed_60", name: "Lightning Mind" },
+      { code: "speed_45", name: "Sub-45" },
+      { code: "speed_30", name: "World Class" },
+      { code: "speed_20", name: "Perfect Lightning" }
+    ]
+  },
+
+  logic: {
+    title: "🧠 Logic Mastery",
+    badges: [
+      { code: "no_hint_1", name: "Pure Mind" },
+      { code: "no_hint_15", name: "Clean Solver" },
+      { code: "no_hint_25", name: "Strategist" },
+      { code: "no_hint_50", name: "Grandmaster" },
+      { code: "no_hint_100", name: "Absolute Clarity" }
+    ]
+  },
+
+  consistency: {
+    title: "🔥 Consistency",
+    badges: [
+      { code: "streak_3", name: "Daily Player" },
+      { code: "streak_7", name: "On Fire" },
+      { code: "streak_14", name: "Unstoppable" },
+      { code: "streak_30", name: "Queens Devotee" },
+      { code: "streak_60", name: "Legendary Streak" }
+    ]
+  },
+
+  competitive: {
+    title: "🏆 Competitive",
+    badges: [
+      { code: "podium_1", name: "First Podium" },
+      { code: "podium_5", name: "Top Competitor" },
+      { code: "podium_10", name: "Podium Collector" },
+      { code: "win_1", name: "Daily Champion" },
+      { code: "win_5", name: "Dominant Player" },
+      { code: "monthly_1", name: "Monthly Champion" }
+    ]
+  },
+
+  experience: {
+    title: "🎯 Experience",
+    badges: [
+      { code: "puzzle_1", name: "First Queen" },
+      { code: "puzzle_10", name: "Puzzle Apprentice" },
+      { code: "puzzle_50", name: "Puzzle Warrior" },
+      { code: "puzzle_100", name: "Puzzle Master" },
+      { code: "puzzle_250", name: "Queens Legend" }
+    ]
+  }
+
+};
 async function openBadgeProfile() {
 
   const modal = document.getElementById("badgeModal");
@@ -2260,18 +2320,36 @@ async function openBadgeProfile() {
     .select("badge_code")
     .eq("email", playerEmail);
 
-  if (!badges || badges.length === 0) {
-    container.innerHTML = "No badges yet.";
-    return;
-  }
+  const unlocked = badges ? badges.map(b => b.badge_code) : [];
 
-  const list = badges.map(b => b.badge_code);
+  let html = "";
 
-  container.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      ${list.map(b => `<div>🏅 ${b}</div>`).join("")}
-    </div>
-  `;
+  Object.values(BADGE_CATEGORIES).forEach(category => {
+
+    html += `<h3 style="margin-top:18px">${category.title}</h3>`;
+
+    category.badges.forEach(badge => {
+
+      const isUnlocked = unlocked.includes(badge.code);
+
+      html += `
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          padding:6px 0;
+          border-bottom:1px solid rgba(255,255,255,0.08);
+          opacity:${isUnlocked ? 1 : 0.35};
+        ">
+          <span>${badge.name}</span>
+          <span>${isUnlocked ? "🏅" : "🔒"}</span>
+        </div>
+      `;
+
+    });
+
+  });
+
+  container.innerHTML = html;
 
 }
 
