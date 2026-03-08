@@ -2102,17 +2102,17 @@ function openPlayerModal() {
 }
 const BADGE_CATEGORIES = {
 speed: {
-  title: "⚡ Speed",
-  badges: [
-    { code:"speed_180", name:"First Blood", description:"Solve a puzzle under 3 minutes" },
-    { code:"speed_120", name:"Speed Runner", description:"Solve a puzzle under 2 minutes" },
-    { code:"speed_60", name:"Lightning Mind", description:"Solve a puzzle under 60 seconds" },
-    { code:"speed_45", name:"Sub-45", description:"Solve a puzzle under 45 seconds" },
-    { code:"speed_30", name:"World Class", description:"Solve a puzzle under 30 seconds" },
-    { code:"speed_20", name:"Perfect Lightning", description:"Solve a puzzle under 20 seconds" },
-{ code:"speed_15", name:"Quantum Solver", description:"Solve a puzzle under 15 seconds" },
-{ code:"speed_10", name:"Impossible Mind", description:"Solve a puzzle under 10 seconds" }
-  ]
+title: "⚡ Speed",
+badges: [
+{ code:"speed_180", name:"First Blood", description:"Solve a puzzle under 3 minutes", points:5 },
+{ code:"speed_120", name:"Speed Runner", description:"Solve a puzzle under 2 minutes", points:5 },
+{ code:"speed_60", name:"Lightning Mind", description:"Solve a puzzle under 60 seconds", points:10 },
+{ code:"speed_45", name:"Sub-45", description:"Solve a puzzle under 45 seconds", points:10 },
+{ code:"speed_30", name:"World Class", description:"Solve a puzzle under 30 seconds", points:20 },
+{ code:"speed_20", name:"Perfect Lightning", description:"Solve a puzzle under 20 seconds", points:20 },
+{ code:"speed_15", name:"Quantum Solver", description:"Solve a puzzle under 15 seconds", points:40 },
+{ code:"speed_10", name:"Impossible Mind", description:"Solve a puzzle under 10 seconds", points:50 }
+]
 },
 special: {
   title: "⭐ Special",
@@ -2298,6 +2298,14 @@ Object.values(BADGE_CATEGORIES).forEach(category => {
   totalBadges += category.badges.length;
 });
 const percent = Math.round((totalUnlocked / totalBadges) * 100);
+let achievementPoints = 0;
+Object.values(BADGE_CATEGORIES).forEach(category => {
+  category.badges.forEach(b => {
+    if (unlocked.includes(b.code)) {
+      achievementPoints += (b.points || 0);
+    }
+  });
+});
   title.innerHTML = `
   <div style="display:flex;align-items:center;gap:8px;">
     <span style="font-weight:700;font-size:20px;">
@@ -2318,6 +2326,8 @@ const percent = Math.round((totalUnlocked / totalBadges) * 100);
     text-shadow:0 0 6px rgba(255,215,0,0.6);
   ">
   🏆 ${totalUnlocked} / ${totalBadges} Achievements unlocked (${percent}%)
+<br>
+⭐ ${achievementPoints} Achievement Points
   </div>
   `;
   if (!data || data.length === 0){
