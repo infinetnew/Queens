@@ -1665,14 +1665,18 @@ if (monthly && monthly.length > 0) {
     unlockBadge("monthly_1");
   }
 }
+
 launchConfetti();
+
 setTimeout(() => {
   showModal(totalSeconds);
   showUnlockedBadges();
 }, 1200);
-  }
-});
-      gridElement.appendChild(cell);
+
+}); // chiude addEventListener
+
+gridElement.appendChild(cell);
+
     }
   }
 }
