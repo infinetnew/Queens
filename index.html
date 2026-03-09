@@ -847,13 +847,11 @@ stroke-linecap="round"/>
 </span>
 <span id="playerDisplay">
   <span id="displayName"
-        style="cursor:pointer"
-<span id="displayName"
         class="clickable-name"
-onclick="openBadgeProfile()">
+        onclick="openBadgeProfile()"
+        style="cursor:pointer">
   </span>
-</span>
-<img id="displayFlag">
+  <img id="displayFlag">
 </span>
 </div>
 <div class="player-timer">
@@ -2315,20 +2313,19 @@ const totalUnlocked = unlocked.length;
         <div class="badge-row">
     `;
     visibleBadges.forEach(badge => {
-      html += `
-        html += `
+html += `
   <div class="badge-card unlocked public-badge">
-          <div class="badge-icon">
-            <img src="badges/${badge.code}.png" class="badge-img">
-          </div>
-          <div style="font-weight:600">
-            ${badge.name}
-          </div>
-          <div style="font-size:11px;opacity:0.7">
-            ${badge.description}
-          </div>
-        </div>
-      `;
+      <div class="badge-icon">
+        <img src="badges/${badge.code}.png" class="badge-img">
+      </div>
+      <div style="font-weight:600">
+        ${badge.name}
+      </div>
+      <div style="font-size:11px;opacity:0.7">
+        ${badge.description}
+      </div>
+  </div>
+`;
     });
     html += `
         </div>
