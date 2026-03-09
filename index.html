@@ -725,8 +725,10 @@ overflow-y: auto;
 .badge-card.unlocked{
   opacity:1;
 }
-.badge-card.locked{
-  opacity:0.35;
+/* badge bloccato */
+.badge-card.locked .badge-img{
+  filter: grayscale(100%) brightness(0.35) blur(0.3px);
+  opacity: 0.45;
 }
 .badge-icon{
   font-size:26px;
@@ -749,6 +751,7 @@ overflow-y: auto;
 .badge-progress-fill{
   height:100%;
   background:linear-gradient(90deg,#ffd700,#ff9800);
+  box-shadow:0 0 6px rgba(255,215,0,0.6);
   transition:width 0.4s ease;
 }
 .badge-progress-fill.almost{
