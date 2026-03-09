@@ -1959,7 +1959,7 @@ function markX(index){
     cell.classList.add("x");
   }
 }
-function giveHint() {
+async function giveHint() {
   if (!startTime) return;
   if (hintsUsed >= maxHints) return;
   if (document.querySelector(".error")) return;
