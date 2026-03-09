@@ -1885,38 +1885,8 @@ if (hasError) {
   return hasError;
 }
 function checkWin() {
-
-  if (queens.length !== size) return false;
-
-  for (const q of queens) {
-
-    if (rows[q.row] !== 1) return false;
-    if (cols[q.col] !== 1) return false;
-    if (regions[q.region] !== 1) return false;
-
-  }
-
-  // controllo adiacenza
-  const queenMap = new Set(
-    queens.map(q => q.row + "-" + q.col)
-  );
-
-  for (const q of queens) {
-
-    for (let dr = -1; dr <= 1; dr++) {
-      for (let dc = -1; dc <= 1; dc++) {
-
-        if (dr === 0 && dc === 0) continue;
-
-        const r = q.row + dr;
-        const c = q.col + dc;
-
-        if (queenMap.has(r + "-" + c)) {
-          return false;
-        }
-
-      }
-    }
+  return queens.length === size;
+}
 function checkIncompleteBoard() {
   let queenCount = 0;
   let filledCount = 0;
@@ -1989,7 +1959,7 @@ function markX(index){
     cell.classList.add("x");
   }
 }
-async function giveHint() {
+function giveHint() {
   if (!startTime) return;
   if (hintsUsed >= maxHints) return;
   if (document.querySelector(".error")) return;
@@ -2040,27 +2010,6 @@ if (!queenFound) {
 targetCell.classList.remove("x");
 placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
-// se l'hint completa la soluzione → termina la partita
-// se l'hint completa la soluzione → termina la partita
-if (checkWin()) {
-  clearInterval(timerInterval);
-  document.getElementById("timer").classList.add("timer-complete");
-  const totalSeconds = Math.round((Date.now() - startTime) / 1000);
-  // 🔹 SALVA IL RISULTATO SU SUPABASE
-  await supabaseClient
-    .from("queens_results")
-    .update({
-      completed: true,
-      time_seconds: totalSeconds,
-      errors_made: errorsMade
-    })
-    .eq("email", playerEmail)
-    .eq("date", new Date().toISOString().split("T")[0]);
-  setTimeout(() => {
-    launchConfetti();
-    showModal(totalSeconds);
-  }, 600);
-}
 if (removedRow !== null) {
 showFixedMessage(
   `👑 I inserted the correct Queen in row ${row + 1} and removed the incorrect one from row ${removedRow + 1}. (+60s)`,
