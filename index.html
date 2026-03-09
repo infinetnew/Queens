@@ -1599,6 +1599,10 @@ await supabaseClient
 challenge_wins: (playerStats.challenge_wins || 0) + 1
 })
 .eq("email", playerEmail);
+const wins = (playerStats.challenge_wins || 0) + 1;
+
+if (wins >= 10) unlockBadge("challenge_win_10");
+if (wins >= 25) unlockBadge("challenge_win_25");
 
 } else {
 
@@ -2167,7 +2171,10 @@ badges: [
 { code:"podium_10", name:"Podium Collector", description:"Reach the daily Top 3 ten times", goal:10 },
 { code:"win_1", name:"Daily Champion", description:"Finish 1st in the daily leaderboard", goal:1 },
 { code:"win_5", name:"Dominant Player", description:"Win the daily leaderboard five times", goal:5 },
-{ code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" }
+{ code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" },
+{ code:"challenge_launch_25", name:"Challenger", description:"Launch 25 challenges", goal:10 },
+{ code:"challenge_win_10", name:"Challenge King", description:"Win 10 challenges", goal:10 },
+{ code:"challenge_win_25", name:"Duel Master", description:"Win 25 challenges", goal:25 }
 ]
 },
 experience: {
@@ -2210,6 +2217,8 @@ let current = 0;
 if (badge.code.startsWith("puzzle_")) current = stats.puzzles_solved || 0;
 if (badge.code.startsWith("no_hint_")) current = stats.no_hint_wins || 0;
 if (badge.code.startsWith("streak_")) current = stats.current_streak || 0;
+if (badge.code.startsWith("challenge_launch_")) current = stats.challenge_launched || 0;
+if (badge.code.startsWith("challenge_win_")) current = stats.challenge_wins || 0;
 const percent = Math.min(100, (current / badge.goal) * 100);
 const almost = percent >= 90 ? "almost" : "";
 progressHTML = `
@@ -2548,6 +2557,15 @@ shareBtn.onclick = async () => {
 await supabaseClient.rpc("increment_challenge_launched", {
 player_email: playerEmail
 });
+const { data: stats } = await supabaseClient
+.from("players")
+.select("challenge_launched")
+.eq("email", playerEmail)
+.single();
+
+if (stats && stats.challenge_launched >= 25) {
+unlockBadge("challenge_launch_25");
+}
 const result = await getPlayerPosition() || { rank: "?", totalPlayers: "?" };
 const challengeLink =
 `${window.location.origin}/Queens/?challenge=${time}&player=${encodeURIComponent(playerName)}`;
