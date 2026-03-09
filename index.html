@@ -2012,9 +2012,13 @@ placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
 // se l'hint completa la soluzione → termina la partita
 if (checkWin()) {
+  clearInterval(timerInterval);
+  document.getElementById("timer").classList.add("timer-complete");
+  const totalSeconds = Math.round((Date.now() - startTime) / 1000);
   setTimeout(() => {
-    targetCell.click();
-  }, 50);
+    launchConfetti();
+    showModal(totalSeconds);
+  }, 600);
 }
 if (removedRow !== null) {
 showFixedMessage(
