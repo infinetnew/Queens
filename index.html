@@ -1532,7 +1532,6 @@ const hasConflict = checkConflicts();
     boardErrorTimeout = null;
   }
   clearHintMessage();
-}
 if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
   if (boardErrorTimeout) clearTimeout(boardErrorTimeout);
   boardErrorTimeout = setTimeout(() => {
