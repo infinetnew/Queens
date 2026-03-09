@@ -986,6 +986,7 @@ const supabaseClient = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
+window.gameFinished = false;
 const size = 10;
 const rows = new Array(size).fill(0);
 const cols = new Array(size).fill(0);
@@ -1004,6 +1005,7 @@ let solution = [];
 let regionMap = [];
 let startTime = null;
 let timerInterval = null;
+let totalSeconds = 0;
 let boardErrorTimeout = null;
 let challengeTargetTime = null;
 let playerEmail = null;
@@ -1501,7 +1503,7 @@ if (col === size-1 || regionMap[row][col+1] !== region) {
   cell.style.borderRight = "3px solid rgba(0,0,0,0.65)";
 }
 cell.addEventListener("click", async () => {
-  if (document.querySelector(".error")) {
+  if (gridElement.querySelector(".error")) {
     const isErrorQueen =
       cell.dataset.state === "queen" &&
       cell.classList.contains("error");
@@ -1524,10 +1526,7 @@ cell.classList.remove("premium-flash");
 void cell.offsetWidth;
 cell.classList.add("premium-flash");
 const hasConflict = checkConflicts();
-if (checkWin()) {
-  triggerWin();
-  return;
-}
+
   if (boardErrorTimeout) {
     clearTimeout(boardErrorTimeout);
     boardErrorTimeout = null;
@@ -1563,15 +1562,6 @@ if (hintsUsed === 0 && errorsMade === 0) {
 if (challengeTargetTime && totalSeconds < challengeTargetTime) {
   unlockBadge("challenge_king");
 }
-   await supabaseClient
-  .from("queens_results")
-  .update({
-    completed: true,
-    time_seconds: totalSeconds,
-    errors_made: errorsMade
-  })
-      .eq("email", playerEmail)
-      .eq("date", new Date().toISOString().split("T")[0]);
 // --- UPDATE PLAYER STATS ---
 const { data: playerStats } = await supabaseClient
   .from("players")
@@ -2847,10 +2837,34 @@ document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
   initializeGame();
 });
+
 function launchConfetti() {
   const duration = 1000;
   const end = Date.now() + duration;
   const colors = ['#ffd700', '#ff4081', '#40c4ff', '#69f0ae'];
+
+  (function frame() {
+    confetti({
+      particleCount: 6,
+      angle: 60,
+      spread: 70,
+      origin: { x: 0 },
+      colors: colors
+    });
+
+    confetti({
+      particleCount: 6,
+      angle: 120,
+      spread: 70,
+      origin: { x: 1 },
+      colors: colors
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
 async function triggerWin() {
 
   if (window.gameFinished) return;
@@ -2858,8 +2872,7 @@ async function triggerWin() {
 
   clearInterval(timerInterval);
 
-  const rawSeconds = Math.round((Date.now() - startTime) / 1000);
-  const totalSeconds = rawSeconds;
+totalSeconds = Math.round((Date.now() - startTime) / 1000);
 
   launchConfetti();
 
@@ -2883,27 +2896,6 @@ async function triggerWin() {
     showModal(totalSeconds);
     showUnlockedBadges();
   }, 1200);
-
-}
-  (function frame() {
-    confetti({
-      particleCount: 6,
-      angle: 60,
-      spread: 70,
-      origin: { x: 0 },
-      colors: colors
-    });
-    confetti({
-      particleCount: 6,
-      angle: 120,
-      spread: 70,
-      origin: { x: 1 },
-      colors: colors
-    });
-    if (Date.now() < end) {
-      requestAnimationFrame(frame);
-    }
-  })();
 }
 hintBtn.addEventListener("click", giveHint);
 document.getElementById("rulesFloating").addEventListener("click", () => {
