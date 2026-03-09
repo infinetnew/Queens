@@ -1524,7 +1524,10 @@ cell.classList.remove("premium-flash");
 void cell.offsetWidth;
 cell.classList.add("premium-flash");
 const hasConflict = checkConflicts();
-if (checkWin() || !checkIncompleteBoard()) {
+if (checkWin()) {
+  triggerWin();
+  return;
+}
   if (boardErrorTimeout) {
     clearTimeout(boardErrorTimeout);
     boardErrorTimeout = null;
@@ -1544,10 +1547,9 @@ if (!hasConflict && !checkWin() && checkIncompleteBoard()) {
   return;
 }
 if (!hasConflict && checkWin()) {
-    clearInterval(timerInterval);
-document.getElementById("timer").classList.add("timer-complete");
-    const rawSeconds = Math.round((Date.now() - startTime) / 1000);
-const totalSeconds = rawSeconds;
+  triggerWin();
+  return;
+}
 // --- SPECIAL BADGES ---
 // ⚡ Clutch Victory (usa tutti e 3 gli hint)
 if (hintsUsed === 3) {
@@ -1556,15 +1558,6 @@ if (hintsUsed === 3) {
 // 🧠 Perfect Game (no hint + zero errori)
 if (hintsUsed === 0 && errorsMade === 0) {
   unlockBadge("perfect_game");
-}
-// --- FLAWLESS BADGES ---
-if (hintsUsed === 0 && errorsMade === 0) {
-
-  const newFlawless = (playerStats.flawless_wins || 0) + 1;
-
-  if (newFlawless >= 5) unlockBadge("flawless_5");
-  if (newFlawless >= 15) unlockBadge("flawless_15");
-
 }
 // 👑 Challenge King (batte un challenge link)
 if (challengeTargetTime && totalSeconds < challengeTargetTime) {
@@ -1596,6 +1589,13 @@ const { data: playerStats } = await supabaseClient
   .single();
 if (playerStats) {
   const today = new Date().toISOString().split("T")[0];
+// --- FLAWLESS BADGES ---
+if (hintsUsed === 0 && errorsMade === 0) {
+  const newFlawless = (playerStats.flawless_wins || 0) + 1;
+
+  if (newFlawless >= 5) unlockBadge("flawless_5");
+  if (newFlawless >= 15) unlockBadge("flawless_15");
+}
   let newStreak = 1;
   if (playerStats.last_played_date) {
     const yesterday = new Date();
@@ -1885,7 +1885,40 @@ if (hasError) {
   return hasError;
 }
 function checkWin() {
-  return queens.length === size;
+  if (queens.length !== size) return false;
+
+  for (let r = 0; r < size; r++) {
+    if (rows[r] !== 1) return false;
+  }
+
+  for (let c = 0; c < size; c++) {
+    if (cols[c] !== 1) return false;
+  }
+
+  for (let r = 0; r < size; r++) {
+    if (regions[r] !== 1) return false;
+  }
+
+  const queenMap = new Set(
+    queens.map(q => q.row + "-" + q.col)
+  );
+
+  for (const q of queens) {
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+
+        const r = q.row + dr;
+        const c = q.col + dc;
+
+        if (queenMap.has(r + "-" + c)) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
 }
 function checkIncompleteBoard() {
   let queenCount = 0;
@@ -2010,6 +2043,9 @@ if (!queenFound) {
 targetCell.classList.remove("x");
 placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
+if (checkWin()) {
+  triggerWin();
+}
 if (removedRow !== null) {
 showFixedMessage(
   `👑 I inserted the correct Queen in row ${row + 1} and removed the incorrect one from row ${removedRow + 1}. (+60s)`,
@@ -2815,6 +2851,40 @@ function launchConfetti() {
   const duration = 1000;
   const end = Date.now() + duration;
   const colors = ['#ffd700', '#ff4081', '#40c4ff', '#69f0ae'];
+async function triggerWin() {
+
+  if (window.gameFinished) return;
+  window.gameFinished = true;
+
+  clearInterval(timerInterval);
+
+  const rawSeconds = Math.round((Date.now() - startTime) / 1000);
+  const totalSeconds = rawSeconds;
+
+  launchConfetti();
+
+  await supabaseClient
+    .from("queens_results")
+    .update({
+      completed: true,
+      time_seconds: totalSeconds,
+      errors_made: errorsMade
+    })
+    .eq("email", playerEmail)
+    .eq("date", new Date().toISOString().split("T")[0]);
+
+  document.getElementById("timer").classList.add("timer-complete");
+
+  cells.forEach(cell => {
+    cell.style.pointerEvents = "none";
+  });
+
+  setTimeout(() => {
+    showModal(totalSeconds);
+    showUnlockedBadges();
+  }, 1200);
+
+}
   (function frame() {
     confetti({
       particleCount: 6,
