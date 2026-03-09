@@ -1040,6 +1040,31 @@ async function loadDailyPuzzle() {
   regionMap = data[0].region_map;
   return true;
 }
+async function endGameAfterHint() {
+
+  clearInterval(timerInterval);
+  document.getElementById("timer").classList.add("timer-complete");
+
+  const rawSeconds = Math.round((Date.now() - startTime) / 1000);
+  const totalSeconds = rawSeconds;
+
+  await supabaseClient
+    .from("queens_results")
+    .update({
+      completed: true,
+      time_seconds: totalSeconds,
+      errors_made: errorsMade
+    })
+    .eq("email", playerEmail)
+    .eq("date", new Date().toISOString().split("T")[0]);
+
+  launchConfetti();
+
+  setTimeout(() => {
+    showModal(totalSeconds);
+    showUnlockedBadges();
+  }, 1200);
+}
 async function getTodayResult() {
   const today = new Date().toISOString().split("T")[0];
   const { data } = await supabaseClient
@@ -1557,15 +1582,7 @@ if (hintsUsed === 3) {
 if (hintsUsed === 0 && errorsMade === 0) {
   unlockBadge("perfect_game");
 }
-// --- FLAWLESS BADGES ---
-if (hintsUsed === 0 && errorsMade === 0) {
 
-  const newFlawless = (playerStats.flawless_wins || 0) + 1;
-
-  if (newFlawless >= 5) unlockBadge("flawless_5");
-  if (newFlawless >= 15) unlockBadge("flawless_15");
-
-}
 // 👑 Challenge King (batte un challenge link)
 if (challengeTargetTime && totalSeconds < challengeTargetTime) {
   unlockBadge("challenge_king");
@@ -1591,9 +1608,20 @@ const { data: playerStats } = await supabaseClient
     current_streak,
     best_streak,
     last_played_date
+ flawless_wins,
+  no_hint_wins
   `)
   .eq("email", playerEmail)
   .single();
+// --- FLAWLESS BADGES ---
+if (hintsUsed === 0 && errorsMade === 0) {
+
+  const newFlawless = (playerStats.flawless_wins || 0) + 1;
+
+  if (newFlawless >= 5) unlockBadge("flawless_5");
+  if (newFlawless >= 15) unlockBadge("flawless_15");
+
+}
 if (playerStats) {
   const today = new Date().toISOString().split("T")[0];
   let newStreak = 1;
@@ -2010,6 +2038,10 @@ if (!queenFound) {
 targetCell.classList.remove("x");
 placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
+// NUOVO CONTROLLO VITTORIA
+if (!checkConflicts() && checkWin()) {
+  endGameAfterHint();
+}
 if (removedRow !== null) {
 showFixedMessage(
   `👑 I inserted the correct Queen in row ${row + 1} and removed the incorrect one from row ${removedRow + 1}. (+60s)`,
