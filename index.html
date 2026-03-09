@@ -1606,7 +1606,7 @@ if (newStreak >= 14) unlockBadge("streak_14");
 if (newStreak >= 30) unlockBadge("streak_30");
 if (newStreak >= 60) unlockBadge("streak_60");
 const bestTime =
-playerStats.best_time === null ||
+!playerStats.best_time ||
 totalSeconds < playerStats.best_time
 ? totalSeconds
 : playerStats.best_time;
