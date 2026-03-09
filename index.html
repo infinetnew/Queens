@@ -2010,6 +2010,12 @@ if (!queenFound) {
 targetCell.classList.remove("x");
 placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
+// se l'hint completa la soluzione → termina la partita
+if (checkWin()) {
+  setTimeout(() => {
+    targetCell.click();
+  }, 50);
+}
 if (removedRow !== null) {
 showFixedMessage(
   `👑 I inserted the correct Queen in row ${row + 1} and removed the incorrect one from row ${removedRow + 1}. (+60s)`,
