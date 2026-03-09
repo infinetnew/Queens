@@ -1639,6 +1639,8 @@ if (newSolved >= 10) unlockBadge("puzzle_10");
 if (newSolved >= 50) unlockBadge("puzzle_50");
 if (newSolved >= 100) unlockBadge("puzzle_100");
 if (newSolved >= 250) unlockBadge("puzzle_250");
+if (newSolved >= 400) unlockBadge("puzzle_400");
+if (newSolved >= 750) unlockBadge("puzzle_750");
 // --- SPEED BADGES ---
 if (totalSeconds < 180) unlockBadge("speed_180");
 if (totalSeconds < 120) unlockBadge("speed_120");
@@ -2105,67 +2107,69 @@ speed: {
 title: "⚡ Speed",
 badges: [
 { code:"speed_180", name:"First Blood", description:"Solve a puzzle under 3 minutes", points:5 },
-{ code:"speed_120", name:"Speed Runner", description:"Solve a puzzle under 2 minutes", points:5 },
-{ code:"speed_60", name:"Lightning Mind", description:"Solve a puzzle under 60 seconds", points:10 },
-{ code:"speed_45", name:"Sub-45", description:"Solve a puzzle under 45 seconds", points:10 },
-{ code:"speed_30", name:"World Class", description:"Solve a puzzle under 30 seconds", points:20 },
+{ code:"speed_120", name:"Speed Runner", description:"Solve a puzzle under 2 minutes", points:6 },
+{ code:"speed_60", name:"Lightning Mind", description:"Solve a puzzle under 60 seconds", points:8 },
+{ code:"speed_45", name:"Sub-45", description:"Solve a puzzle under 45 seconds", points:11 },
+{ code:"speed_30", name:"World Class", description:"Solve a puzzle under 30 seconds", points:15 },
 { code:"speed_20", name:"Perfect Lightning", description:"Solve a puzzle under 20 seconds", points:20 },
-{ code:"speed_15", name:"Quantum Solver", description:"Solve a puzzle under 15 seconds", points:40 },
-{ code:"speed_10", name:"Impossible Mind", description:"Solve a puzzle under 10 seconds", points:50 }
+{ code:"speed_15", name:"Quantum Solver", description:"Solve a puzzle under 15 seconds", points:26 },
+{ code:"speed_10", name:"Impossible Mind", description:"Solve a puzzle under 10 seconds", points:35 }
 ]
 },
 special: {
-  title: "⭐ Special",
-  badges: [
-    { code:"perfect_game", name:"Perfect Game", description:"Solve a puzzle with no hints and no errors" },
-    { code:"clutch_win", name:"Clutch Victory", description:"Solve a puzzle using all 3 hints" },
-    { code:"comeback", name:"Comeback", description:"Use all hints and still finish in the Top 10" },
-    { code:"challenge_king", name:"Challenge King", description:"Beat a challenge time from another player" },
-    { code:"country_pride", name:"Country Pride", description:"Your country is #1 in the monthly ranking" }
-  ]
+title: "⭐ Special",
+badges: [
+{ code:"clutch_win", name:"Clutch Victory", description:"Solve a puzzle using all 3 hints", points:7 },
+{ code:"challenge_king", name:"Challenge King", description:"Beat a challenge time from another player", points:10 },
+{ code:"comeback", name:"Comeback", description:"Use all hints and still finish in the Top 10", points:14 },
+{ code:"perfect_game", name:"Perfect Game", description:"Solve a puzzle with no hints and no errors", points:22 },
+{ code:"country_pride", name:"Country Pride", description:"Your country is #1 in the monthly ranking", points:32 }
+]
 },
 logic: {
-  title: "🧠 Logic Mastery",
-  badges: [
-    { code:"no_hint_1", name:"Pure Mind", description:"Solve a puzzle with no hints", goal:1 },
-    { code:"no_hint_15", name:"Clean Solver", description:"Solve 15 puzzles without using hints", goal:15 },
-    { code:"no_hint_25", name:"Strategist", description:"Solve 25 puzzles without using hints", goal:25 },
-    { code:"no_hint_50", name:"Grandmaster", description:"Solve 50 puzzles without using hints", goal:50 },
-    { code:"no_hint_100", name:"Absolute Clarity", description:"Solve 100 puzzles without using hints", goal:100 },
-{ code:"flawless_5", name:"Flawless Mind", description:"Solve 5 puzzles with no hints and no errors", goal:5 },
-{ code:"flawless_15", name:"Crystal Brain", description:"Solve 15 puzzles with no hints and no errors", goal:15 }
-  ]
+title: "🧠 Logic Mastery",
+badges: [
+{ code:"no_hint_1", name:"Pure Mind", description:"Solve a puzzle with no hints", goal:1, points:8 },
+{ code:"flawless_5", name:"Flawless Mind", description:"Solve 5 puzzles with no hints and no errors", goal:5, points:12 },
+{ code:"no_hint_15", name:"Clean Solver", description:"Solve 15 puzzles without using hints", goal:15, points:16 },
+{ code:"flawless_15", name:"Crystal Brain", description:"Solve 15 puzzles with no hints and no errors", goal:15, points:22 },
+{ code:"no_hint_25", name:"Strategist", description:"Solve 25 puzzles without using hints", goal:25, points:28 },
+{ code:"no_hint_50", name:"Grandmaster", description:"Solve 50 puzzles without using hints", goal:50, points:36 },
+{ code:"no_hint_100", name:"Absolute Clarity", description:"Solve 100 puzzles without using hints", goal:100, points:48 }
+]
 },
 consistency: {
-  title: "🔥 Consistency",
-  badges: [
-    { code:"streak_3", name:"Daily Player", description:"Solve puzzles 3 days in a row", goal:3 },
-    { code:"streak_7", name:"On Fire", description:"Solve puzzles 7 days in a row", goal:7 },
-    { code:"streak_14", name:"Unstoppable", description:"Solve puzzles 14 days in a row", goal:14 },
-    { code:"streak_30", name:"Queens Devotee", description:"Solve puzzles 30 days in a row", goal:30 },
-    { code:"streak_60", name:"Legendary Streak", description:"Solve puzzles 60 days in a row", goal:60 }
-  ]
+title: "🔥 Consistency",
+badges: [
+{ code:"streak_3", name:"Daily Player", description:"Solve puzzles 3 days in a row", goal:3, points:9 },
+{ code:"streak_7", name:"On Fire", description:"Solve puzzles 7 days in a row", goal:7, points:13 },
+{ code:"streak_14", name:"Unstoppable", description:"Solve puzzles 14 days in a row", goal:14, points:19 },
+{ code:"streak_30", name:"Queens Devotee", description:"Solve puzzles 30 days in a row", goal:30, points:29 },
+{ code:"streak_60", name:"Legendary Streak", description:"Solve puzzles 60 days in a row", goal:60, points:42 }
+]
 },
 competitive: {
-  title: "🏆 Competitive",
-  badges: [
-    { code:"podium_1", name:"First Podium", description:"Finish in the Top 3 of the daily leaderboard", goal:1 },
-    { code:"podium_5", name:"Top Competitor", description:"Reach the daily Top 3 five times", goal:5 },
-    { code:"podium_10", name:"Podium Collector", description:"Reach the daily Top 3 ten times", goal:10 },
-    { code:"win_1", name:"Daily Champion", description:"Finish 1st in the daily leaderboard", goal:1 },
-    { code:"win_5", name:"Dominant Player", description:"Win the daily leaderboard five times", goal:5 },
-    { code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" }
-  ]
+title: "🏆 Competitive",
+badges: [
+{ code:"podium_1", name:"First Podium", description:"Finish in the Top 3 of the daily leaderboard", goal:1, points:12 },
+{ code:"podium_5", name:"Top Competitor", description:"Reach the daily Top 3 five times", goal:5, points:18 },
+{ code:"podium_10", name:"Podium Collector", description:"Reach the daily Top 3 ten times", goal:10, points:26 },
+{ code:"win_1", name:"Daily Champion", description:"Finish 1st in the daily leaderboard", goal:1, points:34 },
+{ code:"win_5", name:"Dominant Player", description:"Win the daily leaderboard five times", goal:5, points:45 },
+{ code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard", points:60 }
+]
 },
 experience: {
-  title: "🎯 Experience",
-  badges: [
-    { code:"puzzle_1", name:"First Queen", description:"Solve your first puzzle", goal:1 },
-    { code:"puzzle_10", name:"Puzzle Apprentice", description:"Solve 10 puzzles", goal:10 },
-    { code:"puzzle_50", name:"Puzzle Warrior", description:"Solve 50 puzzles", goal:50 },
-    { code:"puzzle_100", name:"Puzzle Master", description:"Solve 100 puzzles", goal:100 },
-    { code:"puzzle_250", name:"Queens Legend", description:"Solve 250 puzzles", goal:250 }
-  ]
+title: "🎯 Experience",
+badges: [
+{ code:"puzzle_1", name:"First Queen", description:"Solve your first puzzle", goal:1, points:5 },
+{ code:"puzzle_10", name:"Puzzle Apprentice", description:"Solve 10 puzzles", goal:10, points:10 },
+{ code:"puzzle_50", name:"Puzzle Warrior", description:"Solve 50 puzzles", goal:50, points:20 },
+{ code:"puzzle_100", name:"Puzzle Master", description:"Solve 100 puzzles", goal:100, points:35 },
+{ code:"puzzle_250", name:"Queens Legend", description:"Solve 250 puzzles", goal:250, points:55 },
+{ code:"puzzle_400", name:"Queens Titan", description:"Solve 400 puzzles", goal:400, points:75 },
+{ code:"puzzle_750", name:"Immortal Solver", description:"Solve 750 puzzles", goal:750, points:120 }
+]
 }
 };
 async function openBadgeProfile() {
