@@ -2011,10 +2011,21 @@ targetCell.classList.remove("x");
 placeQueen(targetCell,row,correctCol);
   recomputeAutoX();
 // se l'hint completa la soluzione → termina la partita
+// se l'hint completa la soluzione → termina la partita
 if (checkWin()) {
   clearInterval(timerInterval);
   document.getElementById("timer").classList.add("timer-complete");
   const totalSeconds = Math.round((Date.now() - startTime) / 1000);
+  // 🔹 SALVA IL RISULTATO SU SUPABASE
+  await supabaseClient
+    .from("queens_results")
+    .update({
+      completed: true,
+      time_seconds: totalSeconds,
+      errors_made: errorsMade
+    })
+    .eq("email", playerEmail)
+    .eq("date", new Date().toISOString().split("T")[0]);
   setTimeout(() => {
     launchConfetti();
     showModal(totalSeconds);
