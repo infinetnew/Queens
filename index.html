@@ -1885,8 +1885,38 @@ if (hasError) {
   return hasError;
 }
 function checkWin() {
-  return queens.length === size;
-}
+
+  if (queens.length !== size) return false;
+
+  for (const q of queens) {
+
+    if (rows[q.row] !== 1) return false;
+    if (cols[q.col] !== 1) return false;
+    if (regions[q.region] !== 1) return false;
+
+  }
+
+  // controllo adiacenza
+  const queenMap = new Set(
+    queens.map(q => q.row + "-" + q.col)
+  );
+
+  for (const q of queens) {
+
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+
+        if (dr === 0 && dc === 0) continue;
+
+        const r = q.row + dr;
+        const c = q.col + dc;
+
+        if (queenMap.has(r + "-" + c)) {
+          return false;
+        }
+
+      }
+    }
 function checkIncompleteBoard() {
   let queenCount = 0;
   let filledCount = 0;
