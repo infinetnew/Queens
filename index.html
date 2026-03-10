@@ -3027,7 +3027,6 @@ const { error } = await supabaseClient
 .upsert({
 email: playerEmail,
 badge_code: badgeCode
-})
 });
 if (!error) {
 unlockedBadgesThisGame.push(badgeCode);
