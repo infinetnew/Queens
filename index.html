@@ -1008,7 +1008,6 @@ let challengeTargetTime = null;
 let playerEmail = null;
 let playerName = null;
 let countryCode = null;
-const TODAY_UTC = new Date().toISOString().split("T")[0];
 let isRegisterMode = false;
 let isResetMode = false;
 const colors = [
@@ -1024,7 +1023,7 @@ const colors = [
 "rgba(102,0,102,0.75)"     // viola scuro
 ];
 async function loadDailyPuzzle() {
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 console.log("Searching puzzle date:", today);
 const { data, error } = await supabaseClient
 .from("queens_puzzles")
@@ -1041,7 +1040,7 @@ regionMap = data[0].region_map;
 return true;
 }
 async function getTodayResult() {
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 const { data } = await supabaseClient
 .from("queens_results")
 .select("*")
@@ -1051,7 +1050,7 @@ const { data } = await supabaseClient
 return data;
 }
 async function loadTodayLeaderboard() {
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 const { data, error } = await supabaseClient
 .from("queens_results")
 .select("name, email, time_seconds, country_code")
@@ -1249,7 +1248,7 @@ container.appendChild(row);
 });
 }
 async function getPlayerPosition() {
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 const { data, error } = await supabaseClient
 .from("queens_results")
 .select("name, email, time_seconds")
@@ -1618,7 +1617,7 @@ challenge_losses: (playerStats.challenge_losses || 0) + 1
 
 }
 if (playerStats) {
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 let newStreak = 1;
 if (playerStats.last_played_date) {
 const yesterday = new Date();
@@ -1691,6 +1690,14 @@ hintBtn.disabled = true;
 document.querySelectorAll(".queen").forEach(q => {
 q.classList.add("win-effect");
 });
+// 🏆 MONTHLY CHAMPION BADGE
+const monthly = await loadMonthlyLeaderboard();
+if (monthly && monthly.length > 0) {
+const leader = monthly[0].email;
+if (leader === playerEmail) {
+unlockBadge("monthly_1");
+}
+}
 launchConfetti();
 setTimeout(() => {
 showModal(totalSeconds);
@@ -2048,7 +2055,7 @@ if (type === "remove") penalty = 30;
 else if (type === "insert") penalty = 45;
 else if (type === "insert_remove") penalty = 60;
 startTime -= penalty * 1000;
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 const { data } = await supabaseClient
 .from("queens_results")
 .select("penalty_seconds, hints_used")
@@ -2396,7 +2403,7 @@ const { data: badges } = await supabaseClient
 console.log("Player badges:", badges);
 // --- PODIUM COUNT (until yesterday) ---
 let podiums = 0;
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 const { data: allResults } = await supabaseClient
 .from("queens_results")
 .select("email, date, time_seconds")
@@ -2753,7 +2760,7 @@ startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
 hintsUsed = 0;
 hintBtn.textContent = "💡 Hint • 3";
-const today = TODAY_UTC;
+const today = new Date().toISOString().split("T")[0];
 const { data: existing } = await supabaseClient
 .from("queens_results")
 .select("*")
