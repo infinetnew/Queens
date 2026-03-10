@@ -1690,14 +1690,6 @@ hintBtn.disabled = true;
 document.querySelectorAll(".queen").forEach(q => {
 q.classList.add("win-effect");
 });
-// 🏆 MONTHLY CHAMPION BADGE
-const monthly = await loadMonthlyLeaderboard();
-if (monthly && monthly.length > 0) {
-const leader = monthly[0].email;
-if (leader === playerEmail) {
-unlockBadge("monthly_1");
-}
-}
 launchConfetti();
 setTimeout(() => {
 showModal(totalSeconds);
