@@ -3019,20 +3019,25 @@ if ('clearAppBadge' in navigator) {
 navigator.clearAppBadge();
 }
 let unlockedBadgesThisGame = [];
-async function unlockBadge(badgeCode){
+async function unlockBadge(badgeCode) {
+
 if (unlockedBadgesThisGame.includes(badgeCode)) return;
+
 const { error } = await supabaseClient
 .from("player_badges")
-.upsert({
+.upsert(
+{
 email: playerEmail,
 badge_code: badgeCode
-}, { onConflict: 'email,badge_code' })
-});
+},
+{ onConflict: "email,badge_code" }
+);
+
 if (!error) {
 unlockedBadgesThisGame.push(badgeCode);
 }
-}
-function formatTime(seconds) {
+
+}function formatTime(seconds) {
 const m = Math.floor(seconds / 60);
 const s = seconds % 60;
 return (
