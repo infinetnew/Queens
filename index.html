@@ -2954,7 +2954,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const modalStartBtn = document.getElementById("modalStartBtn");
 
-if (!modalStartBtn) return;
+if (!modalStartBtn) {
+return;
+}
 
 modalStartBtn.addEventListener("click", async () => {
 const gameModal = document.getElementById("gameModal");
