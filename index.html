@@ -1589,7 +1589,6 @@ no_hint_wins
 .maybeSingle();
 if (!playerStats) {
 console.error("Player stats not found");
-return;
 }
 // 👑 Challenge result
 if (challengeTargetTime) {
@@ -3027,6 +3026,7 @@ const { error } = await supabaseClient
 .upsert({
 email: playerEmail,
 badge_code: badgeCode
+}, { onConflict: 'email,badge_code' })
 });
 if (!error) {
 unlockedBadgesThisGame.push(badgeCode);
