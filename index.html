@@ -1055,23 +1055,7 @@ let cells = [];
 const gridElement = document.getElementById("grid");
 const openGameBtn = document.getElementById("openGameBtn");
 const startBtn = openGameBtn;
-const modalStartBtn = document.getElementById("modalStartBtn");
-const hintBtn = document.getElementById("hintBtn");
-const gameModal = document.getElementById("gameModal");
-const modalGridContainer = document.getElementById("modalGridContainer");
 
-openGameBtn.addEventListener("click", () => {
-
-gameModal.style.display = "flex";
-
-modalGridContainer.appendChild(gridElement);
-
-gridElement.style.display = "grid";
-gridElement.style.visibility = "visible";
-gridElement.style.opacity = "1";
-gridElement.style.marginTop = "0";
-
-});
 let hintsUsed = 0;
 const maxHints = 3;
 let isDragging = false;
@@ -2965,8 +2949,14 @@ leaderboardDiv.appendChild(positionBox);
 document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 
-
+const modalStartBtn = document.getElementById("modalStartBtn");
 modalStartBtn.addEventListener("click", async () => {
+const gameModal = document.getElementById("gameModal");
+const modalGridContainer = document.getElementById("modalGridContainer");
+
+gameModal.style.display = "flex";
+modalGridContainer.appendChild(gridElement);
+gridElement.style.display = "grid";
 startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
 hintsUsed = 0;
