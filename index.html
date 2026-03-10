@@ -2240,8 +2240,14 @@ const { data: stats } = await supabaseClient
 .eq("email", playerEmail)
 .single();
 let html = `
-<div style="margin-bottom:10px;font-size:13px;opacity:0.8;">
-🏆 ${unlockedCount} / ${totalBadges} unlocked • ${percent}% </div> `;
+<div style="
+    margin-bottom:10px;
+    font-size:12px;      /* più grande del 13px iniziale */
+    opacity:0.9;         /* leggermente più leggibile */
+    color:inherit;       /* usa lo stesso colore del tuo <h2> */
+">
+🏆 ${unlockedCount} / ${totalBadges} Achievements unlocked — equivalent to ${percent}%
+</div>
 Object.values(BADGE_CATEGORIES).forEach(category => {
 html += `
      <div class="badge-category">
