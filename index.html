@@ -1351,6 +1351,15 @@ document.getElementById("logoutFloating").style.display = "flex";
 playerEmail = data.email;
 playerName = data.name;
 countryCode = data.country_code;
+// carica badge già ottenuti
+const { data: existingBadges } = await supabaseClient
+.from("player_badges")
+.select("badge_code")
+.eq("email", playerEmail);
+
+if (existingBadges) {
+playerBadges = new Set(existingBadges.map(b => b.badge_code)); }
+
 setupFloatingButtons();
 document.getElementById("displayName").textContent = playerName;
 document.getElementById("displayFlag").src =
@@ -3018,25 +3027,30 @@ if ('clearAppBadge' in navigator) {
 navigator.clearAppBadge();
 }
 let unlockedBadgesThisGame = [];
-async function unlockBadge(badgeCode) {
+let playerBadges = new Set();
 
+async function unlockBadge(badgeCode){
+
+// se il giocatore ha già il badge → esci if (playerBadges.has(badgeCode)) return;
+
+// evita doppio popup nello stesso game
 if (unlockedBadgesThisGame.includes(badgeCode)) return;
 
 const { error } = await supabaseClient
 .from("player_badges")
-.upsert(
-{
+.insert({
 email: playerEmail,
 badge_code: badgeCode
-},
-{ onConflict: "email,badge_code" }
-);
+});
 
 if (!error) {
+playerBadges.add(badgeCode);
 unlockedBadgesThisGame.push(badgeCode);
 }
 
-}function formatTime(seconds) {
+}
+
+function formatTime(seconds) {
 const m = Math.floor(seconds / 60);
 const s = seconds % 60;
 return (
