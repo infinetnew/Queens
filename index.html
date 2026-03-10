@@ -711,20 +711,6 @@ height:6px;
 background:rgba(255,255,255,0.25);
 border-radius:10px;
 }
-.badge-new{
-margin-top:4px;
-font-size:11px;
-font-weight:700;
-color:#69f0ae;
-animation:newPulse 1.2s infinite;
-}
-
-@keyframes newPulse{
-0%{opacity:0.6; transform:scale(1);}
-50%{opacity:1; transform:scale(1.1);}
-100%{opacity:0.6; transform:scale(1);}
-}
-
 .badge-card{
 min-width:140px;
 flex:0 0 auto;
@@ -741,7 +727,7 @@ transition:transform 0.2s ease, opacity 0.2s ease;
 opacity:1;
 }
 .badge-card.locked{
-opacity:1;
+opacity:0.35;
 }
 .badge-icon{
 font-size:26px;
@@ -2228,27 +2214,12 @@ const { data: badges } = await supabaseClient
 .select("badge_code")
 .eq("email", playerEmail);
 const unlocked = badges ? badges.map(b => b.badge_code) : [];
-const totalBadges = Object.values(BADGE_CATEGORIES) .reduce((sum,cat)=>sum + cat.badges.length,0);
-
-const unlockedCount = unlocked.length;
-
-const percent = Math.round((unlockedCount / totalBadges) * 100);
-
 const { data: stats } = await supabaseClient
 .from("players")
 .select("puzzles_solved,no_hint_wins,current_streak,daily_wins")
 .eq("email", playerEmail)
 .single();
-let html = `
-<div style="
-    margin-bottom:10px;
-    font-size:12px;      /* più grande del 13px iniziale */
-    opacity:0.9;         /* leggermente più leggibile */
-    color:inherit;       /* usa lo stesso colore del tuo <h2> */
-">
-🏆 ${unlockedCount} / ${totalBadges} Achievements unlocked — equivalent to ${percent}%
-</div>
-`;
+let html = "";
 Object.values(BADGE_CATEGORIES).forEach(category => {
 html += `
      <div class="badge-category">
@@ -2257,8 +2228,6 @@ html += `
    `;
 category.badges.forEach(badge => {
 const isUnlocked = unlocked.includes(badge.code);
-const isNew = unlockedBadgesThisGame.includes(badge.code);
-
 let progressHTML = "";
 if (badge.goal && !isUnlocked && stats) {
 let current = 0;
@@ -2284,9 +2253,9 @@ html += `
          <div class="badge-icon">
  <img src="badges/${badge.code}.png" class="badge-img">
 </div>
-<div style="font-weight:600;">
-${badge.name}
-${isNew ? `<div class="badge-new">NEW</div>` : ""} </div>
+         <div style="font-weight:600;">
+           ${badge.name}
+         </div>
          <div style="font-size:11px;opacity:0.7;">
            ${badge.description}
          </div>
