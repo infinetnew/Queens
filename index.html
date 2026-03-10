@@ -723,11 +723,56 @@ font-size:13px;
 backdrop-filter:blur(10px);
 transition:transform 0.2s ease, opacity 0.2s ease;
 }
+.badge-rarity{
+font-size:10px;
+font-weight:700;
+margin-top:4px;
+letter-spacing:0.5px;
+}
+
+.badge-rarity.common{
+color:#b0bec5;
+}
+
+.badge-rarity.uncommon{
+color:#69f0ae;
+}
+
+.badge-rarity.rare{
+color:#40c4ff;
+}
+
+.badge-rarity.epic{
+color:#b388ff;
+}
+
+.badge-rarity.legendary{
+color:#ffd700;
+text-shadow:
+0 0 6px rgba(255,215,0,0.8),
+0 0 12px rgba(255,215,0,0.6);
+}
+.badge-card.legendary{
+border:2px solid #ffd700;
+box-shadow:0 0 12px rgba(255,215,0,0.6);
+}
+
+.badge-card.epic{
+border:2px solid #b388ff;
+}
+
+.badge-card.rare{
+border:2px solid #40c4ff;
+}
+
+.badge-card.uncommon{
+border:2px solid #69f0ae;
+}
 .badge-card.unlocked{
 opacity:1;
 }
 .badge-card.locked{
-opacity:0.35;
+opacity:1;
 }
 .badge-icon{
 font-size:26px;
@@ -2139,6 +2184,74 @@ function openPlayerModal() {
 const modal = document.getElementById("playerModal");
 modal.style.display = "flex";
 }
+function getBadgeRarity(percent){
+
+if (percent < 1) return {label:"LEGENDARY", color:"#ffd700"};
+if (percent < 5) return {label:"EPIC", color:"#b388ff"};
+if (percent < 20) return {label:"RARE", color:"#40c4ff"};
+if (percent < 50) return {label:"UNCOMMON", color:"#69f0ae"};
+
+return {label:"COMMON", color:"#b0bec5"};
+
+}
+async function getBadgeStats(){
+
+const { data: players } = await supabaseClient
+.from("players")
+.select("email");
+
+const { data: badges } = await supabaseClient
+.from("player_badges")
+.select("badge_code,email");
+
+const totalPlayers = players.length;
+
+const counts = {};
+
+badges.forEach(b=>{
+if(!counts[b.badge_code]) counts[b.badge_code] = 0;
+counts[b.badge_code]++;
+});
+
+const stats = {};
+
+Object.keys(counts).forEach(code=>{
+const percent = (counts[code] / totalPlayers) * 100;
+
+stats[code] = {
+count: counts[code],
+percent: percent
+};
+
+});
+
+return stats;
+
+}
+async function getRarestBadges(){
+
+const stats = await getBadgeStats();
+
+const list = [];
+
+Object.values(BADGE_CATEGORIES).forEach(cat=>{
+cat.badges.forEach(b=>{
+if(stats[b.code]){
+list.push({
+code:b.code,
+name:b.name,
+percent:stats[b.code].percent
+});
+}
+});
+});
+
+list.sort((a,b)=>a.percent - b.percent);
+
+return list.slice(0,5);
+
+}
+
 const BADGE_CATEGORIES = {
 speed: {
 title: "⚡ Speed",
@@ -2218,6 +2331,7 @@ async function openBadgeProfile() {
 const modal = document.getElementById("badgeModal");
 const container = document.getElementById("badgeContainer");
 modal.style.display = "flex";
+const badgeStats = await getBadgeStats();
 const { data: badges } = await supabaseClient
 .from("player_badges")
 .select("badge_code")
@@ -2236,6 +2350,23 @@ html += `
        <div class="badge-row">
    `;
 category.badges.forEach(badge => {
+let rarityHTML = "";
+let rarityClass = "";
+
+if (badgeStats[badge.code]){
+
+const percent = badgeStats[badge.code].percent;
+const rarity = getBadgeRarity(percent);
+
+rarityClass = rarity.label.toLowerCase();
+
+rarityHTML = `
+<div class="badge-rarity ${rarityClass}">
+${rarity.label} • ${percent.toFixed(1)}%
+</div>
+`;
+
+}
 const isUnlocked = unlocked.includes(badge.code);
 let progressHTML = "";
 if (badge.goal && !isUnlocked && stats) {
@@ -2269,6 +2400,7 @@ html += `
            ${badge.description}
          </div>
 ${progressHTML}
+${rarityHTML}
        </div>
      `;
 });
@@ -2278,6 +2410,25 @@ html += `
    `;
 });
 container.innerHTML = html;
+const rare = await getRarestBadges();
+
+let rareHTML = `
+<div class="badge-category">
+<div class="badge-title">🔥 Rarest Achievements</div>
+`;
+
+rare.forEach(b=>{
+rareHTML += `
+<div style="display:flex;justify-content:space-between;margin:4px 0;">
+<span>${b.name}</span>
+<span style="color:#ffd700">${b.percent.toFixed(2)}%</span>
+</div>
+`;
+});
+
+rareHTML += "</div>";
+
+container.innerHTML += rareHTML;
 }
 function closePlayerModal() {
 const modal = document.getElementById("playerModal");
