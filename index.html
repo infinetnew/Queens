@@ -915,7 +915,7 @@ stroke-linecap="round"/>
   <img id="displayFlag">
 </span>
 </div>
-<div class="player-timer">
+<div class="player-timer" style="display:none;">
 ⏱ <span id="timer">00:00</span>
 <span id="challengeTarget" style="
    font-size:13px;
@@ -925,7 +925,7 @@ stroke-linecap="round"/>
  "></span>
 </div>
 </div>
-<button id="startBtn" class="game-btn">▶ Play</button>
+<button id="openGameBtn" class="game-btn">I'm ready</button>
 <button id="hintBtn" class="game-btn" disabled style="display:none;">
 💡 Hint • 3
 </button>
@@ -1038,7 +1038,7 @@ Register
 </div>
 </div>
 </div>
-<div id="grid"></div>
+<div id="grid" style="display:none;"></div>
 <script>
 const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZWF4enRrZmRydWZnbmlteGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjA0MTksImV4cCI6MjA4NzY5NjQxOX0.nylDg56BcUzcq6Ag35N8zBDe5zXDCHC-iGwPcZ-ERYk";
@@ -1053,8 +1053,25 @@ const regions = new Array(size).fill(0);
 let queens = [];
 let cells = [];
 const gridElement = document.getElementById("grid");
-const startBtn = document.getElementById("startBtn");
+const openGameBtn = document.getElementById("openGameBtn");
+const startBtn = openGameBtn;
+const modalStartBtn = document.getElementById("modalStartBtn");
 const hintBtn = document.getElementById("hintBtn");
+const gameModal = document.getElementById("gameModal");
+const modalGridContainer = document.getElementById("modalGridContainer");
+
+openGameBtn.addEventListener("click", () => {
+
+gameModal.style.display = "flex";
+
+modalGridContainer.appendChild(gridElement);
+
+gridElement.style.display = "grid";
+gridElement.style.visibility = "visible";
+gridElement.style.opacity = "1";
+gridElement.style.marginTop = "0";
+
+});
 let hintsUsed = 0;
 const maxHints = 3;
 let isDragging = false;
@@ -1525,6 +1542,8 @@ timerInterval = setInterval(() => {
 const seconds = Math.floor((Date.now() - startTime) / 1000);
 const timerEl = document.getElementById("timer");
 timerEl.textContent = formatTime(seconds);
+const modalTimer = document.getElementById("modalTimer");
+if (modalTimer) modalTimer.textContent = formatTime(seconds);
 updateChallengeColor(seconds);
 timerEl.classList.remove("timer-pulse");
 void timerEl.offsetWidth;
@@ -2945,7 +2964,9 @@ leaderboardDiv.appendChild(positionBox);
 }
 document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
-startBtn.addEventListener("click", async () => {
+
+
+modalStartBtn.addEventListener("click", async () => {
 startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
 hintsUsed = 0;
@@ -2978,6 +2999,8 @@ timerInterval = setInterval(() => {
 const seconds = Math.floor((Date.now() - startTime) / 1000);
 const timerEl = document.getElementById("timer");
 timerEl.textContent = formatTime(seconds);
+const modalTimer = document.getElementById("modalTimer");
+if (modalTimer) modalTimer.textContent = formatTime(seconds);
 updateChallengeColor(seconds);
 timerEl.classList.remove("timer-pulse");
 void timerEl.offsetWidth;
@@ -3012,6 +3035,8 @@ timerInterval = setInterval(() => {
 const seconds = Math.floor((Date.now() - startTime) / 1000);
 const timerEl = document.getElementById("timer");
 timerEl.textContent = formatTime(seconds);
+const modalTimer = document.getElementById("modalTimer");
+if (modalTimer) modalTimer.textContent = formatTime(seconds);
 updateChallengeColor(seconds);
 timerEl.classList.remove("timer-pulse");
 void timerEl.offsetWidth;
@@ -3491,5 +3516,40 @@ if (pushBtn) {
 pushBtn.addEventListener("click", enablePush);
 }
 </script>
+<div id="gameModal" class="modal">
+
+<div class="modal-content" style="max-width:700px">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+">
+
+<button id="modalStartBtn" class="game-btn" style="margin:0">
+▶ Play
+</button>
+
+<div style="
+font-weight:700;
+font-size:18px;
+color:#ffd700;
+">
+⏱ <span id="modalTimer">00:00</span>
+</div>
+
+</div>
+
+<div id="modalGridContainer"
+style="
+display:flex;
+justify-content:center;
+align-items:center;
+">
+</div>
+
+</div>
+</div>
 </body>
 </html>
