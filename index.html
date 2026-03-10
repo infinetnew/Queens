@@ -733,6 +733,19 @@ letter-spacing:0.5px;
 .badge-rarity.common{
 color:#b0bec5;
 }
+.badge-rarity.mythic{
+color:#ff4fd8;
+text-shadow:
+0 0 6px rgba(255,79,216,0.8),
+0 0 12px rgba(255,79,216,0.6);
+}
+
+.badge-card.mythic{
+border:2px solid #ff4fd8;
+box-shadow:
+0 0 12px rgba(255,79,216,0.6),
+0 0 22px rgba(255,79,216,0.4);
+}
 
 .badge-rarity.uncommon{
 color:#69f0ae;
@@ -755,6 +768,9 @@ text-shadow:
 .badge-card.legendary{
 border:2px solid #ffd700;
 box-shadow:0 0 12px rgba(255,215,0,0.6);
+}
+.badge-card.common{
+border:2px solid #b0bec5;
 }
 
 .badge-card.epic{
@@ -2366,6 +2382,17 @@ ${rarity.label} • ${percent.toFixed(1)}%
 </div>
 `;
 
+}else{
+
+// badge mai sbloccato da nessuno
+rarityClass = "mythic";
+
+rarityHTML = `
+<div class="badge-rarity mythic">
+MYTHIC • 0%
+</div>
+`;
+
 }
 const isUnlocked = unlocked.includes(badge.code);
 let progressHTML = "";
@@ -3182,7 +3209,8 @@ let playerBadges = new Set();
 
 async function unlockBadge(badgeCode){
 
-// se il giocatore ha già il badge → esci if (playerBadges.has(badgeCode)) return;
+// se il giocatore ha già il badge → esci 
+if (playerBadges.has(badgeCode)) return;
 
 // evita doppio popup nello stesso game
 if (unlockedBadgesThisGame.includes(badgeCode)) return;
