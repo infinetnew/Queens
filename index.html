@@ -1539,8 +1539,9 @@ gridElement.style.animation = "boardGlowStart 1.2s ease";
 document.getElementById("rulesBox").style.display = "none";
 document.getElementById("rulesFloating").style.display = "flex";
 initializeGame();
-}
-}
+});
+
+});
 function showAuthScreen() {
 document.getElementById("playerInfo").style.display = "none";
 document.getElementById("grid").style.display = "none";
@@ -2949,7 +2950,12 @@ leaderboardDiv.appendChild(positionBox);
 document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+
 const modalStartBtn = document.getElementById("modalStartBtn");
+
+if (!modalStartBtn) return;
+
 modalStartBtn.addEventListener("click", async () => {
 const gameModal = document.getElementById("gameModal");
 const modalGridContainer = document.getElementById("modalGridContainer");
