@@ -1582,10 +1582,15 @@ best_streak,
 last_played_date,
 challenge_wins,
 challenge_losses,
-challenge_launched
+challenge_launched,
+no_hint_wins
 `)
 .eq("email", playerEmail)
-.single();
+.maybeSingle();
+if (!playerStats) {
+console.error("Player stats not found");
+return;
+}
 // 👑 Challenge result
 if (challengeTargetTime) {
 
@@ -3019,9 +3024,10 @@ async function unlockBadge(badgeCode){
 if (unlockedBadgesThisGame.includes(badgeCode)) return;
 const { error } = await supabaseClient
 .from("player_badges")
-.insert({
+.upsert({
 email: playerEmail,
 badge_code: badgeCode
+})
 });
 if (!error) {
 unlockedBadgesThisGame.push(badgeCode);
