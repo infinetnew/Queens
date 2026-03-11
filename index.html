@@ -1593,8 +1593,10 @@ cells.forEach(c => c.classList.remove("error"));
 recomputeAutoX();
 }
 cell.classList.remove("premium-flash");
-void cell.offsetWidth;
+
+requestAnimationFrame(()=>{
 cell.classList.add("premium-flash");
+});
 const hasConflict = checkConflicts();
 if (checkWin() || !checkIncompleteBoard()) {
 if (boardErrorTimeout) {
@@ -1982,19 +1984,23 @@ return hasError;
 function checkWin() {
 return queens.length === size;
 }
-function checkIncompleteBoard() {
-let queenCount = 0;
+function checkIncompleteBoard(){
+
+let queenCount = queens.length;
 let filledCount = 0;
-cells.forEach(cell => {
-if (cell.dataset.state === "queen") queenCount++;
-if (
-cell.dataset.state === "queen" ||
-cell.dataset.state === "x"
-) {
+
+for(let i=0;i<cells.length;i++){
+
+const state = cells[i].dataset.state;
+
+if(state==="queen" || state==="x"){
 filledCount++;
 }
-});
-return filledCount === size * size && queenCount < size;
+
+}
+
+return filledCount===size*size && queenCount<size;
+
 }
 function highlightRow(row) {
 for (let col = 0; col < size; col++) {
@@ -2015,37 +2021,56 @@ cell.classList.add("error");
 }
 });
 }
-function recomputeAutoX() {
-cells.forEach(cell => {
-if (cell.dataset.state === "x") {
+function recomputeAutoX(){
+
+// reset solo X
+cells.forEach(cell=>{
+if(cell.dataset.state==="x"){
+cell.dataset.state="empty";
 cell.classList.remove("x");
-cell.dataset.state = "empty";
 }
 });
-queens.forEach(q => {
-for (let r = 0; r < size; r++) {
-const indexRow = q.row * size + r;
-const indexCol = r * size + q.col;
-markX(indexRow);
-markX(indexCol);
+
+for(const q of queens){
+
+// riga
+for(let c=0;c<size;c++){
+markX(q.row*size+c);
 }
-for (let i = -1; i <= 1; i++) {
-for (let j = -1; j <= 1; j++) {
-const r = q.row + i;
-const c = q.col + j;
-if (r >= 0 && r < size && c >= 0 && c < size) {
-markX(r * size + c);
+
+// colonna
+for(let r=0;r<size;r++){
+markX(r*size+q.col);
+}
+
+// adiacenze
+for(let dr=-1;dr<=1;dr++){
+for(let dc=-1;dc<=1;dc++){
+
+const r=q.row+dr;
+const c=q.col+dc;
+
+if(r>=0 && r<size && c>=0 && c<size){
+markX(r*size+c);
+}
+
 }
 }
-}
-cells.forEach((cell,i)=>{
+
+// regione
+for(let i=0;i<cells.length;i++){
+
 const r=Math.floor(i/size);
 const c=i%size;
+
 if(regionMap[r][c]===q.region){
 markX(i);
 }
-});
-});
+
+}
+
+}
+
 }
 function markX(index){
 const cell = cells[index];
