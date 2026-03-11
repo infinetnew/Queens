@@ -1620,6 +1620,7 @@ showFixedMessage(
 return;
 }
 if (!hasConflict && checkWin()) {
+closeGameModal();
 clearInterval(timerInterval);
 document.getElementById("timer").classList.add("timer-complete");
 const rawSeconds = Math.round((Date.now() - startTime) / 1000);
@@ -2097,7 +2098,9 @@ modal.style.display = "flex";
 
 function closeGameModal(){
 
-document.getElementById("gameModal").style.display = "none";
+const modal = document.getElementById("gameModal");
+
+modal.style.display = "none";
 
 }
 function giveHint() {
@@ -3549,21 +3552,7 @@ pushBtn.addEventListener("click", enablePush);
     max-height:95vh;
     padding:0;
   ">
-    
-    <div style="
-      display:flex;
-      justify-content:flex-end;
-      margin-bottom:10px;
-    ">
-      <button onclick="closeGameModal()" style="
-        background:#ff5252;
-        border:none;
-        color:white;
-        padding:8px 14px;
-        border-radius:10px;
-        cursor:pointer;
-      ">✕</button>
-    </div>
+   
 
     <div id="gameContainer"></div>
 
