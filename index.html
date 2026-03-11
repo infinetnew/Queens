@@ -1101,16 +1101,7 @@ Place 10 Queens on the 10×10 grid.</p>
 <p><strong>🏆</strong> One attempt per day.<br>
 Lowest time wins.</p>
 </div>
-<div id="fixedMessageBox" style="
- height: 22px;
- margin-top: 15px;
- font-weight: 700;
- text-align: center;
- color: #ffffff;
- opacity: 0;
- transform: translateY(6px);
- transition: opacity 0.35s ease, transform 0.35s ease;
-"></div>
+
 <div id="authContainer" style="display:none; margin-top:40px; width:100%; max-width:420px;">
 <div style="
    background: rgba(255,255,255,0.05);
@@ -2400,28 +2391,7 @@ if (hintsUsed >= maxHints) {
 hintBtn.disabled = true;
 }
 }
-function showHintMessage(text, type = "info") {
-const oldMsg = document.getElementById("hintMessage");
-if (oldMsg) oldMsg.remove();
-const msg = document.createElement("div");
-msg.id = "hintMessage";
-msg.style.marginTop = "12px";
-msg.style.fontWeight = "600";
-msg.style.transition = "opacity 0.4s ease";
-if (type === "error") {
-msg.style.color = "#ff6b6b";
-} else if (type === "success") {
-msg.style.color = "#69f0ae";
-} else {
-msg.style.color = "#ffffff";
-}
-msg.textContent = text;
-document.getElementById("playerInfo").appendChild(msg);
-setTimeout(() => {
-msg.style.opacity = "0";
-setTimeout(() => msg.remove(), 400);
-}, 3000);
-}
+
 function clearHintMessage() {
 const msg = document.getElementById("hintMessage");
 if (msg) msg.remove();
@@ -3799,7 +3769,16 @@ pushBtn.addEventListener("click", enablePush);
 <div id="challengeStatus"></div>
 
 <div id="gameContainer"></div>
-
+<div id="fixedMessageBox" style="
+ height:24px;
+ margin-top:10px;
+ font-weight:700;
+ text-align:center;
+ color:#ffffff;
+ opacity:0;
+ transform:translateY(6px);
+ transition:opacity 0.35s ease, transform 0.35s ease;
+"></div>
     <div style="text-align:center; margin-top:12px;">
       <button id="hintBtn" class="game-btn">
         💡 Hint
