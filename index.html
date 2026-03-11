@@ -2333,9 +2333,11 @@ if (r === row) continue;
 const indexCheck = r * size + correctCol;
 const cellCheck = cells[indexCheck];
 if (cellCheck.dataset.state === "queen" && solution[r] !== correctCol) {
-cellCheck.innerHTML = "";
-cellCheck.dataset.state = "empty";
+
+removeQueen(cellCheck, r, correctCol);   // 🔴 FIX
+
 removedRow = r;
+
 }
 }
 const index = row * size + correctCol;
