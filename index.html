@@ -3176,8 +3176,12 @@ requestAnimationFrame(frame);
 }
 })();
 }
-hintBtn = document.getElementById("hintBtn");
-hintBtn.addEventListener("click", giveHint);
+document.addEventListener("DOMContentLoaded", () => {
+  hintBtn = document.getElementById("hintBtn");
+  if (hintBtn) {
+    hintBtn.addEventListener("click", giveHint);
+  }
+});
 document.getElementById("rulesFloating").addEventListener("click", () => {
 showRulesModal(
 `🧠 QUEENS — PURE STRATEGY
