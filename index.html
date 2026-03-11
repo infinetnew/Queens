@@ -1278,21 +1278,28 @@ return [];
 return data;
 }
 function showFixedMessage(text, type = "info", DURATION = 2500) {
+
 const box = document.getElementById("fixedMessageBox");
+if (!box) return;
+
 if (type === "error") box.style.color = "#ff6b6b";
 else if (type === "success") box.style.color = "#69f0ae";
 else box.style.color = "#ffffff";
+
 box.textContent = text;
 box.style.opacity = "0";
 box.style.transform = "translateY(6px)";
+
 requestAnimationFrame(() => {
 box.style.opacity = "1";
 box.style.transform = "translateY(0)";
 });
+
 setTimeout(() => {
 box.style.opacity = "0";
 box.style.transform = "translateY(-4px)";
 }, DURATION);
+
 }
 function renderDailyLeaderboard(data) {
 const container = document.getElementById("dailyLeaderboard");
