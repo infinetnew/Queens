@@ -396,6 +396,7 @@ background: rgba(0,0,0,0.6);
 display: none;
 align-items: center;
 justify-content: center;
+padding:20px;
 z-index: 9999;
 }
 .modal-content {
@@ -3624,12 +3625,21 @@ pushBtn.addEventListener("click", enablePush);
 </script>
 <div id="gameModal" class="modal">
   <div class="modal-content" style="
-    background: transparent;
-    border:none;
-    box-shadow:none;
-    max-width:95vw;
+    background: rgba(25,25,35,0.95);
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 30px 80px rgba(0,0,0,0.8);
+    backdrop-filter:blur(18px);
+    border-radius:28px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    width:min(95vw,720px);
     max-height:95vh;
-    padding:0;
   ">
 
     <div id="modalHUD"></div>
