@@ -1719,7 +1719,7 @@ cell.dataset.state = "x";
 } else if (state === "x") {
 cell.classList.remove("x");
 placeQueen(cell,row,col);
-recomputeAutoX();
+
 } else if (state === "queen") {
 removeQueen(cell,row,col);
 cells.forEach(c => c.classList.remove("error"));
@@ -1971,6 +1971,7 @@ img.className = "queen-icon";
 queen.appendChild(img);
 cell.appendChild(queen);
 cell.dataset.state = "queen";
+addAutoX(row,col);
 }
 function removeQueen(cell,row,col){
 const region = regionMap[row][col];
@@ -2169,34 +2170,24 @@ cell.classList.add("error");
 }
 });
 }
-function recomputeAutoX(){
-
-// reset solo X
-cells.forEach(cell=>{
-if(cell.dataset.state==="x"){
-cell.dataset.state="empty";
-cell.classList.remove("x");
-}
-});
-
-for(const q of queens){
+function addAutoX(row,col){
 
 // riga
 for(let c=0;c<size;c++){
-markX(q.row*size+c);
+markX(row*size+c);
 }
 
 // colonna
 for(let r=0;r<size;r++){
-markX(r*size+q.col);
+markX(r*size+col);
 }
 
 // adiacenze
 for(let dr=-1;dr<=1;dr++){
 for(let dc=-1;dc<=1;dc++){
 
-const r=q.row+dr;
-const c=q.col+dc;
+const r=row+dr;
+const c=col+dc;
 
 if(r>=0 && r<size && c>=0 && c<size){
 markX(r*size+c);
@@ -2206,15 +2197,15 @@ markX(r*size+c);
 }
 
 // regione
+const region = regionMap[row][col];
+
 for(let i=0;i<cells.length;i++){
 
 const r=Math.floor(i/size);
 const c=i%size;
 
-if(regionMap[r][c]===q.region){
+if(regionMap[r][c]===region){
 markX(i);
-}
-
 }
 
 }
@@ -2226,6 +2217,21 @@ if(cell.dataset.state==="empty"){
 cell.dataset.state="x";
 cell.classList.add("x");
 }
+}
+
+function recomputeAutoX(){
+
+cells.forEach(cell=>{
+if(cell.dataset.state==="x"){
+cell.dataset.state="empty";
+cell.classList.remove("x");
+}
+});
+
+for(const q of queens){
+addAutoX(q.row, q.col);
+}
+
 }
 
 async function openGameModal(){
