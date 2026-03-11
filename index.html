@@ -1038,7 +1038,7 @@ Register
 </div>
 </div>
 </div>
-<div id="grid"></div>
+<div id="grid" style="display:none"></div>
 <script>
 const SUPABASE_URL = "https://nkeaxztkfdrufgnimxht.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZWF4enRrZmRydWZnbmlteGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjA0MTksImV4cCI6MjA4NzY5NjQxOX0.nylDg56BcUzcq6Ag35N8zBDe5zXDCHC-iGwPcZ-ERYk";
@@ -1530,6 +1530,8 @@ timerEl.classList.remove("timer-pulse");
 void timerEl.offsetWidth;
 timerEl.classList.add("timer-pulse");
 }, 1000);
+openGameModal();
+
 gridElement.style.visibility = "visible";
 gridElement.style.opacity = "1";
 gridElement.style.animation = "boardGlowStart 1.2s ease";
@@ -2078,6 +2080,25 @@ if(cell.dataset.state==="empty"){
 cell.dataset.state="x";
 cell.classList.add("x");
 }
+}
+
+function openGameModal(){
+
+const modal = document.getElementById("gameModal");
+const container = document.getElementById("gameContainer");
+
+if (!container.contains(gridElement)) {
+container.appendChild(gridElement);
+}
+gridElement.style.display = "grid";
+modal.style.display = "flex";
+
+}
+
+function closeGameModal(){
+
+document.getElementById("gameModal").style.display = "none";
+
 }
 function giveHint() {
 if (!startTime) return;
@@ -3008,6 +3029,8 @@ timerEl.classList.remove("timer-pulse");
 void timerEl.offsetWidth;
 timerEl.classList.add("timer-pulse");
 }, 1000);
+openGameModal();
+
 gridElement.style.visibility = "visible";
 gridElement.style.opacity = "1";
 document.getElementById("rulesBox").style.display = "none";
@@ -3042,6 +3065,7 @@ timerEl.classList.remove("timer-pulse");
 void timerEl.offsetWidth;
 timerEl.classList.add("timer-pulse");
 }, 1000);
+openGameModal();
 gridElement.style.visibility = "visible";
 gridElement.style.opacity = "1";
 gridElement.style.animation = "boardGlowStart 1.2s ease";
@@ -3516,5 +3540,34 @@ if (pushBtn) {
 pushBtn.addEventListener("click", enablePush);
 }
 </script>
+<div id="gameModal" class="modal">
+  <div class="modal-content" style="
+    background: transparent;
+    border:none;
+    box-shadow:none;
+    max-width:95vw;
+    max-height:95vh;
+    padding:0;
+  ">
+    
+    <div style="
+      display:flex;
+      justify-content:flex-end;
+      margin-bottom:10px;
+    ">
+      <button onclick="closeGameModal()" style="
+        background:#ff5252;
+        border:none;
+        color:white;
+        padding:8px 14px;
+        border-radius:10px;
+        cursor:pointer;
+      ">✕</button>
+    </div>
+
+    <div id="gameContainer"></div>
+
+  </div>
+</div>
 </body>
 </html>
