@@ -959,9 +959,7 @@ stroke-linecap="round"/>
 </div>
 </div>
 <button id="startBtn" class="game-btn">▶ Play</button>
-<button id="hintBtn" class="game-btn" disabled style="display:none;">
-💡 Hint • 3
-</button>
+
 </div>
 <div id="leaderboardModal" style="display:none; margin-top:25px;">
 <div class="modal-content">
@@ -3628,9 +3626,16 @@ pushBtn.addEventListener("click", enablePush);
     max-height:95vh;
     padding:0;
   ">
-   
+
+    <div id="modalHUD"></div>
 
     <div id="gameContainer"></div>
+
+    <div style="text-align:center; margin-top:12px;">
+      <button id="hintBtn" class="game-btn">
+        💡 Hint
+      </button>
+    </div>
 
   </div>
 </div>
