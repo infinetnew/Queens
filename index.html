@@ -1761,7 +1761,7 @@ lastQueen.classList.add("final-queen");
 closeGameModal();
 clearInterval(timerInterval);
 document.getElementById("timer").classList.add("timer-complete");
-const rawSeconds = Math.round((Date.now() - startTime) / 1000);
+const rawSeconds = Math.floor((Date.now() - startTime) / 1000);
 const totalSeconds = rawSeconds;
 // --- SPECIAL BADGES ---
 // ⚡ Clutch Victory (usa tutti e 3 gli hint)
@@ -1919,6 +1919,9 @@ setTimeout(()=>{
 launchConfetti();
 }, 350);
 
+// aspetta per mostrare l'effetto dorato
+setTimeout(()=>{
+
 // animazione uscita griglia
 gridElement.classList.add("board-exit");
 
@@ -1926,6 +1929,8 @@ setTimeout(() => {
 showModal(totalSeconds);
 showUnlockedBadges();
 }, 650);
+
+}, 1200);
 }
 });
 gridElement.appendChild(cell);
