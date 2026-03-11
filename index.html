@@ -1085,7 +1085,7 @@ let queens = [];
 let cells = [];
 const gridElement = document.getElementById("grid");
 const startBtn = document.getElementById("startBtn");
-const hintBtn = document.getElementById("hintBtn");
+let hintBtn;
 let hintsUsed = 0;
 const maxHints = 3;
 let isDragging = false;
@@ -3176,6 +3176,7 @@ requestAnimationFrame(frame);
 }
 })();
 }
+hintBtn = document.getElementById("hintBtn");
 hintBtn.addEventListener("click", giveHint);
 document.getElementById("rulesFloating").addEventListener("click", () => {
 showRulesModal(
