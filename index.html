@@ -443,8 +443,36 @@ font-variant-numeric:tabular-nums;
 }
 
 .hud-opponent{
-opacity:0.85;
+opacity:0.95;
 font-size:18px;
+background:rgba(255,255,255,0.06);
+padding:6px 10px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.12);
+}
+
+#challengeBarContainer{
+width:100%;
+height:10px;
+background:rgba(255,255,255,0.15);
+border-radius:10px;
+margin-top:10px;
+overflow:hidden;
+}
+
+#challengeBar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#69f0ae,#ffd740,#ff5252);
+transition:width 0.5s ease;
+}
+
+#challengeStatus{
+margin-top:6px;
+font-size:13px;
+font-weight:600;
+letter-spacing:0.5px;
+opacity:0.9;
 }
 .stats-grid{
 display:grid;
@@ -479,7 +507,7 @@ font-weight:800;
 letter-spacing:0.5px;
 text-shadow:0 0 6px rgba(255,255,255,0.25);
 }
-.modal-content button {
+.modal-content button:not(.game-btn) {
 margin-top: 20px;
 padding: 10px 20px;
 border-radius: 10px;
@@ -895,6 +923,15 @@ filter: grayscale(100%) brightness(0.45) blur(0.4px);
     opacity:1;
     transform:translateY(0) scale(1);
   }
+}
+@keyframes losingPulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.08);}
+100%{transform:scale(1);}
+}
+
+.timer-red{
+animation:losingPulse 0.8s infinite;
 }
 </style>
 </head>
@@ -2119,7 +2156,7 @@ cell.classList.add("x");
 }
 }
 
-function openGameModal(){
+async function openGameModal(){
 const hud = document.getElementById("modalHUD");
 
 hud.innerHTML = "";
@@ -2143,9 +2180,22 @@ opponentRow.className = "hud-row hud-opponent";
 
 const opponentName = challengePlayer || "Opponent";
 
+let opponentFlag = "";
+
+const { data } = await supabaseClient
+.from("players")
+.select("country_code")
+.eq("name", opponentName)
+.maybeSingle();
+
+if (data && data.country_code){
+opponentFlag = data.country_code.toLowerCase();
+}
+
 opponentRow.innerHTML = `
 <span>${opponentName}</span>
-<span>🔥 Beat ${formatTime(challengeTargetTime)}</span>
+${opponentFlag ? `<img class="hud-flag" src="https://flagcdn.com/24x18/${opponentFlag}.png">` : ""}
+<span>⏱ Beat ${formatTime(challengeTargetTime)}</span>
 `;
 
 hud.appendChild(opponentRow);
@@ -3371,13 +3421,17 @@ String(s).padStart(2, "0")
 );
 }
 function updateChallengeColor(seconds){
+
 if(!challengeTargetTime) return;
+
 const timerEl = document.getElementById("timer");
+
 timerEl.classList.remove(
 "timer-green",
 "timer-yellow",
 "timer-red"
 );
+
 const ratio = seconds / challengeTargetTime;
 
 if (ratio < 0.7){
@@ -3389,6 +3443,26 @@ timerEl.classList.add("timer-yellow");
 else{
 timerEl.classList.add("timer-red");
 }
+
+/* -------- CHALLENGE BAR -------- */
+
+const bar = document.getElementById("challengeBar");
+const status = document.getElementById("challengeStatus");
+
+if (!bar) return;
+
+const progress = Math.min(100, (seconds / challengeTargetTime) * 100);
+bar.style.width = progress + "%";
+
+if (seconds < challengeTargetTime){
+status.textContent = "🔥 You are beating the challenge";
+status.style.color = "#69f0ae";
+}
+else{
+status.textContent = "⚠️ Challenge is winning";
+status.style.color = "#ff5252";
+}
+
 }
 // --- CHALLENGE LINK ---
 const params = new URLSearchParams(window.location.search);
@@ -3642,9 +3716,15 @@ pushBtn.addEventListener("click", enablePush);
     max-height:95vh;
   ">
 
-    <div id="modalHUD"></div>
+<div id="modalHUD"></div>
 
-    <div id="gameContainer"></div>
+<div id="challengeBarContainer">
+  <div id="challengeBar"></div>
+</div>
+
+<div id="challengeStatus"></div>
+
+<div id="gameContainer"></div>
 
     <div style="text-align:center; margin-top:12px;">
       <button id="hintBtn" class="game-btn">
