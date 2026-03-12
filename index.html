@@ -423,9 +423,10 @@ margin-bottom:10px;
 .hud-difficulty{
 width:100%;
 text-align:left;
-font-size:14px;
-padding-left:6px;
-opacity:0.9;
+font-size:16px;
+padding-left:2px;
+margin-bottom:4px;
+font-weight:700;
 }
 
 .hud-row{
@@ -1808,7 +1809,7 @@ best_streak,
 last_played_date,
 challenge_wins,
 challenge_launched,
-no_hint_wins
+no_hint_wins,
 easy_wins,
 medium_wins,
 hard_wins
@@ -2285,8 +2286,11 @@ if (puzzleDifficulty === "Medium") difficultyColor = "#ffd740";
 if (puzzleDifficulty === "Hard") difficultyColor = "#ff5252";
 
 difficultyRow.innerHTML = `
+<span style="color:#ffffff; font-weight:700;">
+Difficulty: 
 <span style="color:${difficultyColor}; font-weight:700;">
-Difficulty: ${puzzleDifficulty}
+${puzzleDifficulty}
+</span>
 </span>
 `;
 
