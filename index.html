@@ -1677,7 +1677,6 @@ loadMonthlyLeaderboard(),
 loadMonthlyCountryLeaderboard(),
 loadAllTimeLeaderboard()
 ]);
-]);
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
 renderMonthlyLeaderboard(monthly);
@@ -3177,9 +3176,10 @@ message.innerText = "You already solved today’s puzzle 👑";
 document.getElementById("playerInfo").appendChild(message);
 // Carica classifiche
 const [daily, monthly, countries, alltime] = await Promise.all([
-loadTodayLeaderboard(),
-loadMonthlyLeaderboard(),
-loadMonthlyCountryLeaderboard()
+  loadTodayLeaderboard(),
+  loadMonthlyLeaderboard(),
+  loadMonthlyCountryLeaderboard(),
+  loadAllTimeLeaderboard()
 ]);
 renderDailyLeaderboard(daily);
 await renderDailyPosition();
@@ -3481,7 +3481,7 @@ wrapper.addEventListener("touchend", (e) => {
 const endX = e.changedTouches[0].clientX;
 const diff = endX - startX;
 if (Math.abs(diff) < 50) return;
-if (diff < 0 && currentPage < 2) {
+if (diff < 0 && currentPage < 3) {
 currentPage++;
 } else if (diff > 0 && currentPage > 0) {
 currentPage--;
