@@ -1604,25 +1604,94 @@ points: data[position].points
 }
 async function getAllTimePlayerPosition() {
 
-const { data, error } = await supabaseClient
+// prendi il tuo punteggio
+const { data: me } = await supabaseClient
 .from("players")
-.select("name, email, total_score")
-.gt("total_score", 0)
-.order("total_score", { ascending: false });
+.select("total_score")
+.eq("email", playerEmail)
+.single();
 
-if (error || !data) return null;
+if (!me) return null;
 
-const position = data.findIndex(p => p.email === playerEmail);
+const myScore = me.total_score;
 
-if (position === -1) return null;
+// conta quanti hanno punteggio maggiore
+const { count } = await supabaseClient
+.from("players")
+.select("*", { count: "exact", head: true })
+.gt("total_score", myScore);
 
-const totalPlayers = data.length;
-const rank = position + 1;
+// conta totale giocatori
+const { count: totalPlayers } = await supabaseClient
+.from("players")
+.select("*", { count: "exact", head: true })
+.gt("total_score", 0);
+
+const rank = (count || 0) + 1;
 
 return {
 rank,
 totalPlayers
 };
+
+}
+async function getNearbyRivals() {
+
+const { data: me } = await supabaseClient
+.from("players")
+.select("total_score")
+.eq("email", playerEmail)
+.single();
+
+if (!me) return [];
+
+const myScore = me.total_score;
+
+// prendi i giocatori vicini al tuo punteggio
+const { data } = await supabaseClient
+.from("players")
+.select("name,email,total_score,country_code")
+.gte("total_score", myScore - 20)
+.lte("total_score", myScore + 20)
+.order("total_score", { ascending: false })
+.limit(5);
+
+return data || [];
+
+}
+function renderNearbyRivals(players){
+
+const container = document.getElementById("allTimeLeaderboard");
+
+const title = document.createElement("div");
+title.style.marginTop = "16px";
+title.style.fontWeight = "700";
+title.style.color = "#ffd700";
+title.innerText = "⚔ Nearby Rivals";
+
+container.appendChild(title);
+
+players.forEach(player => {
+
+const row = document.createElement("div");
+row.className = "leaderboard-row";
+
+const isYou = player.email === playerEmail;
+
+row.innerHTML = `
+<span style="font-weight:${isYou ? "700" : "500"};">
+${isYou ? "⭐ You" : player.name}
+<img 
+src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
+style="width:20px;margin-left:6px;border-radius:2px;">
+</span>
+
+<strong>${player.total_score} pt</strong>
+`;
+
+container.appendChild(row);
+
+});
 
 }
 async function initializePage() {
@@ -1708,6 +1777,8 @@ await renderDailyPosition();
 renderMonthlyLeaderboard(monthly);
 renderMonthlyCountryLeaderboard(countries);
 renderAllTimeLeaderboard(alltime);
+const rivals = await getNearbyRivals();
+renderNearbyRivals(rivals);
 const allTimePosition = await getAllTimePlayerPosition();
 
 if (allTimePosition) {
@@ -1931,7 +2002,8 @@ challenge_launched,
 no_hint_wins,
 easy_wins,
 medium_wins,
-hard_wins
+hard_wins,
+total_score
 `)
 .eq("email", playerEmail)
 .maybeSingle();
@@ -3241,6 +3313,8 @@ await renderDailyPosition();
 renderMonthlyLeaderboard(monthly);
 renderMonthlyCountryLeaderboard(countries);
 renderAllTimeLeaderboard(alltime);
+const rivals = await getNearbyRivals();
+renderNearbyRivals(rivals);
 const allTimePosition = await getAllTimePlayerPosition();
 
 if (allTimePosition) {
