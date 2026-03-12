@@ -815,7 +815,10 @@ letter-spacing:0.5px;
 }
 
 .badge-rarity.common{
-color:#b0bec5;
+color:#ff9800;
+text-shadow:
+0 0 6px rgba(255,152,0,0.7),
+0 0 12px rgba(255,152,0,0.4);
 }
 .badge-rarity.mythic{
 color:#ff4fd8;
@@ -854,7 +857,8 @@ border:2px solid #ffd700;
 box-shadow:0 0 12px rgba(255,215,0,0.6);
 }
 .badge-card.common{
-border:2px solid #b0bec5;
+border:2px solid #ff9800;
+box-shadow:0 0 8px rgba(255,152,0,0.45);
 }
 
 .badge-card.epic{
@@ -1447,7 +1451,7 @@ const position = data.findIndex(p => p.email === playerEmail);
 if (position === -1) return null;
 const totalPlayers = data.length;
 const rank = position + 1;
-const percent = Math.round((rank / totalPlayers) * 100);
+const percent = Math.round(((totalPlayers - rank) / totalPlayers) * 100);
 return {
 rank,
 totalPlayers,
@@ -1505,7 +1509,7 @@ const position = data.findIndex(p => p.email === playerEmail);
 if (position === -1) return null;
 const totalPlayers = data.length;
 const rank = position + 1;
-const percent = Math.round((rank / totalPlayers) * 100);
+const percent = Math.round(((totalPlayers - rank) / totalPlayers) * 100);
 return {
 rank,
 totalPlayers,
@@ -1906,14 +1910,7 @@ hintBtn.disabled = true;
 document.querySelectorAll(".queen").forEach(q => {
 q.classList.add("win-effect");
 });
-// 🏆 MONTHLY CHAMPION BADGE
-const monthly = await loadMonthlyLeaderboard();
-if (monthly && monthly.length > 0) {
-const leader = monthly[0].email;
-if (leader === playerEmail) {
-unlockBadge("monthly_1");
-}
-}
+
 // micro delay cinematografico
 setTimeout(()=>{
 launchConfetti();
@@ -2608,7 +2605,7 @@ rarityClass = rarity.label.toLowerCase();
 
 rarityHTML = `
 <div class="badge-rarity ${rarityClass}">
-${rarity.label} • ${percent.toFixed(1)}%
+${rarity.label} • ${Math.round(percent)}%
 </div>
 `;
 
@@ -2678,7 +2675,7 @@ rare.forEach(b=>{
 rareHTML += `
 <div style="display:flex;justify-content:space-between;margin:4px 0;">
 <span>${b.name}</span>
-<span style="color:#ffd700">${b.percent.toFixed(2)}%</span>
+<span style="color:#ffd700">${Math.round(b.percent)}%</span>
 </div>
 `;
 });
