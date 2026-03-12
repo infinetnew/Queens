@@ -420,6 +420,13 @@ align-items:center;
 gap:6px;
 margin-bottom:10px;
 }
+.hud-difficulty{
+width:100%;
+text-align:left;
+font-size:14px;
+padding-left:6px;
+opacity:0.9;
+}
 
 .hud-row{
 display:flex;
@@ -1187,6 +1194,7 @@ let dragMode = null;
 let solution = [];
 let regionMap = [];
 let startTime = null;
+let puzzleDifficulty = null;
 let timerInterval = null;
 let boardErrorTimeout = null;
 let challengeTargetTime = null;
@@ -1222,6 +1230,7 @@ return false;
 }
 solution = data[0].solution;
 regionMap = data[0].region_map;
+puzzleDifficulty = data[0].difficulty;
 return true;
 }
 async function getTodayResult() {
@@ -1800,12 +1809,22 @@ last_played_date,
 challenge_wins,
 challenge_launched,
 no_hint_wins
+easy_wins,
+medium_wins,
+hard_wins
 `)
 .eq("email", playerEmail)
 .maybeSingle();
 if (!playerStats) {
 console.error("Player stats not found");
 }
+let easyWins = playerStats.easy_wins || 0;
+let mediumWins = playerStats.medium_wins || 0;
+let hardWins = playerStats.hard_wins || 0;
+
+if (puzzleDifficulty === "Easy") easyWins++;
+if (puzzleDifficulty === "Medium") mediumWins++;
+if (puzzleDifficulty === "Hard") hardWins++;
 // 👑 Challenge result
 if (challengeTargetTime) {
 
@@ -1867,6 +1886,9 @@ await supabaseClient
 puzzles_solved: (playerStats.puzzles_solved || 0) + 1,
 games_played: (playerStats.games_played || 0) + 1,
 total_time: (playerStats.total_time || 0) + totalSeconds,
+easy_wins: easyWins,
+medium_wins: mediumWins,
+hard_wins: hardWins,
 total_hints_used: (playerStats.total_hints_used || 0) + hintsUsed,
 no_hint_wins:
 (playerStats.no_hint_wins || 0) + (hintsUsed === 0 ? 1 : 0),
@@ -2253,6 +2275,22 @@ playerRow.innerHTML = `
 `;
 
 hud.appendChild(playerRow);
+const difficultyRow = document.createElement("div");
+difficultyRow.className = "hud-difficulty";
+
+let difficultyColor = "#ffffff";
+
+if (puzzleDifficulty === "Easy") difficultyColor = "#69f0ae";
+if (puzzleDifficulty === "Medium") difficultyColor = "#ffd740";
+if (puzzleDifficulty === "Hard") difficultyColor = "#ff5252";
+
+difficultyRow.innerHTML = `
+<span style="color:${difficultyColor}; font-weight:700;">
+Difficulty: ${puzzleDifficulty}
+</span>
+`;
+
+hud.appendChild(difficultyRow);
 if (challengeTargetTime){
 
 const opponentRow = document.createElement("div");
