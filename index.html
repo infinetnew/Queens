@@ -1089,7 +1089,7 @@ stroke-linecap="round"/>
 <div id="countryLeaderboard"></div>
 </div>
 <div class="leaderboard-page">
-<div class="leaderboard-title">👑 All Time</div>
+<div class="leaderboard-title">👑 Royal Ranking</div>
 <div id="allTimeLeaderboard"></div>
 </div>
 </div>
@@ -1302,6 +1302,7 @@ async function loadAllTimeLeaderboard() {
 const { data, error } = await supabaseClient
 .from("players")
 .select("name, email, total_score, country_code")
+.gt("total_score", 0)
 .order("total_score", { ascending: false })
 .limit(10);
 
@@ -1601,6 +1602,29 @@ percent,
 points: data[position].points
 };
 }
+async function getAllTimePlayerPosition() {
+
+const { data, error } = await supabaseClient
+.from("players")
+.select("name, email, total_score")
+.gt("total_score", 0)
+.order("total_score", { ascending: false });
+
+if (error || !data) return null;
+
+const position = data.findIndex(p => p.email === playerEmail);
+
+if (position === -1) return null;
+
+const totalPlayers = data.length;
+const rank = position + 1;
+
+return {
+rank,
+totalPlayers
+};
+
+}
 async function initializePage() {
 const hash = window.location.hash;
 if (hash && hash.includes("type=recovery")) {
@@ -1684,6 +1708,25 @@ await renderDailyPosition();
 renderMonthlyLeaderboard(monthly);
 renderMonthlyCountryLeaderboard(countries);
 renderAllTimeLeaderboard(alltime);
+const allTimePosition = await getAllTimePlayerPosition();
+
+if (allTimePosition) {
+
+const positionBox = document.createElement("div");
+positionBox.style.marginTop = "14px";
+positionBox.style.fontWeight = "700";
+
+const rank = allTimePosition.rank;
+const totalPlayers = allTimePosition.totalPlayers;
+
+positionBox.innerText =
+`You are #${rank} of ${totalPlayers} players`;
+
+document
+.getElementById("allTimeLeaderboard")
+.appendChild(positionBox);
+
+}
 const monthlyPosition = await getMonthlyPlayerPosition();
 if (monthlyPosition) {
 const positionBox = document.createElement("div");
@@ -3147,10 +3190,20 @@ const closeBtn = document.getElementById("modalBtn");
 modalContent.insertBefore(shareBtn, closeBtn);
 modal.querySelector("h2").textContent = "👑 Game Completed";
 document.getElementById("finalTime").innerHTML =
-`Time: ${time} seconds<br>
-<span style="color:#ffd700;font-weight:700;">
+`
+<div style="margin-bottom:10px;">
+Time: ${time} seconds
+</div>
+
+<div style="
+margin-top:8px;
+color:#ffd700;
+font-weight:700;
+font-size:18px;
+">
 +${scoreEarned} points earned
-</span>`;
+</div>
+`;
 button.textContent = "Close";
 button.onclick = closeModal;
 modal.style.display = "flex";
@@ -3188,6 +3241,25 @@ await renderDailyPosition();
 renderMonthlyLeaderboard(monthly);
 renderMonthlyCountryLeaderboard(countries);
 renderAllTimeLeaderboard(alltime);
+const allTimePosition = await getAllTimePlayerPosition();
+
+if (allTimePosition) {
+
+const positionBox = document.createElement("div");
+positionBox.style.marginTop = "14px";
+positionBox.style.fontWeight = "700";
+
+const rank = allTimePosition.rank;
+const totalPlayers = allTimePosition.totalPlayers;
+
+positionBox.innerText =
+`You are #${rank} of ${totalPlayers} players`;
+
+document
+.getElementById("allTimeLeaderboard")
+.appendChild(positionBox);
+
+}
 const monthlyPosition = await getMonthlyPlayerPosition();
 if (monthlyPosition) {
 const positionBox = document.createElement("div");
