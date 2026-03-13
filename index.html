@@ -4110,7 +4110,7 @@ musicBtn.addEventListener("click", toggleMusic);
 
 }
 
-document.addEventListener("DOMContentLoaded", startBackgroundMusic);
+document.addEventListener("click", startBackgroundMusic, { once: true });
 initializePage();
 </script>
 <div id="winModal" class="modal">
