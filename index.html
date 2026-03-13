@@ -1103,85 +1103,20 @@ stroke-linecap="round"/>
 </div>
 </div>
 <div id="rulesBox" class="rules-box" style="display:none;">
-<h3>👑 Queens — Official Guide</h3>
-
+<h3>👑 Queens — Official Rules</h3>
 <p><strong>🎯 Objective</strong><br>
-Place 10 Queens on the 10×10 grid without breaking any rule.</p>
-
-<p><strong>♟️ Rules</strong><br>
+Place 10 Queens on the 10×10 grid.</p>
+<p><strong>♟️ Constraints</strong><br>
 • 1 Queen per row<br>
 • 1 Queen per column<br>
 • 1 Queen per colored region<br>
 • Queens cannot touch each other, not even diagonally</p>
-
-<p><strong>⚡ Smart Board</strong><br>
-When you place a Queen, impossible cells are automatically blocked.<br>
-Use logic and elimination to discover the remaining valid positions.</p>
-
 <p><strong>💡 Hints</strong> (max 3)<br>
-• Remove incorrect Queen → +30s<br>
-• Insert correct Queen → +45s<br>
-• Full correction → +60s<br>
-Hints help fix the board but increase your final time.</p>
-
-<p><strong>⏱ Time</strong><br>
-Your final time includes solving time and hint penalties.<br>
-Lower times rank higher in the daily leaderboard.</p>
-
-<p><strong>🧩 Daily Puzzle</strong><br>
-Every day a new global puzzle is released.<br>
-All players solve the same board and have only one attempt.</p>
-
-<p><strong>🎚️ Puzzle Difficulty</strong><br>
-Each puzzle can be Easy, Medium or Hard.<br>
-Harder puzzles require deeper logical reasoning.</p>
-
-<p><strong>👑 Royal Score</strong><br>
-Completing puzzles awards Royal Score:<br>
-Easy → 5 points<br>
-Medium → 20 points<br>
-Hard → 50 points<br>
-These points determine the all-time Royal Ranking.</p>
-
-<p><strong>🏆 Leaderboards</strong><br>
-Queens includes multiple rankings:<br>
-• Daily leaderboard (fastest times)<br>
-• Monthly leaderboard (season points)<br>
-• Country leaderboard (top players by nation)<br>
-• Royal Ranking (all-time score)</p>
-
-<p><strong>📊 Monthly Competition</strong><br>
-Daily results award monthly points:<br>
-1st → 15 • 2nd → 10 • 3rd → 7<br>
-4th–10th → 3 • Participation → 1</p>
-
-<p><strong>🌍 Country Ranking</strong><br>
-Each month the top 3 players of every country contribute points.<br>
-Their combined score determines the global country ranking.</p>
-
-<p><strong>⚔ Challenges</strong><br>
-After solving a puzzle you can launch a challenge.<br>
-Share your time and see if others can beat it.</p>
-
-<p><strong>🏅 Achievements</strong><br>
-Unlock badges for speed, logic, consistency and competition.<br>
-Some achievements are extremely rare.</p>
-
-<p><strong>👤 Player Profiles</strong><br>
-Each player has statistics, achievements and performance rating.<br>
-You can also view achievements of other players.</p>
-
-<p><strong>⚔ Nearby Rivals</strong><br>
-The Royal Ranking shows players directly above and below you.<br>
-Climb the leaderboard by surpassing them.</p>
-
-<p><strong>📲 App Features</strong><br>
-Install Queens for faster access and notifications.</p>
-
-<p><strong>👑 Philosophy</strong><br>
-Queens does not reward luck.<br>
-It rewards clarity, precision and consistency.</p>
-
++30s Remove Queen<br>
++45s Insert Queen<br>
++60s Full correction</p>
+<p><strong>🏆</strong> One attempt per day.<br>
+Lowest time wins.</p>
 </div>
 
 <div id="authContainer" style="display:none; margin-top:40px; width:100%; max-width:420px;">
@@ -3687,10 +3622,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 document.getElementById("rulesFloating").addEventListener("click", () => {
 showRulesModal(
-`🧠 QUEENS — PURE STRATEGY
+🧠 QUEENS — PURE STRATEGY
 
 This is not a game of speed.  
 It is a game of clarity.
+
+Every day, players around the world face the same puzzle.  
+One board. One attempt. One result.
 
 🎯 OBJECTIVE  
 Place 10 Queens on the 10×10 grid while respecting all constraints.  
@@ -3714,21 +3652,63 @@ Hints are tools, not shortcuts.
 
 ⏱️ TIME  
 The timer measures your decision-making ability.  
+Your final time includes hint penalties.
+
 The fastest player does not always win.  
 The most precise one does.
 
-📊 MONTHLY SCORING SYSTEM   
+🎚️ PUZZLE DIFFICULTY  
+Each daily puzzle has a difficulty level.
+
+• Easy  
+• Medium  
+• Hard  
+
+Harder puzzles require deeper logical reasoning.
+
+👑 ROYAL SCORE  
+Completing a puzzle awards Royal Score:
+
+Easy → 5 points  
+Medium → 20 points  
+Hard → 50 points  
+
+These points determine the all-time Royal Ranking.
+
+🏆 LEADERBOARDS  
+Queens includes multiple competitive rankings.
+
+Daily Leaderboard → fastest times of the day  
+Monthly Leaderboard → seasonal points competition  
+Country Leaderboard → nations compete through their players  
+Royal Ranking → all-time score ranking
+
+📊 MONTHLY SCORING SYSTEM  
 • 🥇 1st place → +15 points  
 • 🥈 2nd place → +10 points  
 • 🥉 3rd place → +7 points  
-• 4th–10th place → +3 points
-• Participation → +1 point 
+• 4th–10th place → +3 points  
+• Participation → +1 point  
+
 Even a difficult day contributes to the leaderboard.
+
+⚔️ CHALLENGES  
+After solving a puzzle you can launch a challenge.  
+Share your time and see if others can beat it.
+
+🏅 ACHIEVEMENTS  
+Unlock badges for speed, logic, consistency and competition.  
+Some achievements are extremely rare.
+
+👤 PLAYER PROFILES  
+Every player has statistics, achievements and performance ratings.  
+You can also view the achievements of other players.
 
 🧩 Only one attempt per day.  
 Each game is a final decision.
+
 👑 Queens does not reward luck.  
-It rewards the mind.`
+It rewards the mind.
 );
 });
 // --- SWIPE LEADERBOARD ---
