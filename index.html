@@ -2973,11 +2973,25 @@ const { data: badges } = await supabaseClient
 .select("badge_code")
 .eq("email", playerEmail);
 const unlocked = badges ? badges.map(b => b.badge_code) : [];
+
 const { data: stats } = await supabaseClient
 .from("players")
-.select("puzzles_solved,no_hint_wins,current_streak,daily_wins,easy_wins,medium_wins,hard_wins,total_score")
+.select(`
+puzzles_solved,
+no_hint_wins,
+current_streak,
+daily_wins,
+podiums,
+challenge_wins,
+challenge_launched,
+easy_wins,
+medium_wins,
+hard_wins,
+total_score
+`)
 .eq("email", playerEmail)
 .single();
+
 let html = "";
 Object.values(BADGE_CATEGORIES).forEach(category => {
 html += `
