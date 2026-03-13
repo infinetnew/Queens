@@ -3835,7 +3835,7 @@ const { error } = await supabaseClient
 .from("player_badges")
 .insert({
 email: playerEmail,
-badge_code: badgeCode
+badge_code: badgeCode,
 seen: true
 });
 
