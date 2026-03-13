@@ -2187,6 +2187,34 @@ if (newSolved >= 100) unlockBadge("puzzle_100");
 if (newSolved >= 250) unlockBadge("puzzle_250");
 if (newSolved >= 400) unlockBadge("puzzle_400");
 if (newSolved >= 750) unlockBadge("puzzle_750");
+// --- CONSISTENCY BADGES (DIFFICULTY WINS) ---
+
+const easy = easyWins;
+const medium = mediumWins;
+const hard = hardWins;
+const royal = (playerStats.total_score || 0) + scoreEarned;
+
+// EASY WINS
+if (easy >= 10) unlockBadge("easy_10");
+if (easy >= 25) unlockBadge("easy_25");
+if (easy >= 50) unlockBadge("easy_50");
+
+// MEDIUM WINS
+if (medium >= 10) unlockBadge("medium_10");
+if (medium >= 25) unlockBadge("medium_25");
+if (medium >= 50) unlockBadge("medium_50");
+
+// HARD WINS
+if (hard >= 10) unlockBadge("hard_10");
+if (hard >= 25) unlockBadge("hard_25");
+if (hard >= 50) unlockBadge("hard_50");
+
+// ROYAL SCORE
+if (royal >= 250) unlockBadge("royal_250");
+if (royal >= 500) unlockBadge("royal_500");
+if (royal >= 1500) unlockBadge("royal_1500");
+if (royal >= 4000) unlockBadge("royal_4000");
+if (royal >= 10000) unlockBadge("royal_10000");
 // --- SPEED BADGES ---
 if (totalSeconds < 180) unlockBadge("speed_180");
 if (totalSeconds < 120) unlockBadge("speed_120");
@@ -2858,6 +2886,30 @@ badges: [
 { code:"country_pride", name:"Country Pride", description:"Your country is #1 in the monthly ranking" }
 ]
 },
+consistency_wins: {
+title: "📊 Consistency",
+badges: [
+
+{ code:"easy_10", name:"Easy Specialist", description:"Win 10 Easy puzzles", goal:10 },
+{ code:"easy_25", name:"Easy Dominator", description:"Win 25 Easy puzzles", goal:25 },
+{ code:"easy_50", name:"Easy Master", description:"Win 50 Easy puzzles", goal:50 },
+
+{ code:"medium_10", name:"Medium Fighter", description:"Win 10 Medium puzzles", goal:10 },
+{ code:"medium_25", name:"Medium Strategist", description:"Win 25 Medium puzzles", goal:25 },
+{ code:"medium_50", name:"Medium Conqueror", description:"Win 50 Medium puzzles", goal:50 },
+
+{ code:"hard_10", name:"Hard Challenger", description:"Win 10 Hard puzzles", goal:10 },
+{ code:"hard_25", name:"Hard Master", description:"Win 25 Hard puzzles", goal:25 },
+{ code:"hard_50", name:"Hard Legend", description:"Win 50 Hard puzzles", goal:50 },
+
+{ code:"royal_250", name:"Royal Rookie", description:"Reach 250 Royal Score", goal:250 },
+{ code:"royal_500", name:"Royal Knight", description:"Reach 500 Royal Score", goal:500 },
+{ code:"royal_1500", name:"Royal Lord", description:"Reach 1500 Royal Score", goal:1500 },
+{ code:"royal_4000", name:"Royal Emperor", description:"Reach 4000 Royal Score", goal:4000 },
+{ code:"royal_10000", name:"Royal Immortal", description:"Reach 10000 Royal Score", goal:10000 }
+
+]
+},
 logic: {
 title: "🧠 Logic Mastery",
 badges: [
@@ -2921,7 +2973,7 @@ const { data: badges } = await supabaseClient
 const unlocked = badges ? badges.map(b => b.badge_code) : [];
 const { data: stats } = await supabaseClient
 .from("players")
-.select("puzzles_solved,no_hint_wins,current_streak,daily_wins")
+.select("puzzles_solved,no_hint_wins,current_streak,daily_wins,easy_wins,medium_wins,hard_wins,total_score")
 .eq("email", playerEmail)
 .single();
 let html = "";
@@ -2970,6 +3022,10 @@ if (badge.code.startsWith("streak_")) current = stats.current_streak || 0;
 if (badge.code.startsWith("challenge_launch_")) current = stats.challenge_launched || 0;
 if (badge.code.startsWith("challenge_win_")) current = stats.challenge_wins || 0;
 if (badge.code.startsWith("win_")) current = stats.daily_wins || 0;
+if (badge.code.startsWith("easy_")) current = stats.easy_wins || 0;
+if (badge.code.startsWith("medium_")) current = stats.medium_wins || 0;
+if (badge.code.startsWith("hard_")) current = stats.hard_wins || 0;
+if (badge.code.startsWith("royal_")) current = stats.total_score || 0;
 const percent = Math.min(100, (current / badge.goal) * 100);
 const almost = percent >= 90 ? "almost" : "";
 progressHTML = `
