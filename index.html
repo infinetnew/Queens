@@ -2224,8 +2224,8 @@ if (totalSeconds < 60) unlockBadge("speed_60");
 if (totalSeconds < 45) unlockBadge("speed_45");
 if (totalSeconds < 30) unlockBadge("speed_30");
 if (totalSeconds < 20) unlockBadge("speed_20");
-if (totalSeconds < 15) unlockBadge("speed_15");
-if (totalSeconds < 10) unlockBadge("speed_10");
+if (totalSeconds < 16) unlockBadge("speed_15");
+if (totalSeconds < 13) unlockBadge("speed_10");
 // --- LOGIC BADGES (NO HINT) ---
 if (hintsUsed === 0) {
 const newNoHintWins = (playerStats.no_hint_wins || 0) + 1;
@@ -2874,18 +2874,34 @@ badges: [
 { code:"speed_45", name:"Sub-45", description:"Solve a puzzle under 45 seconds" },
 { code:"speed_30", name:"World Class", description:"Solve a puzzle under 30 seconds" },
 { code:"speed_20", name:"Perfect Lightning", description:"Solve a puzzle under 20 seconds" },
-{ code:"speed_15", name:"Impossible Speed", description:"Solve a puzzle under 15 seconds" },
-{ code:"speed_10", name:"Quantum Mind", description:"Solve a puzzle under 10 seconds" }
+{ code:"speed_15", name:"Impossible Speed", description:"Solve a puzzle under 16 seconds" },
+{ code:"speed_10", name:"Quantum Mind", description:"Solve a puzzle under 13 seconds" }
 ]
 },
 special: {
 title: "⭐ Special",
 badges: [
+
+/* --- LEGENDARY / ADMIN BADGES --- */
+
+{ code:"founder", name:"Founder", description:"Creator of Queens." },
+
+{ code:"queens_favor", name:"Queen’s Favor", description:"A rare honor granted by the creator of Queens." },
+
+{ code:"beta_tester", name:"Beta Tester", description:"Helped test Queens during development." },
+
+/* --- SPECIAL GAMEPLAY BADGES --- */
+
 { code:"perfect_game", name:"Perfect Game", description:"Solve a puzzle with no hints and no errors" },
+
 { code:"clutch_win", name:"Clutch Victory", description:"Solve a puzzle using all 3 hints" },
+
 { code:"comeback", name:"Comeback", description:"Use all hints and still finish in the Top 10" },
+
 { code:"challenge_king", name:"Challenge King", description:"Beat a challenge time from another player" },
+
 { code:"country_pride", name:"Country Pride", description:"Your country is #1 in the monthly ranking" }
+
 ]
 },
 mastery: {
@@ -2913,7 +2929,7 @@ badges: [
 ]
 },
 logic: {
-title: "🧠 Logic Mastery",
+title: "🧠 Logic",
 badges: [
 { code:"no_hint_1", name:"Pure Mind", description:"Solve a puzzle with no hints", goal:1 },
 { code:"no_hint_15", name:"Clean Solver", description:"Solve 15 puzzles without using hints", goal:15 },
