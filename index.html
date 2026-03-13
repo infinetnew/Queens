@@ -1256,6 +1256,7 @@ const { data, error } = await supabaseClient
 .from("queens_results")
 .select("name, email, time_seconds, country_code")
 .eq("date", today)
+.eq("completed", true)
 .order("time_seconds", { ascending: true })
 .limit(10);
 if (error) {
@@ -1530,6 +1531,7 @@ const { data, error } = await supabaseClient
 .from("queens_results")
 .select("name, email, time_seconds")
 .eq("date", today)
+.eq("completed", true)
 .order("time_seconds", { ascending: true });
 if (error || !data) return null;
 const position = data.findIndex(p => p.email === playerEmail);
@@ -1559,6 +1561,7 @@ const { data, error } = await supabaseClient
 .from("queens_results")
 .select("email, time_seconds")
 .eq("date", date)
+.eq("completed", true)
 .order("time_seconds", { ascending: true });
 
 if (error || !data) return;
