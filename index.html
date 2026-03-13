@@ -1758,6 +1758,8 @@ const { data: existingBadges } = await supabaseClient
 .select("badge_code")
 .eq("email", playerEmail);
 
+await checkNewBadges();
+
 if (existingBadges) {
 playerBadges = new Set(existingBadges.map(b => b.badge_code)); }
 
@@ -3834,12 +3836,35 @@ const { error } = await supabaseClient
 .insert({
 email: playerEmail,
 badge_code: badgeCode
+seen: true
 });
 
 if (!error) {
 playerBadges.add(badgeCode);
 unlockedBadgesThisGame.push(badgeCode);
 }
+
+}
+
+async function checkNewBadges(){
+
+const { data } = await supabaseClient
+.from("player_badges")
+.select("badge_code")
+.eq("email", playerEmail)
+.eq("seen", false);
+
+if (!data || data.length === 0) return;
+
+unlockedBadgesThisGame = data.map(b => b.badge_code);
+
+showUnlockedBadges();
+
+await supabaseClient
+.from("player_badges")
+.update({ seen: true })
+.eq("email", playerEmail)
+.eq("seen", false);
 
 }
 
