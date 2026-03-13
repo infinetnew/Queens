@@ -2076,10 +2076,12 @@ total_time,
 best_time,
 total_hints_used,
 current_streak,
+daily_wins,
 best_streak,
 last_played_date,
 challenge_wins,
 challenge_launched,
+podiums,
 no_hint_wins,
 easy_wins,
 medium_wins,
@@ -2943,7 +2945,7 @@ badges: [
 { code:"win_10", name:"Elite Champion", description:"Win the daily leaderboard 10 times", goal:10 },
 { code:"win_25", name:"Absolute Champion", description:"Win the daily leaderboard 25 times", goal:25 },
 { code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" },
-{ code:"challenge_launch_25", name:"Challenger", description:"Launch 25 challenges", goal:10 },
+{ code:"challenge_launch_25", name:"Challenger", description:"Launch 25 challenges", goal:25 },
 { code:"challenge_win_10", name:"Challenge King", description:"Win 10 challenges", goal:10 },
 { code:"challenge_win_25", name:"Duel Master", description:"Win 25 challenges", goal:25 }
 ]
@@ -3022,6 +3024,7 @@ if (badge.code.startsWith("streak_")) current = stats.current_streak || 0;
 if (badge.code.startsWith("challenge_launch_")) current = stats.challenge_launched || 0;
 if (badge.code.startsWith("challenge_win_")) current = stats.challenge_wins || 0;
 if (badge.code.startsWith("win_")) current = stats.daily_wins || 0;
+if (badge.code.startsWith("podium_")) current = stats.podiums || 0;
 if (badge.code.startsWith("easy_")) current = stats.easy_wins || 0;
 if (badge.code.startsWith("medium_")) current = stats.medium_wins || 0;
 if (badge.code.startsWith("hard_")) current = stats.hard_wins || 0;
