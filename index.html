@@ -1647,16 +1647,43 @@ if (!me) return [];
 
 const myScore = me.total_score;
 
-// prendi i giocatori vicini al tuo punteggio
-const { data } = await supabaseClient
+// se il giocatore ha 0 punti non mostriamo rivals
+if (myScore === 0) return [];
+
+
+// giocatore subito sopra
+const { data: above } = await supabaseClient
 .from("players")
 .select("name,email,total_score,country_code")
-.gte("total_score", myScore - 20)
-.lte("total_score", myScore + 20)
-.order("total_score", { ascending: false })
-.limit(5);
+.gt("total_score", myScore)
+.order("total_score", { ascending: true })
+.limit(1);
 
-return data || [];
+
+// giocatore subito sotto
+const { data: below } = await supabaseClient
+.from("players")
+.select("name,email,total_score,country_code")
+.lt("total_score", myScore)
+.gt("total_score", 0)
+.order("total_score", { ascending: false })
+.limit(1);
+
+
+const rivals = [];
+
+if (above && above.length > 0) rivals.push(above[0]);
+
+rivals.push({
+name: playerName,
+email: playerEmail,
+total_score: myScore,
+country_code: countryCode
+});
+
+if (below && below.length > 0) rivals.push(below[0]);
+
+return rivals;
 
 }
 function renderNearbyRivals(players){
@@ -1671,15 +1698,20 @@ title.innerText = "⚔ Nearby Rivals";
 
 container.appendChild(title);
 
-players.forEach(player => {
+players.forEach((player, index) => {
 
 const row = document.createElement("div");
 row.className = "leaderboard-row";
 
 const isYou = player.email === playerEmail;
+let color = "#ffffff";
+
+if (player.email === playerEmail) color = "#ffd700";
+else if (index === 0) color = "#69f0ae";
+else if (index === 2) color = "#ff5252";
 
 row.innerHTML = `
-<span style="font-weight:${isYou ? "700" : "500"};">
+<span style="font-weight:${isYou ? "700" : "500"}; color:${color};">
 ${isYou ? "⭐ You" : player.name}
 <img 
 src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
