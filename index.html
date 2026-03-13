@@ -4065,6 +4065,7 @@ if(!bgMusic) return;
 
 bgMusic.volume = 0.07;
 bgMusic.loop = true;
+bgMusic.preload = "auto";
 
 if(musicEnabled){
 
@@ -4110,7 +4111,11 @@ musicBtn.addEventListener("click", toggleMusic);
 
 }
 
-document.addEventListener("pointerdown", startBackgroundMusic, { once: true });
+document.addEventListener("DOMContentLoaded", () => {
+
+document.addEventListener("pointerdown", startBackgroundMusic, { once:true });
+
+});
 initializePage();
 </script>
 <div id="winModal" class="modal">
