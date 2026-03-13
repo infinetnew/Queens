@@ -1546,9 +1546,7 @@ time: data[position].time_seconds
 }
 async function showYesterdayResult() {
 
-const yesterday = new Date();
-yesterday.setDate(yesterday.getDate() - 1);
-const date = yesterday.toISOString().split("T")[0];
+const date = new Date().toISOString().split("T")[0];
 
 // controlla se è già stato mostrato
 const seenKey = "queens_yesterday_seen_" + date;
