@@ -4065,12 +4065,9 @@ if(!bgMusic) return;
 
 bgMusic.volume = 0.07;
 bgMusic.loop = true;
-bgMusic.preload = "auto";
 
-if(musicEnabled){
-
+if(musicEnabled && bgMusic.paused){
 bgMusic.play().catch(()=>{});
-
 }
 
 updateMusicIcon();
@@ -4111,9 +4108,9 @@ musicBtn.addEventListener("click", toggleMusic);
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
 
-document.addEventListener("pointerdown", startBackgroundMusic, { once:true });
+document.body.addEventListener("click", startBackgroundMusic, { once:true });
 
 });
 initializePage();
