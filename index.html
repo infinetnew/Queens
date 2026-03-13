@@ -1567,13 +1567,13 @@ if (index === -1) return;
 const rank = index + 1;
 const total = data.length;
 
-showRulesModal(
-`🏆 Yesterday's Result
+const modal = document.getElementById("rulesModal");
+document.querySelector("#rulesModal h2").textContent = "🏆 Yesterday's Result";
+document.getElementById("rulesContent").innerHTML =
+`You finished #${rank} out of ${total} players.<br><br>
+See if you can beat it today 👑`;
 
-You finished #${rank} out of ${total} players.
-
-See if you can beat it today 👑`
-);
+modal.style.display = "flex";
 
 // segna come visto
 localStorage.setItem(seenKey, "true");
