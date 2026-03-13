@@ -2505,6 +2505,16 @@ playerRow.innerHTML = `
 `;
 
 hud.appendChild(playerRow);
+const vsRow = document.createElement("div");
+
+vsRow.style.fontWeight = "800";
+vsRow.style.fontSize = "16px";
+vsRow.style.opacity = "0.85";
+vsRow.style.margin = "2px 0";
+
+vsRow.textContent = "VS";
+
+hud.appendChild(vsRow);
 const difficultyRow = document.createElement("div");
 difficultyRow.className = "hud-difficulty";
 
@@ -2522,12 +2532,12 @@ ${puzzleDifficulty}
 </span>
 </span>
 `;
-
+hud.appendChild(opponentRow);
 hud.appendChild(difficultyRow);
 if (challengeTargetTime){
 
 const opponentRow = document.createElement("div");
-opponentRow.className = "hud-row hud-opponent";
+opponentRow.className = "hud-row";
 
 const opponentName = challengePlayer || "Opponent";
 
