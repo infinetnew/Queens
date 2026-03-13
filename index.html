@@ -2505,6 +2505,10 @@ playerRow.innerHTML = `
 `;
 
 hud.appendChild(playerRow);
+
+// VS solo se è una challenge
+if (challengeTargetTime){
+
 const vsRow = document.createElement("div");
 
 vsRow.style.fontWeight = "800";
@@ -2515,24 +2519,9 @@ vsRow.style.margin = "2px 0";
 vsRow.textContent = "⚔ VS ⚔";
 
 hud.appendChild(vsRow);
-const difficultyRow = document.createElement("div");
-difficultyRow.className = "hud-difficulty";
 
-let difficultyColor = "#ffffff";
+}
 
-if (puzzleDifficulty === "Easy") difficultyColor = "#69f0ae";
-if (puzzleDifficulty === "Medium") difficultyColor = "#ffd740";
-if (puzzleDifficulty === "Hard") difficultyColor = "#ff5252";
-
-difficultyRow.innerHTML = `
-<span style="color:#ffffff; font-weight:700;">
-Difficulty: 
-<span style="color:${difficultyColor}; font-weight:800; font-size:20px;">
-${puzzleDifficulty}
-</span>
-</span>
-`;
-hud.appendChild(difficultyRow);
 if (challengeTargetTime){
 
 const opponentRow = document.createElement("div");
@@ -2561,6 +2550,27 @@ ${opponentFlag ? `<img class="hud-flag" src="https://flagcdn.com/24x18/${opponen
 hud.appendChild(opponentRow);
 
 }
+
+// ----- DIFFICULTY ROW -----
+const difficultyRow = document.createElement("div");
+difficultyRow.className = "hud-difficulty";
+
+let difficultyColor = "#ffffff";
+
+if (puzzleDifficulty === "Easy") difficultyColor = "#69f0ae";
+if (puzzleDifficulty === "Medium") difficultyColor = "#ffd740";
+if (puzzleDifficulty === "Hard") difficultyColor = "#ff5252";
+
+difficultyRow.innerHTML = `
+<span style="color:#ffffff; font-weight:700;">
+Difficulty: 
+<span style="color:${difficultyColor}; font-weight:800; font-size:20px;">
+${puzzleDifficulty}
+</span>
+</span>
+`;
+
+hud.appendChild(difficultyRow);
 
 const modal = document.getElementById("gameModal");
 const container = document.getElementById("gameContainer");
