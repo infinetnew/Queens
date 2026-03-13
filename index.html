@@ -1549,14 +1549,11 @@ time: data[position].time_seconds
 async function showYesterdayResult() {
 
 const yesterday = new Date();
-yesterday.setDate(yesterday.getDate() - 1);
 const date = yesterday.toISOString().split("T")[0];
 
-// controlla se è già stato mostrato
 const seenKey = "queens_yesterday_seen_" + date;
 if (localStorage.getItem(seenKey)) return;
 
-// carica leaderboard di ieri
 const { data, error } = await supabaseClient
 .from("queens_results")
 .select("email, time_seconds")
@@ -1573,15 +1570,23 @@ const rank = index + 1;
 const total = data.length;
 
 const modal = document.getElementById("rulesModal");
+
 document.querySelector("#rulesModal h2").textContent = "🏆 Yesterday's Result";
+
 document.getElementById("rulesContent").innerHTML =
 `You finished #${rank} out of ${total} players.<br><br>
 See if you can beat it today 👑`;
 
 modal.style.display = "flex";
 
-// segna come visto
 localStorage.setItem(seenKey, "true");
+
+return new Promise(resolve => {
+document.getElementById("rulesModalBtn").onclick = () => {
+modal.style.display = "none";
+resolve();
+};
+});
 
 }
 async function renderDailyPosition() {
