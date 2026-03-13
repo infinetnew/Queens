@@ -1016,6 +1016,9 @@ z-index:10;
 <div id="pushFloating" class="rules-floating" title="Notifications">
 🔔
 </div>
+<div id="musicFloating" class="rules-floating" title="Music">
+🎵
+</div>
 </div>
 <div style="position:fixed; top:calc(env(safe-area-inset-top) + 20px); right:20px; display:flex; gap:10px; z-index:10000;">
 <div id="logoutFloating" class="rules-floating" title="Logout">
@@ -4049,6 +4052,65 @@ showFixedMessage(
 if (challengeTime) {
 history.replaceState({}, "", window.location.pathname);
 }
+// --- BACKGROUND MUSIC ---
+
+const bgMusic = document.getElementById("bgMusic");
+const musicBtn = document.getElementById("musicFloating");
+
+let musicEnabled = localStorage.getItem("queens_music") !== "off";
+
+function startBackgroundMusic(){
+
+if(!bgMusic) return;
+
+bgMusic.volume = 0.07;
+bgMusic.loop = true;
+
+if(musicEnabled){
+
+bgMusic.play().catch(()=>{});
+
+}
+
+updateMusicIcon();
+
+}
+
+function toggleMusic(){
+
+musicEnabled = !musicEnabled;
+
+if(musicEnabled){
+
+bgMusic.play().catch(()=>{});
+localStorage.setItem("queens_music","on");
+
+}else{
+
+bgMusic.pause();
+localStorage.setItem("queens_music","off");
+
+}
+
+updateMusicIcon();
+
+}
+
+function updateMusicIcon(){
+
+if(!musicBtn) return;
+
+musicBtn.textContent = musicEnabled ? "🎵" : "🔇";
+
+}
+
+if(musicBtn){
+
+musicBtn.addEventListener("click", toggleMusic);
+
+}
+
+document.addEventListener("DOMContentLoaded", startBackgroundMusic);
 initializePage();
 </script>
 <div id="winModal" class="modal">
@@ -4303,5 +4365,6 @@ pushBtn.addEventListener("click", enablePush);
 
   </div>
 </div>
+<audio id="bgMusic" src="sounds/musica.mp3" loop></audio>
 </body>
 </html>
