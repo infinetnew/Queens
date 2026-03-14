@@ -2821,12 +2821,8 @@ const totalPlayers = players.length;
 const counts = {};
 
 badges.forEach(b=>{
-
-if (b.badge_code === "founder") return; // 👑 escluso
-
 if(!counts[b.badge_code]) counts[b.badge_code] = 0;
 counts[b.badge_code]++;
-
 });
 
 const stats = {};
@@ -2852,9 +2848,6 @@ const list = [];
 
 Object.values(BADGE_CATEGORIES).forEach(cat=>{
 cat.badges.forEach(b=>{
-
-if (b.code === "founder") return; // 👑 escluso
-
 if(stats[b.code]){
 list.push({
 code:b.code,
@@ -2862,7 +2855,6 @@ name:b.name,
 percent:stats[b.code].percent
 });
 }
-
 });
 });
 
@@ -3028,9 +3020,6 @@ let rarityHTML = "";
 let rarityClass = "";
 
 if (badgeStats[badge.code]){
-else if (badge.code === "founder"){
-rarityHTML = ""; // nessuna rarità
-}
 
 const percent = badgeStats[badge.code].percent;
 const rarity = getBadgeRarity(percent);
