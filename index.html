@@ -3019,6 +3019,38 @@ total_score
 .single();
 
 let html = "";
+if (specialTitles.length > 0){
+
+html += `
+<div class="badge-category">
+<div class="badge-title">👑 Special Titles</div>
+<div class="badge-row">
+`;
+
+specialTitles.forEach(b => {
+
+const code = b.badge_code;
+const info = SPECIAL_TITLES[code];
+
+html += `
+<div class="badge-card unlocked public-badge">
+<div class="badge-icon">
+<img src="badges/${code}.png" class="badge-img">
+</div>
+<div style="font-weight:600">
+${info.name}
+</div>
+<div style="font-size:11px;opacity:0.7">
+${info.description}
+</div>
+</div>
+`;
+
+});
+
+html += `</div></div>`;
+
+}
 Object.values(BADGE_CATEGORIES).forEach(category => {
 html += `
      <div class="badge-category">
@@ -3188,6 +3220,7 @@ async function openPublicBadges(email,name,country){
     return;
   }
   const unlocked = data.map(b => b.badge_code);
+const specialTitles = unlocked.filter(code => SPECIAL_TITLES[code]);
 const totalUnlocked = unlocked.length;
 title.innerHTML = `
 <div style="display:flex;align-items:center;gap:8px;">
@@ -3209,6 +3242,37 @@ title.innerHTML = `
 </div>
 `;
   let html = "";
+if (specialTitles.length > 0){
+
+html += `
+<div class="badge-category">
+<div class="badge-title">👑 Special Titles</div>
+<div class="badge-row">
+`;
+
+specialTitles.forEach(code => {
+
+const info = SPECIAL_TITLES[code];
+
+html += `
+<div class="badge-card unlocked public-badge">
+<div class="badge-icon">
+<img src="badges/${code}.png" class="badge-img">
+</div>
+<div style="font-weight:600">
+${info.name}
+</div>
+<div style="font-size:11px;opacity:0.7">
+${info.description}
+</div>
+</div>
+`;
+
+});
+
+html += `</div></div>`;
+
+}
   Object.values(BADGE_CATEGORIES).forEach(category => {
     const visibleBadges = category.badges.filter(b => unlocked.includes(b.code));
     if (visibleBadges.length === 0) return;
