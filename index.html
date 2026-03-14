@@ -3063,12 +3063,10 @@ category.badges.forEach(badge => {
 
 const ADMIN_BADGES = ["founder","queens_favor","beta_tester"];
 const isAdminBadge = ADMIN_BADGES.includes(badge.code);
+const isFounder = badge.code === "founder";
 
 let rarityHTML = "";
 let rarityClass = "";
-const isFounder = badge.code === "founder";
-
-/* --- ADMIN BADGES --- */
 
 if (isAdminBadge){
 
@@ -3081,9 +3079,6 @@ LEGEND
 `;
 
 }
-
-/* --- NORMAL BADGES --- */
-
 else if (badgeStats[badge.code]){
 
 const percent = badgeStats[badge.code].percent;
@@ -3098,9 +3093,6 @@ ${rarity.label} • ${Math.round(percent)}%
 `;
 
 }
-
-/* --- BADGE MAI SBLOCCATO --- */
-
 else{
 
 rarityClass = "mythic";
@@ -3112,6 +3104,16 @@ MYTHIC • 0%
 `;
 
 }
+
+const isUnlocked = unlocked.includes(badge.code);
+
+html += `
+<div class="badge-card ${rarityClass} ${isUnlocked ? "unlocked" : "locked"} ${isFounder ? "founder-badge" : ""}">
+<img src="badges/${badge.code}.png">
+<div class="badge-name">${badge.name}</div>
+${rarityHTML}
+</div>
+`;
 
 });
 
