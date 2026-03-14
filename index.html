@@ -3255,10 +3255,12 @@ const { data: badges } = await supabaseClient
 .from("player_badges")
 .select("badge_code")
 .eq("email", playerEmail);
-const specialTitles = badges
-  ? badges.filter(b => SPECIAL_TITLES[b.badge_code])
-  : [];
+const specialTitles = (badges || []).filter(b => 
+  Object.keys(SPECIAL_TITLES).includes(b.badge_code)
+);
 console.log("Player badges:", badges);
+console.log("Special titles:", specialTitles);
+console.log("SPECIAL_TITLES keys:", Object.keys(SPECIAL_TITLES));
 // --- PODIUM COUNT (until yesterday) ---
 let podiums = 0;
 const today = new Date().toISOString().split("T")[0];
@@ -3402,7 +3404,6 @@ if (specialTitles.length > 0){
 statsBox.innerHTML = `
 ${titlesHTML}
 
-<div class="stats-grid">
 <div style="
  display:flex;
  align-items:center;
@@ -3417,6 +3418,7 @@ ${playerName}
  style="width:20px;border-radius:2px;"
 >
 </div>
+
 <div class="stats-grid">
 <div class="stat-card">
 <div class="stat-title">🧩 Puzzles solved</div>
