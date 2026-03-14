@@ -3314,14 +3314,6 @@ const { data, error } = await supabaseClient
 .eq("email", playerEmail)
 .eq("completed", true)
 .order("date", { ascending: true });
-// --- LOAD PLAYER BADGES ---
-const { data: badges } = await supabaseClient
-.from("player_badges")
-.select("badge_code")
-.eq("email", playerEmail);
-const specialTitles = (badges || []).filter(b => 
-  Object.keys(SPECIAL_TITLES).includes(b.badge_code)
-);
 console.log("Player badges:", badges);
 console.log("Special titles:", specialTitles);
 console.log("SPECIAL_TITLES keys:", Object.keys(SPECIAL_TITLES));
@@ -3427,46 +3419,9 @@ else if (score >= 70) label = "Strong 💎";
 else if (score >= 50) label = "Solid 👍";
 rating = `${label} (${score}%)`;
 }
-let titlesHTML = "";
 
-if (specialTitles.length > 0){
-
-  titlesHTML += `
-  <div style="
-  margin-bottom:12px;
-  font-weight:700;
-  color:#ffd700;
-  ">
-  👑 Special Titles
-  </div>
-  `;
-
-  specialTitles.forEach(t => {
-
-    const info = SPECIAL_TITLES[t.badge_code];
-
-    titlesHTML += `
-    <div style="
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-bottom:6px;
-    font-weight:600;
-    ">
-      <img src="badges/${t.badge_code}.png" style="
-      width:26px;
-      height:26px;
-      object-fit:contain;
-      ">
-      ${info.name}
-    </div>
-    `;
-
-  });
-
-}
 statsBox.innerHTML = `
-${titlesHTML}
+
 
 <div style="
  display:flex;
