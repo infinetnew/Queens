@@ -785,6 +785,44 @@ drop-shadow(0 0 30px rgba(255,215,0,0.5));
 .badge-category{
 margin-top:20px;
 }
+.badge-rarity.admin{
+color:#ffd700;
+font-weight:800;
+letter-spacing:1px;
+}
+
+.badge-card.admin{
+border:2px solid #ffd700;
+box-shadow:0 0 12px rgba(255,215,0,0.7);
+}
+/* --- FOUNDER SPECIAL GLOW --- */
+
+.badge-card.founder-badge{
+border:2px solid #ffd700;
+animation: founderGlow 3s infinite alternate;
+}
+
+@keyframes founderGlow{
+
+0%{
+box-shadow:
+0 0 6px rgba(255,215,0,0.6),
+0 0 12px rgba(255,215,0,0.4);
+}
+
+50%{
+box-shadow:
+0 0 16px rgba(255,215,0,0.9),
+0 0 32px rgba(255,215,0,0.7);
+}
+
+100%{
+box-shadow:
+0 0 8px rgba(255,215,0,0.7),
+0 0 18px rgba(255,215,0,0.5);
+}
+
+}
 .badge-title{
 font-size:16px;
 font-weight:700;
@@ -2846,8 +2884,13 @@ const stats = await getBadgeStats();
 
 const list = [];
 
+const ADMIN_BADGES = ["founder","queens_favor","beta_tester"];
+
 Object.values(BADGE_CATEGORIES).forEach(cat=>{
 cat.badges.forEach(b=>{
+
+if (ADMIN_BADGES.includes(b.code)) return;
+
 if(stats[b.code]){
 list.push({
 code:b.code,
@@ -2855,6 +2898,7 @@ name:b.name,
 percent:stats[b.code].percent
 });
 }
+
 });
 });
 
@@ -2886,7 +2930,7 @@ badges: [
 
 { code:"founder", name:"Founder", description:"Creator of Queens." },
 
-{ code:"queens_favor", name:"Queen’s Favor", description:"A rare honor granted by the creator of Queens." },
+{ code:"queens_favor", name:"Queen’s Favor", description:"Granted by the Founder." },
 
 { code:"beta_tester", name:"Beta Tester", description:"Helped test Queens during development." },
 
@@ -3016,10 +3060,31 @@ html += `
        <div class="badge-row">
    `;
 category.badges.forEach(badge => {
+
+const ADMIN_BADGES = ["founder","queens_favor","beta_tester"];
+const isAdminBadge = ADMIN_BADGES.includes(badge.code);
+
 let rarityHTML = "";
 let rarityClass = "";
+const isFounder = badge.code === "founder";
 
-if (badgeStats[badge.code]){
+/* --- ADMIN BADGES --- */
+
+if (isAdminBadge){
+
+rarityClass = "admin";
+
+rarityHTML = `
+<div class="badge-rarity admin">
+LEGEND
+</div>
+`;
+
+}
+
+/* --- NORMAL BADGES --- */
+
+else if (badgeStats[badge.code]){
 
 const percent = badgeStats[badge.code].percent;
 const rarity = getBadgeRarity(percent);
@@ -3032,9 +3097,12 @@ ${rarity.label} • ${Math.round(percent)}%
 </div>
 `;
 
-}else{
+}
 
-// badge mai sbloccato da nessuno
+/* --- BADGE MAI SBLOCCATO --- */
+
+else{
+
 rarityClass = "mythic";
 
 rarityHTML = `
@@ -3044,6 +3112,9 @@ MYTHIC • 0%
 `;
 
 }
+
+});
+
 const isUnlocked = unlocked.includes(badge.code);
 let progressHTML = "";
 if (badge.goal && !isUnlocked && stats) {
@@ -3071,7 +3142,7 @@ progressHTML = `
  `;
 }
 html += `
-       <div class="badge-card ${rarityClass} ${isUnlocked ? "unlocked" : "locked"}">
+       <div class="badge-card ${rarityClass} ${isUnlocked ? "unlocked" : "locked"} ${isFounder ? "founder-badge" : ""}">
          <div class="badge-icon">
  <img src="badges/${badge.code}.png" class="badge-img">
 </div>
