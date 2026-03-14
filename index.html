@@ -3254,6 +3254,9 @@ const { data: badges } = await supabaseClient
 .from("player_badges")
 .select("badge_code")
 .eq("email", playerEmail);
+const specialTitles = badges
+  ? badges.filter(b => SPECIAL_TITLES[b.badge_code])
+  : [];
 console.log("Player badges:", badges);
 // --- PODIUM COUNT (until yesterday) ---
 let podiums = 0;
