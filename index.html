@@ -3314,9 +3314,7 @@ const { data, error } = await supabaseClient
 .eq("email", playerEmail)
 .eq("completed", true)
 .order("date", { ascending: true });
-console.log("Player badges:", badges);
-console.log("Special titles:", specialTitles);
-console.log("SPECIAL_TITLES keys:", Object.keys(SPECIAL_TITLES));
+
 // --- PODIUM COUNT (until yesterday) ---
 let podiums = 0;
 const today = new Date().toISOString().split("T")[0];
