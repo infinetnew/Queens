@@ -3310,7 +3310,7 @@ modal.style.display = "flex";
 statsBox.innerHTML = "Loading statistics...";
 const { data, error } = await supabaseClient
 .from("queens_results")
-.select("time_seconds, date, hints_used, completed")
+.select("time_seconds, date, hints_used, difficulty")
 .eq("email", playerEmail)
 .eq("completed", true)
 .order("date", { ascending: true });
@@ -3396,26 +3396,46 @@ bestDate = g.date;
 // average time
 const totalTime = data.reduce((sum, g) => sum + g.time_seconds, 0);
 const avgTime = Math.round(totalTime / games);
+
+const BASE_TIMES = {
+Easy: 25,
+Medium: 45,
+Hard: 100
+};
+
 // hint usage
 const gamesWithHints = data.filter(g => g.hints_used > 0).length;
 const hintUsage = Math.round((gamesWithHints / games) * 100);
-// consistency
 let rating = "—";
+
 if (games >= 3) {
-const deviations = data.map(g =>
-Math.abs(g.time_seconds - avgTime)
-);
-const avgDeviation =
-deviations.reduce((a,b)=>a+b,0) / deviations.length;
-let score =
-100 - Math.round((avgDeviation / avgTime) * 100);
-if (score < 0) score = 0;
-if (score > 100) score = 100;
-let label = "Unstable ⚠️";
-if (score >= 90) label = "Elite 👑";
-else if (score >= 70) label = "Strong 💎";
-else if (score >= 50) label = "Solid 👍";
-rating = `${label} (${score}%)`;
+
+let performances = data.map(g => {
+
+const base = BASE_TIMES[g.difficulty] || 45;
+
+let perf = base / g.time_seconds;
+
+// penalità hint
+if (g.hints_used) {
+perf *= (1 - (g.hints_used * 0.05));
+}
+
+return perf;
+
+});
+
+const avgPerf =
+performances.reduce((a,b)=>a+b,0) / performances.length;
+
+let label = "Learning 🌱";
+
+if (avgPerf >= 1.30) label = "Elite 👑";
+else if (avgPerf >= 1.15) label = "Strong 💎";
+else if (avgPerf >= 1.00) label = "Solid 👍";
+
+rating = `${label} (${avgPerf.toFixed(2)})`;
+
 }
 
 statsBox.innerHTML = `
