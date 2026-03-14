@@ -2990,13 +2990,14 @@ const modal = document.getElementById("badgeModal");
 const container = document.getElementById("badgeContainer");
 modal.style.display = "flex";
 const badgeStats = await getBadgeStats();
-const { data: badges } = await supabaseClient
+const { data: badges, error: badgeError } = await supabaseClient
 .from("player_badges")
 .select("badge_code")
 .eq("email", playerEmail);
-const specialTitles = badges
-  ? badges.filter(b => SPECIAL_TITLES[b.badge_code])
-  : [];
+
+console.log("Badges DB:", badges);
+
+const specialTitles = (badges || []).filter(b => SPECIAL_TITLES[b.badge_code]);
 const unlocked = badges ? badges.map(b => b.badge_code) : [];
 
 const { data: stats } = await supabaseClient
