@@ -2882,16 +2882,6 @@ special: {
 title: "⭐ Special",
 badges: [
 
-/* --- LEGENDARY / ADMIN BADGES --- */
-
-{ code:"founder", name:"Founder", description:"Creator of Queens." },
-
-{ code:"queens_favor", name:"Queen’s Favor", description:"Granted by the Founder." },
-
-{ code:"beta_tester", name:"Beta Tester", description:"Helped test Queens during development." },
-
-/* --- SPECIAL GAMEPLAY BADGES --- */
-
 { code:"perfect_game", name:"Perfect Game", description:"Solve a puzzle with no hints and no errors" },
 
 { code:"clutch_win", name:"Clutch Victory", description:"Solve a puzzle using all 3 hints" },
@@ -2979,6 +2969,22 @@ badges: [
 ]
 }
 };
+const SPECIAL_TITLES = {
+  founder: {
+    name: "Founder",
+    description: "Creator of Queens"
+  },
+
+  queens_favor: {
+    name: "Queen’s Favor",
+    description: "Granted by the Founder"
+  },
+
+  beta_tester: {
+    name: "Beta Tester",
+    description: "Queens beta tester"
+  }
+};
 async function openBadgeProfile() {
 const modal = document.getElementById("badgeModal");
 const container = document.getElementById("badgeContainer");
@@ -2988,6 +2994,9 @@ const { data: badges } = await supabaseClient
 .from("player_badges")
 .select("badge_code")
 .eq("email", playerEmail);
+const specialTitles = badges
+  ? badges.filter(b => SPECIAL_TITLES[b.badge_code])
+  : [];
 const unlocked = badges ? badges.map(b => b.badge_code) : [];
 
 const { data: stats } = await supabaseClient
@@ -3348,7 +3357,48 @@ else if (score >= 70) label = "Strong 💎";
 else if (score >= 50) label = "Solid 👍";
 rating = `${label} (${score}%)`;
 }
+let titlesHTML = "";
+
+if (specialTitles.length > 0){
+
+  titlesHTML += `
+  <div style="
+  margin-bottom:12px;
+  font-weight:700;
+  color:#ffd700;
+  ">
+  👑 Special Titles
+  </div>
+  `;
+
+  specialTitles.forEach(t => {
+
+    const info = SPECIAL_TITLES[t.badge_code];
+
+    titlesHTML += `
+    <div style="
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:6px;
+    font-weight:600;
+    ">
+      <img src="badges/${t.badge_code}.png" style="
+      width:26px;
+      height:26px;
+      object-fit:contain;
+      ">
+      ${info.name}
+    </div>
+    `;
+
+  });
+
+}
 statsBox.innerHTML = `
+${titlesHTML}
+
+<div class="stats-grid">
 <div style="
  display:flex;
  align-items:center;
