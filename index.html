@@ -3398,9 +3398,9 @@ const totalTime = data.reduce((sum, g) => sum + g.time_seconds, 0);
 const avgTime = Math.round(totalTime / games);
 
 const BASE_TIMES = {
-Easy: 25,
-Medium: 45,
-Hard: 100
+Easy: 15,
+Medium: 25,
+Hard: 45
 };
 
 // hint usage
@@ -3420,6 +3420,14 @@ let perf = base / g.time_seconds;
 if (g.hints_used) {
 perf *= (1 - (g.hints_used * 0.05));
 }
+
+// bonus difficoltà Hard
+if (g.difficulty === "Hard") {
+perf *= 1.05;
+}
+
+// limite massimo performance
+perf = Math.min(perf, 1.8);
 
 return perf;
 
