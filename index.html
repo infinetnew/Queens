@@ -1718,16 +1718,35 @@ const { data: below } = await supabaseClient
 
 const rivals = [];
 
-if (above && above.length > 0) rivals.push(above[0]);
+if (above && above.length > 0) {
+  rivals.push(above[0]);
+}
 
 rivals.push({
-name: playerName,
-email: playerEmail,
-total_score: myScore,
-country_code: countryCode
+  name: playerName,
+  email: playerEmail,
+  total_score: myScore,
+  country_code: countryCode
 });
 
-if (below && below.length > 0) rivals.push(below[0]);
+if (below && below.length > 0) {
+  rivals.push(below[0]);
+}
+
+/* --------------------------
+   CALCOLA IL RANK DI OGNUNO
+--------------------------- */
+
+for (let player of rivals) {
+
+  const { count } = await supabaseClient
+    .from("players")
+    .select("*", { count: "exact", head: true })
+    .gt("total_score", player.total_score);
+
+  player.rank = (count || 0) + 1;
+
+}
 
 return rivals;
 
@@ -1757,11 +1776,18 @@ else if (index === 0) color = "#69f0ae";
 else if (index === 2) color = "#ff5252";
 
 row.innerHTML = `
-<span style="font-weight:${isYou ? "700" : "500"}; color:${color};">
+<span class="leaderboard-player clickable-name"
+style="font-weight:${isYou ? "700" : "500"}; color:${color}; cursor:pointer;"
+onclick="openPublicBadges('${player.email}','${player.name}','${player.country_code}')">
+
+#${player.rank} 
+
 ${isYou ? "⭐ You" : player.name}
+
 <img 
 src="https://flagcdn.com/24x18/${(player.country_code || "un").toLowerCase()}.png"
 style="width:20px;margin-left:6px;border-radius:2px;">
+
 </span>
 
 <strong>${player.total_score} pt</strong>
