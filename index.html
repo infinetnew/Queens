@@ -1191,6 +1191,8 @@ let queens = [];
 let cells = [];
 const gridElement = document.getElementById("grid");
 const startBtn = document.getElementById("startBtn");
+startBtn.disabled = true;
+startBtn.innerText = "Loading...";
 let hintBtn;
 let hintsUsed = 0;
 const maxHints = 3;
@@ -1846,7 +1848,15 @@ target.textContent = "Beat " + formatTime(challengeTargetTime);
 }
 // Da qui in poi è il tuo flusso normale
 const puzzleLoaded = await loadDailyPuzzle();
-if (!puzzleLoaded) return;
+
+if (!puzzleLoaded) {
+  startBtn.innerText = "No puzzle today";
+  return;
+}
+
+// ✅ SBLOCCA PLAY SOLO QUI
+startBtn.disabled = false;
+startBtn.innerText = "▶ Play";
 const todayResult = await getTodayResult();
 if (!todayResult) {
 // nessuna partita iniziata oggi
@@ -3764,6 +3774,13 @@ leaderboardDiv.appendChild(positionBox);
 document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 startBtn.addEventListener("click", async () => {
+// 🛡️ SICUREZZA TOTALE
+if (startBtn.disabled) return;
+
+if (!regionMap || regionMap.length === 0) {
+  showFixedMessage("Loading puzzle...");
+  return;
+}
 startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
 hintsUsed = 0;
