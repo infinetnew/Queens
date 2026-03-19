@@ -3462,7 +3462,6 @@ rating = `${label} (${avgPerf.toFixed(2)})`;
 
 statsBox.innerHTML = `
 
-
 <div style="
  display:flex;
  align-items:center;
@@ -3478,67 +3477,96 @@ ${playerName}
 >
 </div>
 
+<!-- GENERAL STATS -->
+<div style="margin-top:10px; font-weight:700; opacity:0.8;">📊 General</div>
 <div class="stats-grid">
+
 <div class="stat-card">
-<div class="stat-title">🧩 Puzzles solved</div>
+<div class="stat-title">🧩 Puzzles</div>
 <div class="stat-value">${puzzlesSolved}</div>
 </div>
+
 <div class="stat-card">
-<div class="stat-title">⚡ Best time</div>
+<div class="stat-title">⚡ Best Time</div>
 <div class="stat-value">${formatTime(bestTime)}</div>
 </div>
+
 <div class="stat-card">
-<div class="stat-title">💡 Average hints</div>
+<div class="stat-title">💡 Average Hints</div>
 <div class="stat-value">${hintUsage}</div>
 </div>
+
 <div class="stat-card">
 <div class="stat-title">🏆 Podiums</div>
 <div class="stat-value">${podiums}</div>
 </div>
+
 <div class="stat-card">
-<div class="stat-title">🔥 Current streak</div>
+<div class="stat-title">🔥 Current Streak</div>
 <div class="stat-value">${currentStreak}</div>
 </div>
+
 <div class="stat-card">
-<div class="stat-title">👑 Best streak</div>
+<div class="stat-title">👑 Best Streak</div>
 <div class="stat-value">${bestStreak}</div>
 </div>
-<div class="stat-card">
-  <div class="stat-title">🏆 Daily Wins</div>
-  <div class="stat-value">${dailyWins}</div>
+
 </div>
 
-<div class="stat-card">
-  <div class="stat-title">⚔️ Challenge Wins</div>
-  <div class="stat-value">${challengeWins}</div>
-</div>
+<!-- PERFORMANCE -->
+<div style="margin-top:16px; font-weight:700; opacity:0.8;">🧠 Performance</div>
+<div class="stats-grid">
 
-<div class="stat-card">
-  <div class="stat-title">🚀 Challenges Launched</div>
-  <div class="stat-value">${challengesLaunched}</div>
-</div>
-
-<div class="stat-card">
-  <div class="stat-title">🟢 Easy Completed</div>
-  <div class="stat-value">${easyWins}</div>
-</div>
-
-<div class="stat-card">
-  <div class="stat-title">🟡 Medium Completed</div>
-  <div class="stat-value">${mediumWins}</div>
-</div>
-
-<div class="stat-card">
-  <div class="stat-title">🔴 Hard Completed</div>
-  <div class="stat-value">${hardWins}</div>
-</div>
 <div class="stat-card">
 <div class="stat-title">🧠 Rating</div>
 <div class="stat-value">${rating}</div>
 </div>
+
+<div class="stat-card">
+<div class="stat-title">🏆 Daily Wins</div>
+<div class="stat-value">${dailyWins}</div>
 </div>
-`;
-}
+
+</div>
+
+<!-- CHALLENGE -->
+<div style="margin-top:16px; font-weight:700; opacity:0.8;">⚔️ Challenge</div>
+<div class="stats-grid">
+
+<div class="stat-card">
+<div class="stat-title">⚔️ Wins</div>
+<div class="stat-value">${challengeWins}</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">🚀 Launched</div>
+<div class="stat-value">${challengesLaunched}</div>
+</div>
+
+</div>
+
+<!-- DIFFICULTY -->
+<div style="margin-top:16px; font-weight:700; opacity:0.8;">🎯 Difficulty</div>
+<div class="stats-grid">
+
+<div class="stat-card">
+<div class="stat-title">🟢 Easy</div>
+<div class="stat-value">${easyWins}</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">🟡 Medium</div>
+<div class="stat-value">${mediumWins}</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">🔴 Hard</div>
+<div class="stat-value">${hardWins}</div>
+</div>
+
+</div>
+
+`;}
 function showModal(time) {
 const modal = document.getElementById("winModal");
 const button = document.getElementById("modalBtn");
