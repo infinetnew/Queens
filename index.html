@@ -3366,66 +3366,40 @@ const { data, error } = await supabaseClient
 .eq("completed", true)
 .order("date", { ascending: true });
 
-// --- PODIUM COUNT (until yesterday) ---
-let podiums = 0;
-const today = new Date().toISOString().split("T")[0];
-const { data: allResults } = await supabaseClient
-.from("queens_results")
-.select("email, date, time_seconds")
-.lt("date", today)
-.order("date", { ascending: true });
-if (allResults) {
-const grouped = {};
-allResults.forEach(r => {
-if (!grouped[r.date]) grouped[r.date] = [];
-grouped[r.date].push(r);
-});
-Object.values(grouped).forEach(day => {
-day.sort((a,b)=>a.time_seconds - b.time_seconds);
-const top3 = day.slice(0,3);
-if (top3.some(p => p.email === playerEmail)) {
-podiums++;
-}
-});
-}
+
+
 if (error || !data || data.length === 0) {
 statsBox.innerHTML = "No statistics yet.";
 return;
 }
-const games = data.length;
-const monthNames = [
-"January","February","March","April","May","June",
-"July","August","September","October","November","December"
-];
-const monthNumber = data.length
-? parseInt(data[0].date.split("-")[1],10) - 1
-: new Date().getMonth();
-const monthName = monthNames[monthNumber];
+
 document.getElementById("profileTitle").textContent =
-`📊 Statistics — ${monthName}`;
-// puzzles solved
-const puzzlesSolved = games;
+"📊 Statistics";
+
 const { data: playerStats } = await supabaseClient
   .from("players")
-  .select("current_streak, best_streak")
+  .select(`
+    current_streak,
+    best_streak,
+    puzzles_solved,
+    best_time,
+    total_hints_used,
+    podiums
+  `)
   .eq("email", playerEmail)
   .single();
 
+const puzzlesSolved = playerStats?.puzzles_solved || 0;
 const currentStreak = playerStats?.current_streak || 0;
 const bestStreak = playerStats?.best_streak || 0;
+const bestTime = playerStats?.best_time || 0;
+const podiums = playerStats?.podiums || 0;
 
-// best time
-let bestTime = Infinity;
-let bestDate = null;
-data.forEach(g => {
-if (g.time_seconds < bestTime) {
-bestTime = g.time_seconds;
-bestDate = g.date;
-}
-});
-// average time
-const totalTime = data.reduce((sum, g) => sum + g.time_seconds, 0);
-const avgTime = Math.round(totalTime / games);
+const totalHints = playerStats?.total_hints_used || 0;
+const hintUsage = puzzlesSolved > 0
+  ? Math.round(totalHints / puzzlesSolved)
+  : 0;
+
 
 const BASE_TIMES = {
 Easy: 15,
@@ -3433,12 +3407,10 @@ Medium: 25,
 Hard: 45
 };
 
-// hint usage
-const gamesWithHints = data.filter(g => g.hints_used > 0).length;
-const hintUsage = Math.round((gamesWithHints / games) * 100);
+
 let rating = "—";
 
-if (games >= 3) {
+if (data.length >= 3) {
 
 let performances = data.map(g => {
 
@@ -3502,17 +3474,10 @@ ${playerName}
 <div class="stat-card">
 <div class="stat-title">⚡ Best time</div>
 <div class="stat-value">${formatTime(bestTime)}</div>
-<div style="font-size:11px;opacity:0.6;">
-Day ${bestDate.split("-")[2]}
-</div>
 </div>
 <div class="stat-card">
-<div class="stat-title">📈 Average time</div>
-<div class="stat-value">${formatTime(avgTime)}</div>
-</div>
-<div class="stat-card">
-<div class="stat-title">💡 Hint usage</div>
-<div class="stat-value">${hintUsage}%</div>
+<div class="stat-title">💡 Avg hints</div>
+<div class="stat-value">${hintUsage}</div>
 </div>
 <div class="stat-card">
 <div class="stat-title">🏆 Podiums</div>
