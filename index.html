@@ -3384,7 +3384,13 @@ const { data: playerStats } = await supabaseClient
     puzzles_solved,
     best_time,
     total_hints_used,
-    podiums
+    podiums,  
+    daily_wins,
+  challenge_wins,
+  challenges_launched,
+  easy_wins,
+  medium_wins,
+  hard_wins
   `)
   .eq("email", playerEmail)
   .single();
@@ -3394,7 +3400,13 @@ const currentStreak = playerStats?.current_streak || 0;
 const bestStreak = playerStats?.best_streak || 0;
 const bestTime = playerStats?.best_time || 0;
 const podiums = playerStats?.podiums || 0;
+const dailyWins = playerStats?.daily_wins || 0;
+const challengeWins = playerStats?.challenge_wins || 0;
+const challengesLaunched = playerStats?.challenges_launched || 0;
 
+const easyWins = playerStats?.easy_wins || 0;
+const mediumWins = playerStats?.medium_wins || 0;
+const hardWins = playerStats?.hard_wins || 0;
 const totalHints = playerStats?.total_hints_used || 0;
 const hintUsage = puzzlesSolved > 0
   ? Math.round(totalHints / puzzlesSolved)
@@ -3476,7 +3488,7 @@ ${playerName}
 <div class="stat-value">${formatTime(bestTime)}</div>
 </div>
 <div class="stat-card">
-<div class="stat-title">💡 Avg hints</div>
+<div class="stat-title">💡 Average hints</div>
 <div class="stat-value">${hintUsage}</div>
 </div>
 <div class="stat-card">
@@ -3490,6 +3502,35 @@ ${playerName}
 <div class="stat-card">
 <div class="stat-title">👑 Best streak</div>
 <div class="stat-value">${bestStreak}</div>
+</div>
+<div class="stat-card">
+  <div class="stat-title">🏆 Daily Wins</div>
+  <div class="stat-value">${dailyWins}</div>
+</div>
+
+<div class="stat-card">
+  <div class="stat-title">⚔️ Challenge Wins</div>
+  <div class="stat-value">${challengeWins}</div>
+</div>
+
+<div class="stat-card">
+  <div class="stat-title">🚀 Challenges Launched</div>
+  <div class="stat-value">${challengesLaunched}</div>
+</div>
+
+<div class="stat-card">
+  <div class="stat-title">🟢 Easy Completed</div>
+  <div class="stat-value">${easyWins}</div>
+</div>
+
+<div class="stat-card">
+  <div class="stat-title">🟡 Medium Completed</div>
+  <div class="stat-value">${mediumWins}</div>
+</div>
+
+<div class="stat-card">
+  <div class="stat-title">🔴 Hard Completed</div>
+  <div class="stat-value">${hardWins}</div>
 </div>
 <div class="stat-card">
 <div class="stat-title">🧠 Rating</div>
