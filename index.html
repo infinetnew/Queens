@@ -3413,17 +3413,7 @@ const { data: playerStats } = await supabaseClient
 
 const currentStreak = playerStats?.current_streak || 0;
 const bestStreak = playerStats?.best_streak || 0;
-if (streak > bestStreak) bestStreak = streak;
-}
-const todayDate = new Date().toISOString().split("T")[0];
-const lastDate = dates[dates.length - 1];
-const diffToday =
-(new Date(todayDate) - new Date(lastDate)) / (1000*60*60*24);
-if (diffToday <= 1) {
-currentStreak = streak;
-} else {
-currentStreak = 0;
-}
+
 // best time
 let bestTime = Infinity;
 let bestDate = null;
