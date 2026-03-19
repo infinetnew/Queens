@@ -376,7 +376,7 @@ transform: scale(1);
 font-size: 20px;
 }
 .app-header {
-gap: 12px;
+gap: 4px;
 }
 .app-icon {
 width: 260px;
@@ -706,9 +706,14 @@ border-radius:16px;
 background:rgba(255,255,255,0.06);
 backdrop-filter:blur(8px);
 border:1px solid rgba(255,255,255,0.15);
-width: min(92vmin, 650px); /* 🔥 ALLINEATO ALLA GRID */
+
+width: 100%;
+max-width: 650px;
+
 margin-left:auto;
 margin-right:auto;
+
+box-sizing: border-box;
 }
 .player-left{
 display:flex;
