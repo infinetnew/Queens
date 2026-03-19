@@ -412,6 +412,7 @@ max-height: 85vh;
 width: min(500px, 90vw);
 display: flex;
 flex-direction: column;
+overflow: hidden;
 }
 .modal-hud{
 display:flex;
@@ -3394,6 +3395,7 @@ const { data: playerStats } = await supabaseClient
   `)
   .eq("email", playerEmail)
   .single();
+console.log("PLAYER STATS:", playerStats);
 
 const puzzlesSolved = playerStats?.puzzles_solved || 0;
 const currentStreak = playerStats?.current_streak || 0;
@@ -4275,11 +4277,14 @@ initializePage();
 <div class="modal-content">
 <h2 id="profileTitle">📊 Statistics</h2>
 <div id="playerStats" style="
-     margin-top:15px;
-     text-align:left;
-     font-size:15px;
-     line-height:1.6;
-   "></div>
+margin-top:15px;
+text-align:left;
+font-size:15px;
+line-height:1.6;
+overflow-y:auto;
+flex:1;
+padding-right:6px;
+"></div>
 <button onclick="closePlayerModal()">Close</button>
 </div>
 </div>
