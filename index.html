@@ -2162,50 +2162,75 @@ if (puzzleDifficulty === "Hard") scoreEarned = 50;
 if (puzzleDifficulty === "Easy") easyWins++;
 if (puzzleDifficulty === "Medium") mediumWins++;
 if (puzzleDifficulty === "Hard") hardWins++;
-// 👑 Challenge result
 if (challengeTargetTime) {
-
-if (totalSeconds < challengeTargetTime) {
-
-unlockBadge("challenge_king");
-
-await supabaseClient
-.from("players")
-.update({
-challenge_wins: (playerStats.challenge_wins || 0) + 1
-})
-.eq("email", playerEmail);
-// 🔥 UPDATE CHALLENGE PARTICIPANT
-if (currentChallengeId) {
 
   const isWinner = totalSeconds < challengeTargetTime;
 
-  await supabaseClient
-    .from("challenge_participants")
-    .update({
-      result_time: totalSeconds,
-      completed: true,
-      is_winner: isWinner
-    })
-    .eq("challenge_id", currentChallengeId)
-    .eq("player_email", playerEmail);
+  // 🔥 1. aggiorna SEMPRE participant
+  if (currentChallengeId) {
 
-}
-const wins = (playerStats.challenge_wins || 0) + 1;
+    await supabaseClient
+      .from("challenge_participants")
+      .update({
+        result_time: totalSeconds,
+        completed: true,
+        is_winner: isWinner
+      })
+      .eq("challenge_id", currentChallengeId)
+      .eq("player_email", playerEmail);
 
-if (wins >= 10) unlockBadge("challenge_win_10");
-if (wins >= 25) unlockBadge("challenge_win_25");
+  }
 
-} else {
+  // 🔥 2. prendi creator challenge
+  let challengeCreator = null;
 
-await supabaseClient
-.from("players")
-.update({
-challenge_losses: (playerStats.challenge_losses || 0) + 1
-})
-.eq("email", playerEmail);
+  if (currentChallengeId) {
 
-}
+    const { data: challengeData } = await supabaseClient
+      .from("challenges")
+      .select("created_by")
+      .eq("id", currentChallengeId)
+      .single();
+
+    challengeCreator = challengeData?.created_by;
+
+  }
+
+  // 🏆 3. SE VINCE (player batte il tempo)
+  if (isWinner) {
+
+    unlockBadge("challenge_king");
+
+    await supabaseClient
+      .from("players")
+      .update({
+        challenge_wins: (playerStats.challenge_wins || 0) + 1
+      })
+      .eq("email", playerEmail);
+
+  }
+
+  // ❌ 4. SE PERDE → creator difende
+  else {
+
+    if (challengeCreator && challengeCreator !== playerEmail) {
+
+      const { data: creatorStats } = await supabaseClient
+        .from("players")
+        .select("challenge_defend")
+        .eq("email", challengeCreator)
+        .single();
+
+      await supabaseClient
+        .from("players")
+        .update({
+          challenge_defend: (creatorStats?.challenge_defend || 0) + 1
+        })
+        .eq("email", challengeCreator);
+
+    }
+
+  }
 
 }
 if (playerStats) {
