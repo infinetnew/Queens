@@ -1227,6 +1227,7 @@ let scoreEarned = 0;
 let timerInterval = null;
 let boardErrorTimeout = null;
 let challengeTargetTime = null;
+let currentChallengeId = null;
 let playerEmail = null;
 let playerName = null;
 let countryCode = null;
@@ -4307,52 +4308,38 @@ status.style.color = "#ff5252";
 }
 
 }
-// --- CHALLENGE LINK ---
-const params = new URLSearchParams(window.location.search);
-const challengeId = params.get("challenge_id");
+async function loadChallengeFromURL() {
 
-let currentChallengeId = null;
+  const params = new URLSearchParams(window.location.search);
+  const challengeId = params.get("challenge_id");
 
-if (challengeId) {
+  if (!challengeId) return;
 
   currentChallengeId = challengeId;
 
-  const { data: challenge } = await supabaseClient
+  const { data: challenge, error } = await supabaseClient
     .from("challenges")
     .select("*")
     .eq("id", challengeId)
     .single();
 
-  if (challenge) {
-
-    challengeTargetTime = challenge.created_time;
-    challengePlayer = challenge.created_name;
-
-    showFixedMessage(
-      `🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTargetTime)}`,
-      "info",
-      6000
-    );
+  if (error || !challenge) {
+    console.error("Challenge not found", error);
+    return;
   }
+
+  challengeTargetTime = challenge.created_time;
+  challengePlayer = challenge.created_name;
+
+  showFixedMessage(
+    `🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTargetTime)}`,
+    "info",
+    6000
+  );
 }
-if (challengeTime) {
-if (challengePlayer) {
-showFixedMessage(
-`🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTime)}`,
-"info",
-6000
-);
-} else {
-showFixedMessage(
-`🔥 Challenge: beat ${formatTime(challengeTime)}`,
-"info",
-6000
-);
-}
-}
-if (challengeTime) {
-history.replaceState({}, "", window.location.pathname);
-}
+
+
+loadChallengeFromURL();
 initializePage();
 </script>
 <div id="winModal" class="modal">
