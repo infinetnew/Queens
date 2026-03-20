@@ -1227,7 +1227,6 @@ let scoreEarned = 0;
 let timerInterval = null;
 let boardErrorTimeout = null;
 let challengeTargetTime = null;
-let currentChallengeId = null;
 let playerEmail = null;
 let playerName = null;
 let countryCode = null;
@@ -1262,52 +1261,6 @@ solution = data[0].solution;
 regionMap = data[0].region_map;
 puzzleDifficulty = data[0].difficulty;
 return true;
-}
-async function handleChallengeSend(){
-
-  if (selectedPlayers.size === 0){
-    showFixedMessage("Select at least one player");
-    return;
-  }
-
-  const selectedEmails = Array.from(selectedPlayers);
-
-  const { data: challenge } = await supabaseClient
-    .from("challenges")
-    .insert({
-      created_by: playerEmail,
-      created_name: playerName,
-      created_time: currentGameTime || 0
-    })
-    .select()
-    .single();
-
-  if (!challenge){
-    showFixedMessage("Error creating challenge");
-    return;
-  }
-
-  const participants = challengePlayers
-    .filter(p => selectedEmails.includes(p.email))
-    .map(p => ({
-      challenge_id: challenge.id,
-      player_email: p.email,
-      player_name: p.name
-    }));
-
-  const { error } = await supabaseClient
-    .from("challenge_participants")
-    .insert(participants);
-
-  if (error){
-    showFixedMessage("Error saving participants");
-    return;
-  }
-
-  closeChallengeModal();
-
-  showFixedMessage("🔥 Challenge sent!");
-
 }
 async function getTodayResult() {
 const today = new Date().toISOString().split("T")[0];
@@ -2208,75 +2161,34 @@ if (puzzleDifficulty === "Hard") scoreEarned = 50;
 if (puzzleDifficulty === "Easy") easyWins++;
 if (puzzleDifficulty === "Medium") mediumWins++;
 if (puzzleDifficulty === "Hard") hardWins++;
+// 👑 Challenge result
 if (challengeTargetTime) {
 
-  const isWinner = totalSeconds < challengeTargetTime;
+if (totalSeconds < challengeTargetTime) {
 
-  // 🔥 1. aggiorna SEMPRE participant
-  if (currentChallengeId) {
+unlockBadge("challenge_king");
 
-    await supabaseClient
-      .from("challenge_participants")
-      .update({
-        result_time: totalSeconds,
-        completed: true,
-        is_winner: isWinner
-      })
-      .eq("challenge_id", currentChallengeId)
-      .eq("player_email", playerEmail);
+await supabaseClient
+.from("players")
+.update({
+challenge_wins: (playerStats.challenge_wins || 0) + 1
+})
+.eq("email", playerEmail);
+const wins = (playerStats.challenge_wins || 0) + 1;
 
-  }
+if (wins >= 10) unlockBadge("challenge_win_10");
+if (wins >= 25) unlockBadge("challenge_win_25");
 
-  // 🔥 2. prendi creator challenge
-  let challengeCreator = null;
+} else {
 
-  if (currentChallengeId) {
+await supabaseClient
+.from("players")
+.update({
+challenge_losses: (playerStats.challenge_losses || 0) + 1
+})
+.eq("email", playerEmail);
 
-    const { data: challengeData } = await supabaseClient
-      .from("challenges")
-      .select("created_by")
-      .eq("id", currentChallengeId)
-      .single();
-
-    challengeCreator = challengeData?.created_by;
-
-  }
-
-  // 🏆 3. SE VINCE (player batte il tempo)
-  if (isWinner) {
-
-    unlockBadge("challenge_king");
-
-    await supabaseClient
-      .from("players")
-      .update({
-        challenge_wins: (playerStats.challenge_wins || 0) + 1
-      })
-      .eq("email", playerEmail);
-
-  }
-
-  // ❌ 4. SE PERDE → creator difende
-  else {
-
-    if (challengeCreator && challengeCreator !== playerEmail) {
-
-      const { data: creatorStats } = await supabaseClient
-        .from("players")
-        .select("challenge_defend")
-        .eq("email", challengeCreator)
-        .single();
-
-      await supabaseClient
-        .from("players")
-        .update({
-          challenge_defend: (creatorStats?.challenge_defend || 0) + 1
-        })
-        .eq("email", challengeCreator);
-
-    }
-
-  }
+}
 
 }
 if (playerStats) {
@@ -3684,89 +3596,41 @@ if (!shareBtn) {
 shareBtn = document.createElement("button");
 shareBtn.id = "shareBtn";
 }
-shareBtn.textContent = "⚔️ Lancia sfida";
+shareBtn.textContent = "📤 Share result";
 shareBtn.style.marginTop = "10px";
-window.currentGameTime = time;
 shareBtn.onclick = async () => {
+// registra challenge lanciata
+await supabaseClient.rpc("increment_challenge_launched", {
+player_email: playerEmail
+});
+const { data: stats } = await supabaseClient
+.from("players")
+.select("challenge_launched")
+.eq("email", playerEmail)
+.single();
 
-  // 🔴 1. incrementa challenge launched
-  await supabaseClient.rpc("increment_challenge_launched", {
-    player_email: playerEmail
-  });
-
-  const { data: stats } = await supabaseClient
-    .from("players")
-    .select("challenge_launched")
-    .eq("email", playerEmail)
-    .single();
-
-  if (stats && stats.challenge_launched >= 25) {
-    unlockBadge("challenge_launch_25");
-  }
-
-const { data: players } = await supabaseClient
-  .from("players")
-  .select("email, name")
-  .neq("email", playerEmail);
-
-if (!players || players.length === 0) {
-  showFixedMessage("No players available");
-  return;
+if (stats && stats.challenge_launched >= 25) {
+unlockBadge("challenge_launch_25");
 }
-
-challengePlayers = players;
-selectedPlayers.clear();
-
-openChallengeModal();
-
-  // 🔴 4. CREA CHALLENGE
-  const { data: challenge } = await supabaseClient
-    .from("challenges")
-    .insert({
-      created_by: playerEmail,
-      created_name: playerName,
-      created_time: time
-    })
-    .select()
-    .single();
-
-  if (!challenge) {
-    showFixedMessage("Error creating challenge");
-    return;
-  }
-
-  // 🔴 5. CREA PARTECIPANTI
-const participants = players
-  .filter(p => selectedPlayers.has(p.email))
-    .map(p => ({
-      challenge_id: challenge.id,
-      player_email: p.email,
-      player_name: p.name
-    }));
-
-  if (participants.length === 0) {
-    showFixedMessage("No valid players selected");
-    return;
-  }
-
-  const { error: insertError } = await supabaseClient
-    .from("challenge_participants")
-    .insert(participants);
-
-  if (insertError) {
-    console.error(insertError);
-    showFixedMessage("Error saving participants");
-    return;
-  }
-
-  // 🔴 6. LINK NUOVO
-  const link =
-    `${window.location.origin}/Queens/?challenge_id=${challenge.id}`;
-
-  await navigator.clipboard.writeText(link);
-
-  showFixedMessage("Challenge link copied!");
-
+const result = await getPlayerPosition() || { rank: "?", totalPlayers: "?" };
+const challengeLink =
+`${window.location.origin}/Queens/?challenge=${time}&player=${encodeURIComponent(playerName)}`;
+const text =
+`🔥 Queens Challenge
+Solved in ${formatTime(time)}.
+🏆 Rank ${result.rank}/${result.totalPlayers}
+Can you do better?
+Or is this too hard for you?
+${challengeLink}`;
+if (navigator.share) {
+navigator.share({
+title: "Queens Game",
+text: text
+});
+} else {
+navigator.clipboard.writeText(text);
+showFixedMessage("Result copied to clipboard");
+}
 };
 const modalContent = document.querySelector("#winModal .modal-content");
 const closeBtn = document.getElementById("modalBtn");
@@ -4088,14 +3952,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hintBtn.addEventListener("click", giveHint);
   }
 });
-document.addEventListener("DOMContentLoaded", () => {
-  const rulesBtn = document.getElementById("rulesFloating");
-  if (rulesBtn) {
-    rulesBtn.addEventListener("click", () => {
-      showRulesModal(`...`);
-    });
-  }
-});
+document.getElementById("rulesFloating").addEventListener("click", () => {
 showRulesModal(
 `🧠 QUEENS — PURE STRATEGY
 
@@ -4185,7 +4042,7 @@ Each game is a final decision.
 👑 Queens does not reward luck.  
 It rewards the mind.
 `);
-
+});
 // --- SWIPE LEADERBOARD ---
 document.addEventListener("DOMContentLoaded", () => {
 const wrapper = document.getElementById("leaderboardWrapper");
@@ -4295,8 +4152,6 @@ navigator.clearAppBadge();
 }
 let unlockedBadgesThisGame = [];
 let playerBadges = new Set();
-let challengePlayers = [];
-let selectedPlayers = new Set();
 
 async function unlockBadge(badgeCode){
 
@@ -4396,130 +4251,31 @@ status.style.color = "#ff5252";
 }
 
 }
-async function loadChallengeFromURL() {
-
-  const params = new URLSearchParams(window.location.search);
-  const challengeId = params.get("challenge_id");
-
-  if (!challengeId) return;
-
-  currentChallengeId = challengeId;
-
-  const { data: challenge, error } = await supabaseClient
-    .from("challenges")
-    .select("*")
-    .eq("id", challengeId)
-    .single();
-
-  if (error || !challenge) {
-    console.error("Challenge not found", error);
-    return;
-  }
-
-  challengeTargetTime = challenge.created_time;
-  challengePlayer = challenge.created_name;
-
-  showFixedMessage(
-    `🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTargetTime)}`,
-    "info",
-    6000
-  );
+// --- CHALLENGE LINK ---
+const params = new URLSearchParams(window.location.search);
+const challengeTime = params.get("challenge");
+const challengePlayer = params.get("player");
+if (challengeTime) {
+challengeTargetTime = parseInt(challengeTime);
 }
-function openChallengeModal(){
-
-
-  const modal = document.getElementById("challengeModal");
-  const list = document.getElementById("challengeList");
-  const search = document.getElementById("challengeSearch");
-const btn = document.getElementById("challengeSendBtn");
-
-if (btn){
-  btn.onclick = handleChallengeSend;
+if (challengeTime) {
+if (challengePlayer) {
+showFixedMessage(
+`🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTime)}`,
+"info",
+6000
+);
+} else {
+showFixedMessage(
+`🔥 Challenge: beat ${formatTime(challengeTime)}`,
+"info",
+6000
+);
 }
-  modal.style.display = "flex";
-  search.value = "";
-
-  renderChallengeList("");
-
-  search.oninput = (e) => {
-    renderChallengeList(e.target.value);
-  };
-
 }
-function renderChallengeList(query){
-
-  const list = document.getElementById("challengeList");
-  list.innerHTML = "";
-
-  const filtered = challengePlayers.filter(p =>
-    p.name.toLowerCase().includes(query.toLowerCase())
-  );
-
-  filtered.forEach(p => {
-
-    const row = document.createElement("div");
-
-    row.style.padding = "8px";
-    row.style.cursor = "pointer";
-    row.style.borderRadius = "8px";
-
-    row.textContent = p.name;
-
-    if (selectedPlayers.has(p.email)){
-      row.style.background = "rgba(255,215,0,0.2)";
-    }
-
-    row.onclick = () => togglePlayer(p);
-
-    list.appendChild(row);
-
-  });
-
+if (challengeTime) {
+history.replaceState({}, "", window.location.pathname);
 }
-function renderSelectedPlayers(){
-
-  const container = document.getElementById("challengeSelected");
-  container.innerHTML = "";
-
-  selectedPlayers.forEach(email => {
-
-    const player = challengePlayers.find(p => p.email === email);
-
-    const tag = document.createElement("div");
-
-    tag.style.padding = "6px 10px";
-    tag.style.borderRadius = "20px";
-    tag.style.background = "rgba(255,255,255,0.1)";
-    tag.style.fontSize = "13px";
-
-    tag.textContent = player.name;
-
-    container.appendChild(tag);
-
-  });
-
-}
-function closeChallengeModal(){
-  document.getElementById("challengeModal").style.display = "none";
-}
-
-function togglePlayer(player){
-
-  if (selectedPlayers.has(player.email)){
-    selectedPlayers.delete(player.email);
-  } else {
-    selectedPlayers.add(player.email);
-  }
-
-  renderChallengeList(
-    document.getElementById("challengeSearch").value
-  );
-
-  renderSelectedPlayers();
-
-}
-
-loadChallengeFromURL();
 initializePage();
 </script>
 <div id="winModal" class="modal">
@@ -4596,8 +4352,6 @@ padding-right:6px;
 
   </div>
 </div>
-
-
 <script>
 if ('serviceWorker' in navigator) {
 navigator.serviceWorker.register('service-worker.js')
@@ -4776,44 +4530,6 @@ pushBtn.addEventListener("click", enablePush);
         💡 Hint
       </button>
     </div>
-
-  </div>
-</div>
-<div id="challengeModal" class="modal">
-  <div class="modal-content">
-
-    <h2>⚔️ Lancia Sfida</h2>
-
-    <input id="challengeSearch" type="text" placeholder="Search player..."
-    style="
-      width:100%;
-      padding:12px;
-      border-radius:12px;
-      border:none;
-      margin-bottom:10px;
-    ">
-
-    <div id="challengeList" style="
-      max-height:200px;
-      overflow-y:auto;
-      text-align:left;
-      margin-bottom:10px;
-    "></div>
-
-    <div id="challengeSelected" style="
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-bottom:10px;
-    "></div>
-
-    <button id="challengeSendBtn" class="game-btn">
-      🚀 Send Challenge
-    </button>
-
-    <button onclick="closeChallengeModal()" style="margin-top:10px;">
-      Cancel
-    </button>
 
   </div>
 </div>
