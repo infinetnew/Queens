@@ -3736,8 +3736,8 @@ openChallengeModal();
   }
 
   // 🔴 5. CREA PARTECIPANTI
-  const participants = players
-    .filter(p => selectedEmails.includes(p.email))
+const participants = players
+  .filter(p => selectedPlayers.has(p.email))
     .map(p => ({
       challenge_id: challenge.id,
       player_email: p.email,
@@ -4088,7 +4088,14 @@ document.addEventListener("DOMContentLoaded", () => {
     hintBtn.addEventListener("click", giveHint);
   }
 });
-document.getElementById("rulesFloating").addEventListener("click", () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const rulesBtn = document.getElementById("rulesFloating");
+  if (rulesBtn) {
+    rulesBtn.addEventListener("click", () => {
+      showRulesModal(`...`);
+    });
+  }
+});
 showRulesModal(
 `🧠 QUEENS — PURE STRATEGY
 
