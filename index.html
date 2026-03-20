@@ -2175,6 +2175,22 @@ await supabaseClient
 challenge_wins: (playerStats.challenge_wins || 0) + 1
 })
 .eq("email", playerEmail);
+// 🔥 UPDATE CHALLENGE PARTICIPANT
+if (currentChallengeId) {
+
+  const isWinner = totalSeconds < challengeTargetTime;
+
+  await supabaseClient
+    .from("challenge_participants")
+    .update({
+      result_time: totalSeconds,
+      completed: true,
+      is_winner: isWinner
+    })
+    .eq("challenge_id", currentChallengeId)
+    .eq("player_email", playerEmail);
+
+}
 const wins = (playerStats.challenge_wins || 0) + 1;
 
 if (wins >= 10) unlockBadge("challenge_win_10");
