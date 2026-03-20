@@ -1263,6 +1263,52 @@ regionMap = data[0].region_map;
 puzzleDifficulty = data[0].difficulty;
 return true;
 }
+async function handleChallengeSend(){
+
+  if (selectedPlayers.size === 0){
+    showFixedMessage("Select at least one player");
+    return;
+  }
+
+  const selectedEmails = Array.from(selectedPlayers);
+
+  const { data: challenge } = await supabaseClient
+    .from("challenges")
+    .insert({
+      created_by: playerEmail,
+      created_name: playerName,
+      created_time: currentGameTime || 0
+    })
+    .select()
+    .single();
+
+  if (!challenge){
+    showFixedMessage("Error creating challenge");
+    return;
+  }
+
+  const participants = challengePlayers
+    .filter(p => selectedEmails.includes(p.email))
+    .map(p => ({
+      challenge_id: challenge.id,
+      player_email: p.email,
+      player_name: p.name
+    }));
+
+  const { error } = await supabaseClient
+    .from("challenge_participants")
+    .insert(participants);
+
+  if (error){
+    showFixedMessage("Error saving participants");
+    return;
+  }
+
+  closeChallengeModal();
+
+  showFixedMessage("🔥 Challenge sent!");
+
+}
 async function getTodayResult() {
 const today = new Date().toISOString().split("T")[0];
 const { data } = await supabaseClient
@@ -4374,10 +4420,15 @@ async function loadChallengeFromURL() {
 }
 function openChallengeModal(){
 
+
   const modal = document.getElementById("challengeModal");
   const list = document.getElementById("challengeList");
   const search = document.getElementById("challengeSearch");
+const btn = document.getElementById("challengeSendBtn");
 
+if (btn){
+  btn.onclick = handleChallengeSend;
+}
   modal.style.display = "flex";
   search.value = "";
 
@@ -4441,52 +4492,6 @@ function renderSelectedPlayers(){
   });
 
 }
-document.getElementById("challengeSendBtn").onclick = async () => {
-
-  if (selectedPlayers.size === 0){
-    showFixedMessage("Select at least one player");
-    return;
-  }
-
-  const selectedEmails = Array.from(selectedPlayers);
-
-  const { data: challenge } = await supabaseClient
-    .from("challenges")
-    .insert({
-      created_by: playerEmail,
-      created_name: playerName,
-      created_time: currentGameTime || 0
-    })
-    .select()
-    .single();
-
-  if (!challenge){
-    showFixedMessage("Error creating challenge");
-    return;
-  }
-
-  const participants = challengePlayers
-    .filter(p => selectedEmails.includes(p.email))
-    .map(p => ({
-      challenge_id: challenge.id,
-      player_email: p.email,
-      player_name: p.name
-    }));
-
-  const { error } = await supabaseClient
-    .from("challenge_participants")
-    .insert(participants);
-
-  if (error){
-    showFixedMessage("Error saving participants");
-    return;
-  }
-
-  closeChallengeModal();
-
-  showFixedMessage("🔥 Challenge sent!");
-
-};
 function closeChallengeModal(){
   document.getElementById("challengeModal").style.display = "none";
 }
