@@ -3640,6 +3640,7 @@ shareBtn.id = "shareBtn";
 }
 shareBtn.textContent = "⚔️ Lancia sfida";
 shareBtn.style.marginTop = "10px";
+window.currentGameTime = time;
 shareBtn.onclick = async () => {
 
   // 🔴 1. incrementa challenge launched
@@ -3657,29 +3658,20 @@ shareBtn.onclick = async () => {
     unlockBadge("challenge_launch_25");
   }
 
-  // 🔴 2. PRENDI PLAYER DISPONIBILI
-  const { data: players } = await supabaseClient
-    .from("players")
-    .select("email, name")
-    .neq("email", playerEmail);
+const { data: players } = await supabaseClient
+  .from("players")
+  .select("email, name")
+  .neq("email", playerEmail);
 
-  if (!players || players.length === 0) {
-    showFixedMessage("No players available");
-    return;
-  }
+if (!players || players.length === 0) {
+  showFixedMessage("No players available");
+  return;
+}
 
-  // 🔴 3. SELEZIONE (INPUT)
-  const input = prompt(
-    "Select players (comma separated emails):\n\n" +
-    players.map(p => p.email).join("\n")
-  );
+challengePlayers = players;
+selectedPlayers.clear();
 
-  if (!input) return;
-
-  const selectedEmails = input
-    .split(",")
-    .map(e => e.trim())
-    .filter(e => e.length > 0);
+openChallengeModal();
 
   // 🔴 4. CREA CHALLENGE
   const { data: challenge } = await supabaseClient
@@ -4250,6 +4242,8 @@ navigator.clearAppBadge();
 }
 let unlockedBadgesThisGame = [];
 let playerBadges = new Set();
+let challengePlayers = [];
+let selectedPlayers = new Set();
 
 async function unlockBadge(badgeCode){
 
@@ -4378,7 +4372,140 @@ async function loadChallengeFromURL() {
     6000
   );
 }
+function openChallengeModal(){
 
+  const modal = document.getElementById("challengeModal");
+  const list = document.getElementById("challengeList");
+  const search = document.getElementById("challengeSearch");
+
+  modal.style.display = "flex";
+  search.value = "";
+
+  renderChallengeList("");
+
+  search.oninput = (e) => {
+    renderChallengeList(e.target.value);
+  };
+
+}
+function renderChallengeList(query){
+
+  const list = document.getElementById("challengeList");
+  list.innerHTML = "";
+
+  const filtered = challengePlayers.filter(p =>
+    p.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  filtered.forEach(p => {
+
+    const row = document.createElement("div");
+
+    row.style.padding = "8px";
+    row.style.cursor = "pointer";
+    row.style.borderRadius = "8px";
+
+    row.textContent = p.name;
+
+    if (selectedPlayers.has(p.email)){
+      row.style.background = "rgba(255,215,0,0.2)";
+    }
+
+    row.onclick = () => togglePlayer(p);
+
+    list.appendChild(row);
+
+  });
+
+}
+function renderSelectedPlayers(){
+
+  const container = document.getElementById("challengeSelected");
+  container.innerHTML = "";
+
+  selectedPlayers.forEach(email => {
+
+    const player = challengePlayers.find(p => p.email === email);
+
+    const tag = document.createElement("div");
+
+    tag.style.padding = "6px 10px";
+    tag.style.borderRadius = "20px";
+    tag.style.background = "rgba(255,255,255,0.1)";
+    tag.style.fontSize = "13px";
+
+    tag.textContent = player.name;
+
+    container.appendChild(tag);
+
+  });
+
+}
+document.getElementById("challengeSendBtn").onclick = async () => {
+
+  if (selectedPlayers.size === 0){
+    showFixedMessage("Select at least one player");
+    return;
+  }
+
+  const selectedEmails = Array.from(selectedPlayers);
+
+  const { data: challenge } = await supabaseClient
+    .from("challenges")
+    .insert({
+      created_by: playerEmail,
+      created_name: playerName,
+      created_time: currentGameTime || 0
+    })
+    .select()
+    .single();
+
+  if (!challenge){
+    showFixedMessage("Error creating challenge");
+    return;
+  }
+
+  const participants = challengePlayers
+    .filter(p => selectedEmails.includes(p.email))
+    .map(p => ({
+      challenge_id: challenge.id,
+      player_email: p.email,
+      player_name: p.name
+    }));
+
+  const { error } = await supabaseClient
+    .from("challenge_participants")
+    .insert(participants);
+
+  if (error){
+    showFixedMessage("Error saving participants");
+    return;
+  }
+
+  closeChallengeModal();
+
+  showFixedMessage("🔥 Challenge sent!");
+
+};
+function closeChallengeModal(){
+  document.getElementById("challengeModal").style.display = "none";
+}
+
+function togglePlayer(player){
+
+  if (selectedPlayers.has(player.email)){
+    selectedPlayers.delete(player.email);
+  } else {
+    selectedPlayers.add(player.email);
+  }
+
+  renderChallengeList(
+    document.getElementById("challengeSearch").value
+  );
+
+  renderSelectedPlayers();
+
+}
 
 loadChallengeFromURL();
 initializePage();
@@ -4457,6 +4584,8 @@ padding-right:6px;
 
   </div>
 </div>
+
+
 <script>
 if ('serviceWorker' in navigator) {
 navigator.serviceWorker.register('service-worker.js')
@@ -4635,6 +4764,44 @@ pushBtn.addEventListener("click", enablePush);
         💡 Hint
       </button>
     </div>
+
+  </div>
+</div>
+<div id="challengeModal" class="modal">
+  <div class="modal-content">
+
+    <h2>⚔️ Lancia Sfida</h2>
+
+    <input id="challengeSearch" type="text" placeholder="Search player..."
+    style="
+      width:100%;
+      padding:12px;
+      border-radius:12px;
+      border:none;
+      margin-bottom:10px;
+    ">
+
+    <div id="challengeList" style="
+      max-height:200px;
+      overflow-y:auto;
+      text-align:left;
+      margin-bottom:10px;
+    "></div>
+
+    <div id="challengeSelected" style="
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:10px;
+    "></div>
+
+    <button id="challengeSendBtn" class="game-btn">
+      🚀 Send Challenge
+    </button>
+
+    <button onclick="closeChallengeModal()" style="margin-top:10px;">
+      Cancel
+    </button>
 
   </div>
 </div>
