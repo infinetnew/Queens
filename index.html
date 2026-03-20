@@ -4309,10 +4309,31 @@ status.style.color = "#ff5252";
 }
 // --- CHALLENGE LINK ---
 const params = new URLSearchParams(window.location.search);
-const challengeTime = params.get("challenge");
-const challengePlayer = params.get("player");
-if (challengeTime) {
-challengeTargetTime = parseInt(challengeTime);
+const challengeId = params.get("challenge_id");
+
+let currentChallengeId = null;
+
+if (challengeId) {
+
+  currentChallengeId = challengeId;
+
+  const { data: challenge } = await supabaseClient
+    .from("challenges")
+    .select("*")
+    .eq("id", challengeId)
+    .single();
+
+  if (challenge) {
+
+    challengeTargetTime = challenge.created_time;
+    challengePlayer = challenge.created_name;
+
+    showFixedMessage(
+      `🔥 ${challengePlayer} challenged you · Beat ${formatTime(challengeTargetTime)}`,
+      "info",
+      6000
+    );
+  }
 }
 if (challengeTime) {
 if (challengePlayer) {
