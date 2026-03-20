@@ -3596,41 +3596,97 @@ if (!shareBtn) {
 shareBtn = document.createElement("button");
 shareBtn.id = "shareBtn";
 }
-shareBtn.textContent = "📤 Share result";
+shareBtn.textContent = "⚔️ Lancia sfida";
 shareBtn.style.marginTop = "10px";
 shareBtn.onclick = async () => {
-// registra challenge lanciata
-await supabaseClient.rpc("increment_challenge_launched", {
-player_email: playerEmail
-});
-const { data: stats } = await supabaseClient
-.from("players")
-.select("challenge_launched")
-.eq("email", playerEmail)
-.single();
 
-if (stats && stats.challenge_launched >= 25) {
-unlockBadge("challenge_launch_25");
-}
-const result = await getPlayerPosition() || { rank: "?", totalPlayers: "?" };
-const challengeLink =
-`${window.location.origin}/Queens/?challenge=${time}&player=${encodeURIComponent(playerName)}`;
-const text =
-`🔥 Queens Challenge
-Solved in ${formatTime(time)}.
-🏆 Rank ${result.rank}/${result.totalPlayers}
-Can you do better?
-Or is this too hard for you?
-${challengeLink}`;
-if (navigator.share) {
-navigator.share({
-title: "Queens Game",
-text: text
-});
-} else {
-navigator.clipboard.writeText(text);
-showFixedMessage("Result copied to clipboard");
-}
+  // 🔴 1. incrementa challenge launched
+  await supabaseClient.rpc("increment_challenge_launched", {
+    player_email: playerEmail
+  });
+
+  const { data: stats } = await supabaseClient
+    .from("players")
+    .select("challenge_launched")
+    .eq("email", playerEmail)
+    .single();
+
+  if (stats && stats.challenge_launched >= 25) {
+    unlockBadge("challenge_launch_25");
+  }
+
+  // 🔴 2. PRENDI PLAYER DISPONIBILI
+  const { data: players } = await supabaseClient
+    .from("players")
+    .select("email, name")
+    .neq("email", playerEmail);
+
+  if (!players || players.length === 0) {
+    showFixedMessage("No players available");
+    return;
+  }
+
+  // 🔴 3. SELEZIONE (INPUT)
+  const input = prompt(
+    "Select players (comma separated emails):\n\n" +
+    players.map(p => p.email).join("\n")
+  );
+
+  if (!input) return;
+
+  const selectedEmails = input
+    .split(",")
+    .map(e => e.trim())
+    .filter(e => e.length > 0);
+
+  // 🔴 4. CREA CHALLENGE
+  const { data: challenge } = await supabaseClient
+    .from("challenges")
+    .insert({
+      created_by: playerEmail,
+      created_name: playerName,
+      created_time: time
+    })
+    .select()
+    .single();
+
+  if (!challenge) {
+    showFixedMessage("Error creating challenge");
+    return;
+  }
+
+  // 🔴 5. CREA PARTECIPANTI
+  const participants = players
+    .filter(p => selectedEmails.includes(p.email))
+    .map(p => ({
+      challenge_id: challenge.id,
+      player_email: p.email,
+      player_name: p.name
+    }));
+
+  if (participants.length === 0) {
+    showFixedMessage("No valid players selected");
+    return;
+  }
+
+  const { error: insertError } = await supabaseClient
+    .from("challenge_participants")
+    .insert(participants);
+
+  if (insertError) {
+    console.error(insertError);
+    showFixedMessage("Error saving participants");
+    return;
+  }
+
+  // 🔴 6. LINK NUOVO
+  const link =
+    `${window.location.origin}/Queens/?challenge_id=${challenge.id}`;
+
+  await navigator.clipboard.writeText(link);
+
+  showFixedMessage("Challenge link copied!");
+
 };
 const modalContent = document.querySelector("#winModal .modal-content");
 const closeBtn = document.getElementById("modalBtn");
