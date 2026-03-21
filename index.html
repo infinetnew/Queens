@@ -3688,13 +3688,21 @@ button.onclick = closeModal;
 modal.style.display = "flex";
 }
 async function openChallengeModal(time){
-console.log("Opening challenge modal");
-modal.style.display = "flex";
+
   const modal = document.getElementById("challengeModal");
+  if (!modal) {
+    console.error("Challenge modal not found");
+    return;
+  }
+
+  console.log("Opening challenge modal");
+
+  modal.style.display = "flex";
 
   selectedPlayers.clear();
-document.getElementById("challengeSearch").value = "";
-filteredPlayers = [...allPlayers];
+
+  const search = document.getElementById("challengeSearch");
+  if (search) search.value = "";
 
   const { data: players } = await supabaseClient
     .from("players")
@@ -3706,7 +3714,6 @@ filteredPlayers = [...allPlayers];
 
   renderChallengeList();
 
-  modal.style.display = "flex";
   modal.dataset.time = time;
 }
 function renderChallengeList(){
