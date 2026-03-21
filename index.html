@@ -2206,6 +2206,7 @@ best_streak,
 last_played_date,
 challenge_wins,
 challenge_launched,
+challenge_defend,
 podiums,
 no_hint_wins,
 easy_wins,
@@ -2295,6 +2296,11 @@ if (challengeTargetTime) {
           challenge_defend: (creatorStats?.challenge_defend || 0) + 1
         })
         .eq("email", challengeCreator);
+// 🔥 BADGE DEFENSE
+const newDefend = (creatorStats?.challenge_defend || 0) + 1;
+
+if (newDefend >= 10) unlockBadge("def_10");
+if (newDefend >= 25) unlockBadge("def_25");
 
     }
 
@@ -3134,7 +3140,9 @@ badges: [
 { code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" },
 { code:"challenge_launch_25", name:"Challenger", description:"Launch 25 challenges", goal:25 },
 { code:"challenge_win_10", name:"Challenge King", description:"Win 10 challenges", goal:10 },
-{ code:"challenge_win_25", name:"Duel Master", description:"Win 25 challenges", goal:25 }
+{ code:"challenge_win_25", name:"Duel Master", description:"Win 25 challenges", goal:25 },
+{ code:"def_10", name:"Shield Wall", description:"Defend 10 challenges", goal:10 },
+{ code:"def_25", name:"Fortress", description:"Defend 25 challenges", goal:25 }
 ]
 },
 experience: {
@@ -3533,7 +3541,8 @@ const bestTime = playerStats?.best_time || 0;
 const podiums = playerStats?.podiums || 0;
 const dailyWins = playerStats?.daily_wins || 0;
 const challengeWins = playerStats?.challenge_wins || 0;
-const challengesLaunched = playerStats?.challenges_launched || 0;
+const challengeLaunched = playerStats?.challenges_launched || 0;
+const challengesDefended = playerStats?.challenge_defend || 0;
 
 const easyWins = playerStats?.easy_wins || 0;
 const mediumWins = playerStats?.medium_wins || 0;
@@ -3672,6 +3681,10 @@ ${playerName}
 <div class="stat-card">
 <div class="stat-title">🚀 Launched</div>
 <div class="stat-value">${challengesLaunched}</div>
+</div>
+<div class="stat-card">
+<div class="stat-title">🛡 Defended</div>
+<div class="stat-value">${challengesDefended}</div>
 </div>
 
 </div>
