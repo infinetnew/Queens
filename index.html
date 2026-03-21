@@ -3709,10 +3709,11 @@ async function openChallengeModal(time){
     .select("email, name, country_code")
     .neq("email", playerEmail);
 
-  allPlayers = players || [];
-  filteredPlayers = [...allPlayers];
+allPlayers = players || [];
+filteredPlayers = []; // 🔥 niente lista iniziale
 
-  renderChallengeList();
+renderChallengeList();
+renderSelectedPlayers(); // 🔥 aggiunto
 
   modal.dataset.time = time;
 }
@@ -3757,18 +3758,58 @@ function renderChallengeList(){
       "></div>
     `;
 
-    row.onclick = () => {
-      if (selectedPlayers.has(p.email)){
-        selectedPlayers.delete(p.email);
-      } else {
-        selectedPlayers.add(p.email);
-      }
-      renderChallengeList();
-    };
+row.onclick = () => {
+
+  if (selectedPlayers.has(p.email)){
+    selectedPlayers.delete(p.email);
+  } else {
+    selectedPlayers.add(p.email);
+  }
+
+  filteredPlayers = []; // 🔥 sparisce lista dopo selezione
+
+  renderChallengeList();
+  renderSelectedPlayers();
+};
 
     list.appendChild(row);
   });
 
+}
+function renderSelectedPlayers(){
+
+  const container = document.getElementById("selectedPlayers");
+  container.innerHTML = "";
+
+  selectedPlayers.forEach(email => {
+
+    const p = allPlayers.find(x => x.email === email);
+    if (!p) return;
+
+    const chip = document.createElement("div");
+
+    chip.style.display = "flex";
+    chip.style.alignItems = "center";
+    chip.style.gap = "6px";
+    chip.style.padding = "6px 10px";
+    chip.style.borderRadius = "20px";
+    chip.style.background = "rgba(255,255,255,0.1)";
+    chip.style.cursor = "pointer";
+
+    chip.innerHTML = `
+      <span>${p.name}</span>
+      <img src="https://flagcdn.com/24x18/${(p.country_code || "un").toLowerCase()}.png"
+           style="width:16px;border-radius:2px;">
+      <span style="color:#ff5252;font-weight:700;">✕</span>
+    `;
+
+    chip.onclick = () => {
+      selectedPlayers.delete(email);
+      renderSelectedPlayers();
+    };
+
+    container.appendChild(chip);
+  });
 }
 function closeChallengeModal(){
   document.getElementById("challengeModal").style.display = "none";
@@ -4074,18 +4115,24 @@ document.addEventListener("DOMContentLoaded", () => {
 const searchInput = document.getElementById("challengeSearch");
 
 if (searchInput) {
-  searchInput.addEventListener("input", (e)=>{
+searchInput.addEventListener("input", (e)=>{
 
-    const value = e.target.value.toLowerCase();
+  const value = e.target.value.toLowerCase();
 
-    filteredPlayers = allPlayers.filter(p =>
-      p.name.toLowerCase().includes(value) ||
-      p.email.toLowerCase().includes(value)
-    );
+  if (!value) {
+    filteredPlayers = []; // 🔥 vuoto = nessun risultato
+  } else {
+    filteredPlayers = allPlayers
+      .filter(p =>
+        p.name.toLowerCase().includes(value) ||
+        p.email.toLowerCase().includes(value)
+      )
+      .slice(0, 10); // 🔥 limita risultati (fondamentale)
+  }
 
-    renderChallengeList();
+  renderChallengeList();
 
-  });
+});
 }
   // ⚔️ SEND CHALLENGE
   document.getElementById("sendChallengeBtn").onclick = async () => {
@@ -4569,6 +4616,12 @@ padding-right:6px;
       max-height:300px;
       text-align:left;
     "></div>
+<div id="selectedPlayers" style="
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:12px;
+"></div>
 
     <button id="sendChallengeBtn">Send Challenge</button>
     <button onclick="closeChallengeModal()">Cancel</button>
