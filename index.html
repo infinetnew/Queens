@@ -4146,7 +4146,7 @@ searchInput.addEventListener("input", (e)=>{
 
     const btn = document.getElementById("sendChallengeBtn");
     btn.disabled = true; // 🔒 evita doppio click
-
+  try {
     if (selectedPlayers.size === 0){
       showFixedMessage("Select at least one player");
       btn.disabled = false;
@@ -4184,27 +4184,35 @@ searchInput.addEventListener("input", (e)=>{
     const link =
       `${window.location.origin}/Queens/?challenge_id=${challenge.id}`;
 
-    await navigator.clipboard.writeText(link);
-
-// 🔥 CHIUDI SUBITO (fix iOS)
+// 🔥 1. chiudi IMMEDIATO (PRIMA di qualsiasi await pesante)
 closeChallengeModal();
 
-// blur per sicurezza tastiera iOS
+// 🔥 2. cleanup UI iOS
 document.activeElement?.blur();
 document.getElementById("challengeSearch")?.blur();
 
-// clipboard DOPO (non deve bloccare UI)
-try {
-  await navigator.clipboard.writeText(link);
-} catch(e) {
-  console.log("Clipboard error", e);
-}
+// 🔥 3. clipboard NON bloccante (dopo)
+setTimeout(async () => {
+  try {
+    await navigator.clipboard.writeText(link);
+  } catch(e) {
+    console.log("Clipboard error", e);
+  }
+}, 0);
 
-// messaggio dopo
+// 🔥 4. feedback
 showFixedMessage("⚔️ Challenge sent!");
+  } catch (err) {
 
-btn.disabled = false;
-};
+    console.error(err);
+    showFixedMessage("Error sending challenge", "error");
+
+  } finally {
+
+    // 🔥 QUESTA È LA MAGIA
+    btn.disabled = false;
+
+  }
 });
 document.getElementById("rulesFloating").addEventListener("click", () => {
 showRulesModal(
