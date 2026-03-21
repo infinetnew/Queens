@@ -1387,8 +1387,8 @@ function updateChallengeButton(){
   const btn = document.getElementById("challengeBtn");
   if (!btn) return;
 
-  // 🔥 NUOVO CONTROLLO
-  if (window.alreadyPlayedToday){
+  // 🔥 BLOCCO TOTALE
+  if (window.alreadyPlayedToday === true){
     btn.style.display = "none";
     return;
   }
@@ -1909,7 +1909,6 @@ document.getElementById("logoutFloating").style.display = "flex";
 playerEmail = data.email;
 playerName = data.name;
 countryCode = data.country_code;
-await loadReceivedChallenges();
 await showYesterdayResult();
 // carica badge già ottenuti
 const { data: existingBadges } = await supabaseClient
@@ -1943,6 +1942,7 @@ startBtn.disabled = false;
 startBtn.innerText = "▶ Play";
 const todayResult = await getTodayResult();
 window.alreadyPlayedToday = todayResult?.completed === true;
+await loadReceivedChallenges();
 if (!todayResult) {
 // nessuna partita iniziata oggi
 startBtn.style.display = "inline-block";
