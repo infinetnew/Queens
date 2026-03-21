@@ -3645,7 +3645,7 @@ shareBtn.textContent = "⚔️ Lancia sfida";
 shareBtn.style.marginTop = "10px";
 shareBtn.onclick = async () => {
 
-  // 🔴 1. incrementa challenge launched
+  // 🔴 incrementa challenge launched
   await supabaseClient.rpc("increment_challenge_launched", {
     player_email: playerEmail
   });
@@ -3660,16 +3660,8 @@ shareBtn.onclick = async () => {
     unlockBadge("challenge_launch_25");
   }
 
-  // 🔴 2. PRENDI PLAYER DISPONIBILI
-  const { data: players } = await supabaseClient
-    .from("players")
-    .select("email, name")
-    .neq("email", playerEmail);
-
-  if (!players || players.length === 0) {
-    showFixedMessage("No players available");
-    return;
-  }
+  // 🔥 QUESTA È LA RIGA CHE TI MANCA
+  openChallengeModal(time);
 
 };
 const modalContent = document.querySelector("#winModal .modal-content");
