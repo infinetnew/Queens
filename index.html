@@ -2299,8 +2299,8 @@ if (challengeTargetTime) {
 // 🔥 BADGE DEFENSE
 const newDefend = (creatorStats?.challenge_defend || 0) + 1;
 
-if (newDefend >= 10) unlockBadge("def_10");
-if (newDefend >= 25) unlockBadge("def_25");
+if (newDefend >= 10) await unlockBadgeForUser(challengeCreator, "def_10");
+if (newDefend >= 25) await unlockBadgeForUser(challengeCreator, "def_25");
 
     }
 
@@ -4564,6 +4564,27 @@ if (!error) {
 playerBadges.add(badgeCode);
 unlockedBadgesThisGame.push(badgeCode);
 }
+
+}
+async function unlockBadgeForUser(email, badgeCode){
+
+  const { data } = await supabaseClient
+    .from("player_badges")
+    .select("badge_code")
+    .eq("email", email)
+    .eq("badge_code", badgeCode)
+    .maybeSingle();
+
+  // se già ce l'ha → esci
+  if (data) return;
+
+  await supabaseClient
+    .from("player_badges")
+    .insert({
+      email: email,
+      badge_code: badgeCode,
+      seen: false
+    });
 
 }
 
