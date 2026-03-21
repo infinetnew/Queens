@@ -1231,6 +1231,9 @@ let currentChallengeId = null;
 let playerEmail = null;
 let playerName = null;
 let countryCode = null;
+let allPlayers = [];
+let filteredPlayers = [];
+let selectedPlayers = new Set();
 let isRegisterMode = false;
 let isResetMode = false;
 const colors = [
@@ -3668,67 +3671,6 @@ shareBtn.onclick = async () => {
     return;
   }
 
-  // 🔴 3. SELEZIONE (INPUT)
-  const input = prompt(
-    "Select players (comma separated emails):\n\n" +
-    players.map(p => p.email).join("\n")
-  );
-
-  if (!input) return;
-
-  const selectedEmails = input
-    .split(",")
-    .map(e => e.trim())
-    .filter(e => e.length > 0);
-
-  // 🔴 4. CREA CHALLENGE
-  const { data: challenge } = await supabaseClient
-    .from("challenges")
-    .insert({
-      created_by: playerEmail,
-      created_name: playerName,
-      created_time: time
-    })
-    .select()
-    .single();
-
-  if (!challenge) {
-    showFixedMessage("Error creating challenge");
-    return;
-  }
-
-  // 🔴 5. CREA PARTECIPANTI
-  const participants = players
-    .filter(p => selectedEmails.includes(p.email))
-    .map(p => ({
-      challenge_id: challenge.id,
-      player_email: p.email,
-      player_name: p.name
-    }));
-
-  if (participants.length === 0) {
-    showFixedMessage("No valid players selected");
-    return;
-  }
-
-  const { error: insertError } = await supabaseClient
-    .from("challenge_participants")
-    .insert(participants);
-
-  if (insertError) {
-    console.error(insertError);
-    showFixedMessage("Error saving participants");
-    return;
-  }
-
-  // 🔴 6. LINK NUOVO
-  const link =
-    `${window.location.origin}/Queens/?challenge_id=${challenge.id}`;
-
-  await navigator.clipboard.writeText(link);
-
-  showFixedMessage("Challenge link copied!");
-
 };
 const modalContent = document.querySelector("#winModal .modal-content");
 const closeBtn = document.getElementById("modalBtn");
@@ -3752,6 +3694,83 @@ font-size:18px;
 button.textContent = "Close";
 button.onclick = closeModal;
 modal.style.display = "flex";
+}
+async function openChallengeModal(time){
+
+  const modal = document.getElementById("challengeModal");
+
+  selectedPlayers.clear();
+document.getElementById("challengeSearch").value = "";
+filteredPlayers = [...allPlayers];
+
+  const { data: players } = await supabaseClient
+    .from("players")
+    .select("email, name, country_code")
+    .neq("email", playerEmail);
+
+  allPlayers = players || [];
+  filteredPlayers = [...allPlayers];
+
+  renderChallengeList();
+
+  modal.style.display = "flex";
+  modal.dataset.time = time;
+}
+function renderChallengeList(){
+
+  const list = document.getElementById("challengeList");
+  list.innerHTML = "";
+
+  filteredPlayers.forEach(p => {
+
+    const row = document.createElement("div");
+
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.justifyContent = "space-between";
+    row.style.padding = "10px";
+    row.style.borderRadius = "12px";
+    row.style.marginBottom = "6px";
+    row.style.background = "rgba(255,255,255,0.05)";
+    row.style.cursor = "pointer";
+
+    const isSelected = selectedPlayers.has(p.email);
+
+    if (isSelected){
+      row.style.border = "2px solid #ffd700";
+    }
+
+    row.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span>${p.name}</span>
+        <img src="https://flagcdn.com/24x18/${(p.country_code || "un").toLowerCase()}.png"
+             style="width:20px;border-radius:2px;">
+      </div>
+
+      <div style="
+        width:18px;
+        height:18px;
+        border-radius:50%;
+        border:2px solid #ffd700;
+        background:${isSelected ? "#ffd700" : "transparent"};
+      "></div>
+    `;
+
+    row.onclick = () => {
+      if (selectedPlayers.has(p.email)){
+        selectedPlayers.delete(p.email);
+      } else {
+        selectedPlayers.add(p.email);
+      }
+      renderChallengeList();
+    };
+
+    list.appendChild(row);
+  });
+
+}
+function closeChallengeModal(){
+  document.getElementById("challengeModal").style.display = "none";
 }
 async function closeModal() {
 // Chiudi modal vittoria
@@ -4049,6 +4068,73 @@ document.addEventListener("DOMContentLoaded", () => {
   if (hintBtn) {
     hintBtn.addEventListener("click", giveHint);
   }
+
+  // 🔍 SEARCH PLAYERS
+  document.getElementById("challengeSearch").addEventListener("input", (e)=>{
+
+    const value = e.target.value.toLowerCase();
+
+    filteredPlayers = allPlayers.filter(p =>
+      p.name.toLowerCase().includes(value) ||
+      p.email.toLowerCase().includes(value)
+    );
+
+    renderChallengeList();
+
+  });
+
+  // ⚔️ SEND CHALLENGE
+  document.getElementById("sendChallengeBtn").onclick = async () => {
+
+    const btn = document.getElementById("sendChallengeBtn");
+    btn.disabled = true; // 🔒 evita doppio click
+
+    if (selectedPlayers.size === 0){
+      showFixedMessage("Select at least one player");
+      btn.disabled = false;
+      return;
+    }
+
+    const modal = document.getElementById("challengeModal");
+    const time = parseInt(modal.dataset.time);
+
+    const { data: challenge } = await supabaseClient
+      .from("challenges")
+      .insert({
+        created_by: playerEmail,
+        created_name: playerName,
+        created_time: time
+      })
+      .select()
+      .single();
+
+    const participants = Array.from(selectedPlayers).map(email => {
+
+      const player = allPlayers.find(p => p.email === email);
+
+      return {
+        challenge_id: challenge.id,
+        player_email: player.email,
+        player_name: player.name
+      };
+    });
+
+    await supabaseClient
+      .from("challenge_participants")
+      .insert(participants);
+
+    const link =
+      `${window.location.origin}/Queens/?challenge_id=${challenge.id}`;
+
+    await navigator.clipboard.writeText(link);
+
+    showFixedMessage("⚔️ Challenge sent!");
+
+    btn.disabled = false;
+
+    closeChallengeModal();
+  };
+
 });
 document.getElementById("rulesFloating").addEventListener("click", () => {
 showRulesModal(
@@ -4454,6 +4540,34 @@ padding-right:6px;
     "></div>
 
     <button onclick="closePublicBadgeModal()">Close</button>
+
+  </div>
+</div>
+<div id="challengeModal" class="modal">
+  <div class="modal-content">
+
+    <h2>⚔️ Send Challenge</h2>
+
+    <input 
+      id="challengeSearch"
+      placeholder="Search player..."
+      style="
+        width:100%;
+        padding:12px;
+        border-radius:12px;
+        border:none;
+        margin-bottom:12px;
+      "
+    >
+
+    <div id="challengeList" style="
+      overflow-y:auto;
+      max-height:300px;
+      text-align:left;
+    "></div>
+
+    <button id="sendChallengeBtn">Send Challenge</button>
+    <button onclick="closeChallengeModal()">Cancel</button>
 
   </div>
 </div>
