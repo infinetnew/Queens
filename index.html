@@ -3688,7 +3688,8 @@ button.onclick = closeModal;
 modal.style.display = "flex";
 }
 async function openChallengeModal(time){
-
+console.log("Opening challenge modal");
+modal.style.display = "flex";
   const modal = document.getElementById("challengeModal");
 
   selectedPlayers.clear();
@@ -3709,6 +3710,7 @@ filteredPlayers = [...allPlayers];
   modal.dataset.time = time;
 }
 function renderChallengeList(){
+  if (!filteredPlayers) return;
 
   const list = document.getElementById("challengeList");
   list.innerHTML = "";
@@ -4062,7 +4064,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🔍 SEARCH PLAYERS
-  document.getElementById("challengeSearch").addEventListener("input", (e)=>{
+const searchInput = document.getElementById("challengeSearch");
+
+if (searchInput) {
+  searchInput.addEventListener("input", (e)=>{
 
     const value = e.target.value.toLowerCase();
 
@@ -4074,7 +4079,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderChallengeList();
 
   });
-
+}
   // ⚔️ SEND CHALLENGE
   document.getElementById("sendChallengeBtn").onclick = async () => {
 
