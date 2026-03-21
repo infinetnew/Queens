@@ -2269,6 +2269,12 @@ if (challengeTargetTime) {
   if (isWinner) {
 
     unlockBadge("challenge_king");
+  const newWins = (playerStats.challenge_wins || 0) + 1;
+
+  // 🔥 BADGE CHALLENGE WIN
+  if (newWins >= 10) unlockBadge("challenge_win_10");
+  if (newWins >= 25) unlockBadge("challenge_win_25");
+  if (newWins >= 100) unlockBadge("challenge_win_100");
 
     await supabaseClient
       .from("players")
@@ -2301,7 +2307,7 @@ const newDefend = (creatorStats?.challenge_defend || 0) + 1;
 
 if (newDefend >= 10) await unlockBadgeForUser(challengeCreator, "def_10");
 if (newDefend >= 25) await unlockBadgeForUser(challengeCreator, "def_25");
-
+if (newDefend >= 100) await unlockBadgeForUser(challengeCreator, "def_100");
     }
 
   }
@@ -3139,10 +3145,13 @@ badges: [
 { code:"win_25", name:"Absolute Champion", description:"Win the daily leaderboard 25 times", goal:25 },
 { code:"monthly_1", name:"Monthly Champion", description:"Finish 1st in the monthly leaderboard" },
 { code:"challenge_launch_25", name:"Challenger", description:"Launch 25 challenges", goal:25 },
+{ code:"challenge_launch_100", name:"Grand Challenger", description:"Launch 100 challenges", goal:100 },
 { code:"challenge_win_10", name:"Challenge King", description:"Win 10 challenges", goal:10 },
 { code:"challenge_win_25", name:"Duel Master", description:"Win 25 challenges", goal:25 },
+{ code:"challenge_win_100", name:"Duel Legend", description:"Win 100 challenges", goal:100 },
 { code:"def_10", name:"Shield Wall", description:"Defend 10 challenges", goal:10 },
-{ code:"def_25", name:"Fortress", description:"Defend 25 challenges", goal:25 }
+{ code:"def_25", name:"Fortress", description:"Defend 25 challenges", goal:25 },
+{ code:"def_100", name:"Iron Fortress", description:"Defend 100 challenges", goal:100 }
 ]
 },
 experience: {
@@ -3737,9 +3746,14 @@ shareBtn.onclick = async () => {
     .eq("email", playerEmail)
     .single();
 
-  if (stats && stats.challenge_launched >= 25) {
+if (stats) {
+  if (stats.challenge_launched >= 25) {
     unlockBadge("challenge_launch_25");
   }
+  if (stats.challenge_launched >= 100) {
+    unlockBadge("challenge_launch_100");
+  }
+}
 
   // 🔥 QUESTA È LA RIGA CHE TI MANCA
   openChallengeModal(time);
