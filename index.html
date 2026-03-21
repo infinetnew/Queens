@@ -1387,6 +1387,12 @@ function updateChallengeButton(){
   const btn = document.getElementById("challengeBtn");
   if (!btn) return;
 
+  // 🔥 NUOVO CONTROLLO
+  if (window.alreadyPlayedToday){
+    btn.style.display = "none";
+    return;
+  }
+
   if (receivedChallenges.length > 0){
     btn.style.display = "inline-block";
     btn.textContent = `⚔️ Challenges (${receivedChallenges.length})`;
@@ -1936,6 +1942,7 @@ if (!puzzleLoaded) {
 startBtn.disabled = false;
 startBtn.innerText = "▶ Play";
 const todayResult = await getTodayResult();
+window.alreadyPlayedToday = todayResult?.completed === true;
 if (!todayResult) {
 // nessuna partita iniziata oggi
 startBtn.style.display = "inline-block";
