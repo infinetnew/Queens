@@ -1092,6 +1092,9 @@ stroke-linecap="round"/>
 </div>
 </div>
 <button id="startBtn" class="game-btn">▶ Play</button>
+<button id="challengeBtn" class="game-btn" style="display:none;">
+⚔️ Challenges
+</button>
 
 </div>
 <div id="leaderboardModal" style="display:none; margin-top:25px;">
@@ -1237,6 +1240,7 @@ let countryCode = null;
 let allPlayers = [];
 let filteredPlayers = [];
 let selectedPlayers = new Set();
+let receivedChallenges = [];
 let isRegisterMode = false;
 let isResetMode = false;
 const colors = [
@@ -1343,6 +1347,52 @@ return [];
 
 return data;
 
+}
+async function loadReceivedChallenges(){
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data, error } = await supabaseClient
+    .from("challenge_participants")
+    .select(`
+      id,
+      challenge_id,
+      player_email,
+      challenges (
+        id,
+        created_name,
+        created_time,
+        created_at
+      )
+    `)
+    .eq("player_email", playerEmail)
+    .is("completed", false);
+
+  if (error){
+    console.error(error);
+    return;
+  }
+
+  if (!data) return;
+
+  receivedChallenges = data.filter(c => {
+    const d = c.challenges?.created_at?.split("T")[0];
+    return d === today;
+  });
+
+  updateChallengeButton();
+}
+function updateChallengeButton(){
+
+  const btn = document.getElementById("challengeBtn");
+  if (!btn) return;
+
+  if (receivedChallenges.length > 0){
+    btn.style.display = "inline-block";
+    btn.textContent = `⚔️ Challenges (${receivedChallenges.length})`;
+  } else {
+    btn.style.display = "none";
+  }
 }
 function showFixedMessage(text, type = "info", DURATION = 2500) {
 
@@ -1853,6 +1903,7 @@ document.getElementById("logoutFloating").style.display = "flex";
 playerEmail = data.email;
 playerName = data.name;
 countryCode = data.country_code;
+await loadReceivedChallenges();
 await showYesterdayResult();
 // carica badge già ottenuti
 const { data: existingBadges } = await supabaseClient
@@ -3917,6 +3968,44 @@ if (dots[0]) dots[0].classList.add("active");
 // Apri modal leaderboard
 document.getElementById("leaderboardModal").style.display = "block";
 }
+function openChallengeSelectionModal(){
+
+  const modal = document.getElementById("challengeSelectModal");
+  const list = document.getElementById("challengeSelectList");
+
+  list.innerHTML = "";
+
+  const sorted = [...receivedChallenges].sort(
+    (a,b) => a.challenges.created_time - b.challenges.created_time
+  );
+
+  sorted.forEach(c => {
+
+    const div = document.createElement("div");
+
+    div.style.padding = "12px";
+    div.style.borderRadius = "14px";
+    div.style.marginBottom = "8px";
+    div.style.background = "rgba(255,255,255,0.06)";
+    div.style.cursor = "pointer";
+
+    div.innerHTML = `
+      <div style="font-weight:700;">${c.challenges.created_name}</div>
+      <div style="opacity:0.8;">Beat ${formatTime(c.challenges.created_time)}</div>
+    `;
+
+    div.onclick = () => selectChallenge(c);
+
+    list.appendChild(div);
+
+  });
+
+  modal.style.display = "flex";
+}
+
+function closeChallengeSelect(){
+  document.getElementById("challengeSelectModal").style.display = "none";
+}
 function closeLeaderboardModal() {
 document.getElementById("leaderboardModal").style.display = "none";
 }
@@ -3989,6 +4078,9 @@ leaderboardDiv.appendChild(positionBox);
 document.getElementById("playerInfo").appendChild(leaderboardDiv);
 }
 startBtn.addEventListener("click", async () => {
+if (!currentChallengeId){
+  await rejectAllChallenges();
+}
 // 🛡️ SICUREZZA TOTALE
 if (startBtn.disabled) return;
 
@@ -4117,6 +4209,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (hintBtn) {
     hintBtn.addEventListener("click", giveHint);
   }
+const challengeBtn = document.getElementById("challengeBtn");
+if (challengeBtn){
+  challengeBtn.addEventListener("click", openChallengeSelectionModal);
+}
 
   // 🔍 SEARCH PLAYERS
 const searchInput = document.getElementById("challengeSearch");
@@ -4470,6 +4566,49 @@ String(m).padStart(2, "0") +
 String(s).padStart(2, "0")
 );
 }
+
+function selectChallenge(c){
+
+  currentChallengeId = c.challenge_id;
+  challengeTargetTime = c.challenges.created_time;
+  challengePlayer = c.challenges.created_name;
+
+  rejectOtherChallenges(c.challenge_id);
+
+  closeChallengeSelect();
+
+  startBtn.click();
+}
+async function rejectOtherChallenges(selectedId){
+
+  const others = receivedChallenges.filter(c => c.challenge_id !== selectedId);
+
+  for (const c of others){
+    await supabaseClient
+      .from("challenge_participants")
+      .update({
+        completed: true,
+        is_winner: false,
+        status: "rejected"
+      })
+      .eq("id", c.id);
+  }
+
+}
+async function rejectAllChallenges(){
+
+  for (const c of receivedChallenges){
+    await supabaseClient
+      .from("challenge_participants")
+      .update({
+        completed: true,
+        is_winner: false,
+        status: "rejected"
+      })
+      .eq("id", c.id);
+  }
+
+}
 function updateChallengeColor(seconds){
 
 if(!challengeTargetTime) return;
@@ -4514,6 +4653,7 @@ status.style.color = "#ff5252";
 }
 
 }
+
 async function loadChallengeFromURL() {
 
   const params = new URLSearchParams(window.location.search);
@@ -4654,6 +4794,21 @@ font-size:16px; /* ✅ FIX iOS zoom */
 
     <button id="sendChallengeBtn">Send Challenge</button>
     <button onclick="closeChallengeModal()">Cancel</button>
+
+  </div>
+</div>
+<div id="challengeSelectModal" class="modal">
+  <div class="modal-content">
+
+    <h2>⚔️ Choose your challenge</h2>
+
+    <div id="challengeSelectList" style="
+      overflow-y:auto;
+      max-height:300px;
+      margin-top:15px;
+    "></div>
+
+    <button onclick="closeChallengeSelect()">Cancel</button>
 
   </div>
 </div>
