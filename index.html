@@ -4186,21 +4186,25 @@ searchInput.addEventListener("input", (e)=>{
 
     await navigator.clipboard.writeText(link);
 
-showFixedMessage("⚔️ Challenge sent!");
+// 🔥 CHIUDI SUBITO (fix iOS)
+closeChallengeModal();
 
-// ✅ FIX iOS (IMPORTANTISSIMO)
-document.activeElement.blur();
+// blur per sicurezza tastiera iOS
+document.activeElement?.blur();
 document.getElementById("challengeSearch")?.blur();
 
-// chiusura leggermente ritardata
-setTimeout(() => {
-  closeChallengeModal();
-}, 50);
+// clipboard DOPO (non deve bloccare UI)
+try {
+  await navigator.clipboard.writeText(link);
+} catch(e) {
+  console.log("Clipboard error", e);
+}
+
+// messaggio dopo
+showFixedMessage("⚔️ Challenge sent!");
 
 btn.disabled = false;
-  };
-
-});
+};
 document.getElementById("rulesFloating").addEventListener("click", () => {
 showRulesModal(
 `🧠 QUEENS — PURE STRATEGY
