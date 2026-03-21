@@ -24,6 +24,10 @@ justify-content: flex-start;
 
 min-height: 100vh;
 min-height: 100dvh;
+  height: 100vh;            /* ✅ AGGIUNTO */
+  overflow: hidden;         /* ✅ AGGIUNTO */
+  position: fixed;          /* ✅ AGGIUNTO */
+  width: 100%;              /* ✅ AGGIUNTO */
 
 margin: 0;
 
@@ -3688,6 +3692,7 @@ button.onclick = closeModal;
 modal.style.display = "flex";
 }
 async function openChallengeModal(time){
+document.body.style.overflow = "hidden";
 
   const modal = document.getElementById("challengeModal");
   if (!modal) {
@@ -3813,6 +3818,9 @@ function renderSelectedPlayers(){
 }
 function closeChallengeModal(){
   document.getElementById("challengeModal").style.display = "none";
+
+  // ✅ riabilita scroll
+  document.body.style.overflow = "auto";
 }
 async function closeModal() {
 // Chiudi modal vittoria
@@ -4179,11 +4187,18 @@ searchInput.addEventListener("input", (e)=>{
 
     await navigator.clipboard.writeText(link);
 
-    showFixedMessage("⚔️ Challenge sent!");
+showFixedMessage("⚔️ Challenge sent!");
 
-    btn.disabled = false;
+// ✅ FIX iOS (IMPORTANTISSIMO)
+document.activeElement.blur();
+document.getElementById("challengeSearch")?.blur();
 
-    closeChallengeModal();
+// chiusura leggermente ritardata
+setTimeout(() => {
+  closeChallengeModal();
+}, 50);
+
+btn.disabled = false;
   };
 
 });
@@ -4608,6 +4623,7 @@ padding-right:6px;
         border-radius:12px;
         border:none;
         margin-bottom:12px;
+font-size:16px; /* ✅ FIX iOS zoom */
       "
     >
 
