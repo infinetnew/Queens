@@ -1091,9 +1091,9 @@ stroke-linecap="round"/>
  "></span>
 </div>
 </div>
-<button id="startBtn" class="game-btn">▶ Play</button>
+<button id="startBtn" class="game-btn">▶ Start Run</button>
 <button id="challengeBtn" class="game-btn" style="display:none;">
-⚔️ Challenges
+⚔️ Duels
 </button>
 
 </div>
@@ -1218,7 +1218,7 @@ let cells = [];
 const gridElement = document.getElementById("grid");
 const startBtn = document.getElementById("startBtn");
 startBtn.disabled = true;
-startBtn.innerText = "Loading...";
+startBtn.innerText = "Preparing Run...";
 let hintBtn;
 let hintsUsed = 0;
 const maxHints = 3;
@@ -1939,7 +1939,7 @@ if (!puzzleLoaded) {
 
 // ✅ SBLOCCA PLAY SOLO QUI
 startBtn.disabled = false;
-startBtn.innerText = "▶ Play";
+startBtn.innerText = "▶ Start Run";
 const todayResult = await getTodayResult();
 window.alreadyPlayedToday = todayResult?.completed === true;
 await loadReceivedChallenges();
@@ -3731,7 +3731,7 @@ if (!shareBtn) {
 shareBtn = document.createElement("button");
 shareBtn.id = "shareBtn";
 }
-shareBtn.textContent = "⚔️ Lancia sfida";
+shareBtn.textContent = "⚔️ Start Duel";
 shareBtn.style.marginTop = "10px";
 shareBtn.onclick = async () => {
 
@@ -3778,7 +3778,7 @@ font-size:18px;
 +${scoreEarned} points earned
 </div>
 `;
-button.textContent = "Close";
+button.textContent = "Continue";
 button.onclick = closeModal;
 modal.style.display = "flex";
 }
@@ -4137,7 +4137,7 @@ if (!regionMap || regionMap.length === 0) {
 startBtn.style.display = "none";
 hintBtn.style.display = "inline-block";
 hintsUsed = 0;
-hintBtn.textContent = "💡 Hint • 3";
+hintBtn.textContent = "💡 Use Hint • 3";
 const today = new Date().toISOString().split("T")[0];
 const { data: existing } = await supabaseClient
 .from("queens_results")
@@ -4152,7 +4152,7 @@ return;
 }
 startBtn.disabled = true;
 hintsUsed = existing.hints_used || 0;
-hintBtn.textContent = `💡 Hint (${maxHints - hintsUsed})`;
+hintBtn.textContent = `💡 Use Hint (${maxHints - hintsUsed})`;
 if (hintsUsed < maxHints) {
 hintBtn.disabled = false;
 } else {
@@ -4759,7 +4759,7 @@ initializePage();
 <div class="modal-content">
 <h2>👑 Game Completed</h2>
 <p id="finalTime"></p>
-<button id="modalBtn">Close</button>
+<button id="modalBtn">Continue</button>
 </div>
 </div>
 <div id="rulesModal" class="modal">
@@ -4859,8 +4859,8 @@ font-size:16px; /* ✅ FIX iOS zoom */
   margin-bottom:12px;
 "></div>
 
-    <button id="sendChallengeBtn">Send Challenge</button>
-    <button onclick="closeChallengeModal()">Cancel</button>
+    <button id="sendChallengeBtn">Send Duel</button>
+    <button onclick="closeChallengeModal()">Back</button>
 
   </div>
 </div>
@@ -4875,7 +4875,7 @@ font-size:16px; /* ✅ FIX iOS zoom */
       margin-top:15px;
     "></div>
 
-    <button onclick="closeChallengeSelect()">Cancel</button>
+    <button onclick="closeChallengeSelect()">Back</button>
 
   </div>
 </div>
@@ -5054,7 +5054,7 @@ pushBtn.addEventListener("click", enablePush);
 "></div>
     <div style="text-align:center; margin-top:12px;">
       <button id="hintBtn" class="game-btn">
-        💡 Hint
+        💡 Use Hint
       </button>
     </div>
 
