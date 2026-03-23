@@ -1706,9 +1706,23 @@ async function showDailySummary(){
       const rank = index + 1;
       const total = results.length;
 
-      resultHTML = `
-        <div>🏆 Yesterday: #${rank} / ${total}</div>
-      `;
+   let text = "";
+
+if (rank === 1){
+  text = "🥇 Winner out of " + total + " players";
+} else if (rank === 2){
+  text = "🥈 2nd place out of " + total + " players";
+} else if (rank === 3){
+  text = "🥉 3rd place out of " + total + " players";
+} else {
+  const betterThan = Math.round(((total - rank) / total) * 100);
+  text = `#${rank} out of ${total} · Better than ${betterThan}% of players`;
+}
+
+resultHTML = `
+  <div style="margin-bottom:10px;">🏆 Yesterday</div>
+  <div style="font-weight:600;">${text}</div>
+`;
     }
   }
 
