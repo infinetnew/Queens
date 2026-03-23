@@ -1743,7 +1743,7 @@ resultHTML = `
     badgeHTML += `<div style="margin-top:10px;">🏅 Achievements</div>`;
 
     newBadges.forEach(b => {
-      badgeHTML += `<div>• ${b.badge_code}</div>`;
+      badgeHTML += `<div>• ${getBadgeName(b.badge_code)}</div>`;
     });
 
   }
@@ -3336,6 +3336,18 @@ badges: [
 ]
 }
 };
+function getBadgeName(code){
+
+  for (const category of Object.values(BADGE_CATEGORIES)){
+    for (const badge of category.badges){
+      if (badge.code === code){
+        return badge.name;
+      }
+    }
+  }
+
+  return code; // fallback
+}
 const SPECIAL_TITLES = {
   founder: {
     name: "Founder",
