@@ -2119,18 +2119,23 @@ cell.classList.contains("error");
 if (!isErrorQueen) return;
 }
 const state = cell.dataset.state;
+
 if (state === "empty") {
   cell.classList.add("x");
   cell.dataset.state = "x-manual";
 }
-else if (state === "x-manual") {
+else if (state === "x-manual" || state === "x-auto") {
+
   cell.classList.remove("x");
+
+  // 🔥 IMPORTANTE: se era auto, diventa manuale implicitamente
   placeQueen(cell,row,col);
 
-} else if (state === "queen") {
-removeQueen(cell,row,col);
-cells.forEach(c => c.classList.remove("error"));
-recomputeAutoX();
+}
+else if (state === "queen") {
+  removeQueen(cell,row,col);
+  cells.forEach(c => c.classList.remove("error"));
+  recomputeAutoX();
 }
 cell.classList.remove("premium-flash");
 
