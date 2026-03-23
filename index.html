@@ -2120,11 +2120,12 @@ if (!isErrorQueen) return;
 }
 const state = cell.dataset.state;
 if (state === "empty") {
-cell.classList.add("x");
-cell.dataset.state = "x";
-} else if (state === "x") {
-cell.classList.remove("x");
-placeQueen(cell,row,col);
+  cell.classList.add("x");
+  cell.dataset.state = "x-manual";
+}
+else if (state === "x-manual") {
+  cell.classList.remove("x");
+  placeQueen(cell,row,col);
 
 } else if (state === "queen") {
 removeQueen(cell,row,col);
@@ -2740,17 +2741,17 @@ markX(i);
 function markX(index){
 const cell = cells[index];
 if(cell.dataset.state==="empty"){
-cell.dataset.state="x";
-cell.classList.add("x");
+  cell.dataset.state="x-auto";
+  cell.classList.add("x");
 }
 }
 
 function recomputeAutoX(){
 
 cells.forEach(cell=>{
-if(cell.dataset.state==="x"){
-cell.dataset.state="empty";
-cell.classList.remove("x");
+if(cell.dataset.state==="x-auto"){
+  cell.dataset.state="empty";
+  cell.classList.remove("x");
 }
 });
 
