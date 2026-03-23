@@ -1675,6 +1675,155 @@ resolve();
 });
 
 }
+async function showDailySummary(){
+
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const date = yesterday.toISOString().split("T")[0];
+
+  const seenKey = "queens_daily_summary_seen_" + date;
+  if (localStorage.getItem(seenKey)) return;
+
+  /* --------------------------
+     1. RESULT YESTERDAY
+  --------------------------- */
+
+  const { data: results } = await supabaseClient
+    .from("queens_results")
+    .select("email, time_seconds")
+    .eq("date", date)
+    .eq("completed", true)
+    .order("time_seconds", { ascending: true });
+
+  let resultHTML = "";
+
+  if (results){
+    const index = results.findIndex(p => p.email === playerEmail);
+
+    if (index !== -1){
+      const rank = index + 1;
+      const total = results.length;
+
+      resultHTML = `
+        <div>🏆 Yesterday: #${rank} / ${total}</div>
+      `;
+    }
+  }
+
+  /* --------------------------
+     2. BADGES NUOVI
+  --------------------------- */
+
+  const { data: newBadges } = await supabaseClient
+    .from("player_badges")
+    .select("badge_code")
+    .eq("email", playerEmail)
+    .eq("seen", false);
+
+  let badgeHTML = "";
+
+  if (newBadges && newBadges.length > 0){
+
+    badgeHTML += `<div style="margin-top:10px;">🏅 Achievements</div>`;
+
+    newBadges.forEach(b => {
+      badgeHTML += `<div>• ${b.badge_code}</div>`;
+    });
+
+  }
+
+  /* --------------------------
+     3. CHALLENGE
+  --------------------------- */
+
+  let challengeHTML = "";
+
+  const { data: myChallenges } = await supabaseClient
+    .from("challenges")
+    .select("id, created_at")
+    .eq("created_by", playerEmail);
+
+  if (myChallenges){
+
+    const yesterdayChallenges = myChallenges.filter(c => {
+      return c.created_at?.split("T")[0] === date;
+    });
+
+    let lines = [];
+
+    for (const ch of yesterdayChallenges){
+
+      const { data: participants } = await supabaseClient
+        .from("challenge_participants")
+        .select("player_name, completed, is_winner")
+        .eq("challenge_id", ch.id);
+
+      participants?.forEach(p => {
+
+        if (p.completed === true){
+
+          if (p.is_winner){
+            lines.push(`❌ ${p.player_name} beat your challenge`);
+          } else {
+            lines.push(`🛡️ You defended vs ${p.player_name}`);
+          }
+
+        }
+
+      });
+
+    }
+
+    if (lines.length > 0){
+
+      challengeHTML += `<div style="margin-top:10px;">⚔️ Challenges</div>`;
+
+      lines.forEach(l => {
+        challengeHTML += `<div>• ${l}</div>`;
+      });
+
+    }
+
+  }
+
+  /* --------------------------
+     4. SE VUOTO → NON MOSTRARE
+  --------------------------- */
+
+  if (!resultHTML && !badgeHTML && !challengeHTML){
+    return;
+  }
+
+  /* --------------------------
+     5. MOSTRA POPUP
+  --------------------------- */
+
+  const modal = document.getElementById("rulesModal");
+
+  document.querySelector("#rulesModal h2").textContent = "👑 Daily Summary";
+
+  document.getElementById("rulesContent").innerHTML =
+    `${resultHTML}${challengeHTML}${badgeHTML}`;
+
+  modal.style.display = "flex";
+
+  document.getElementById("rulesModalBtn").onclick = async () => {
+
+    modal.style.display = "none";
+
+    await supabaseClient
+      .from("player_badges")
+      .update({ seen: true })
+      .eq("email", playerEmail)
+      .eq("seen", false);
+
+    localStorage.setItem(seenKey, "true");
+
+  };
+
+}
 async function renderDailyPosition() {
 const dailyPosition = await getPlayerPosition();
 if (!dailyPosition) return;
@@ -1909,14 +2058,14 @@ document.getElementById("logoutFloating").style.display = "flex";
 playerEmail = data.email;
 playerName = data.name;
 countryCode = data.country_code;
-await showYesterdayResult();
+await showDailySummary();
 // carica badge già ottenuti
 const { data: existingBadges } = await supabaseClient
 .from("player_badges")
 .select("badge_code")
 .eq("email", playerEmail);
+// await checkNewBadges();
 
-await checkNewBadges();
 
 if (existingBadges) {
 playerBadges = new Set(existingBadges.map(b => b.badge_code)); }
