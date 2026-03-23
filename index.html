@@ -1740,10 +1740,29 @@ resultHTML = `
 
   if (newBadges && newBadges.length > 0){
 
-    badgeHTML += `<div style="margin-top:10px;">🏅 Achievements</div>`;
+    badgeHTML += `<div style="margin-top:10px;">🏅 New Achievements Unlocked</div>`;
 
     newBadges.forEach(b => {
-      badgeHTML += `<div>• ${getBadgeName(b.badge_code)}</div>`;
+      badgeHTML += `
+<div style="
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+  font-weight:600;
+">
+
+  <img src="badges/${b.badge_code}.png" style="
+    width:26px;
+    height:26px;
+    object-fit:contain;
+    filter: drop-shadow(0 0 6px rgba(255,215,0,0.8));
+  ">
+
+  ${getBadgeName(b.badge_code)}
+
+</div>
+`;
     });
 
   }
