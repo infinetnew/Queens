@@ -1749,7 +1749,6 @@ if (rank === 1){
 }
 
 resultHTML = `
-  <div style="margin-bottom:10px;">🏆 Yesterday</div>
   <div style="font-weight:600;">${text}</div>
 `;
     }
@@ -1769,7 +1768,7 @@ resultHTML = `
 
   if (newBadges && newBadges.length > 0){
 
-    badgeHTML += `<div style="margin-top:10px;">🏅 New Achievements Unlocked</div>`;
+   
 
     newBadges.forEach(b => {
       badgeHTML += `
@@ -1840,7 +1839,7 @@ resultHTML = `
 
     if (lines.length > 0){
 
-      challengeHTML += `<div style="margin-top:10px;">⚔️ Challenges</div>`;
+  
 
       lines.forEach(l => {
         challengeHTML += `<div>• ${l}</div>`;
@@ -1892,7 +1891,7 @@ if (challengeHTML){
 if (badgeHTML){
   finalHTML += `
     <div class="summary-section">
-      <div class="summary-title">🏅 New Achievements</div>
+      <div class="summary-title">🏅 New Achievements Unlocked</div>
       ${badgeHTML}
     </div>
   `;
