@@ -3110,74 +3110,116 @@ modal.style.display = "none";
 
 }
 function giveHint() {
-if (!startTime) return;
-if (hintsUsed >= maxHints) return;
-if (document.querySelector(".error")) return;
-const gridCells = document.querySelectorAll(".cell");
-for (let row = 0; row < size; row++) {
-let queenFound = false;
-let queenCol = null;
-let queenCell = null;
-for (let col = 0; col < size; col++) {
-const index = row * size + col;
-const cell = cells[index];
-if (cell.dataset.state === "queen") {
-queenFound = true;
-queenCol = col;
-queenCell = cell;
-break;
-}
-}
-if (queenFound && queenCol !== solution[row]) {
-removeQueen(queenCell,row,queenCol);
-queenCell.classList.add("error");
-setTimeout(() => {
-queenCell.classList.remove("error");
-}, 800);
-recomputeAutoX();
-showFixedMessage(
-`❌ I removed an incorrect Queen from row ${row + 1}. (+30s)`,
-"error"
-);
-applyHintPenalty("remove");
-return;
-}
-if (!queenFound) {
-const correctCol = solution[row];
-let removedRow = null;
-for (let r = 0; r < size; r++) {
-if (r === row) continue;
-const indexCheck = r * size + correctCol;
-const cellCheck = cells[indexCheck];
-if (cellCheck.dataset.state === "queen" && solution[r] !== correctCol) {
+  if (!startTime) return;
+  if (hintsUsed >= maxHints) return;
+  if (document.querySelector(".error")) return;
 
-removeQueen(cellCheck, r, correctCol);   // 🔴 FIX
+  // 🔀 CREA ORDINE RANDOM DELLE RIGHE
+  const shuffledRows = [...Array(size).keys()]
+    .sort(() => Math.random() - 0.5);
 
-removedRow = r;
+  // ============================
+  // 1️⃣ STEP: RIMUOVI ERRORI (PRIORITÀ)
+  // ============================
 
-}
-}
-const index = row * size + correctCol;
-const targetCell = cells[index];
-targetCell.classList.remove("x");
-placeQueen(targetCell,row,correctCol);
-recomputeAutoX();
-if (removedRow !== null) {
-showFixedMessage(
-`👑 I inserted the correct Queen in row ${row + 1} and removed the incorrect one from row ${removedRow + 1}. (+60s)`,
-"success"
-);
-applyHintPenalty("insert_remove");
-} else {
-showFixedMessage(
-`👑 I inserted the correct Queen in row ${row + 1}. (+45s)`,
-"success"
-);
-applyHintPenalty("insert");
-}
-return;
-}
-}
+  for (let row of shuffledRows) {
+
+    let queenCell = null;
+    let queenCol = null;
+
+    for (let col = 0; col < size; col++) {
+      const cell = cells[row * size + col];
+
+      if (cell.dataset.state === "queen") {
+        queenCell = cell;
+        queenCol = col;
+        break;
+      }
+    }
+
+    // se c'è una regina ed è sbagliata → rimuovi
+    if (queenCell && solution[row] !== queenCol) {
+
+      removeQueen(queenCell, row, queenCol);
+      queenCell.classList.add("error");
+
+      setTimeout(() => {
+        queenCell.classList.remove("error");
+      }, 800);
+
+      recomputeAutoX();
+
+      showFixedMessage(
+        `❌ Removed wrong Queen (row ${row + 1}) (+30s)`,
+        "error"
+      );
+
+      applyHintPenalty("remove");
+      return;
+    }
+  }
+
+  // ============================
+  // 2️⃣ STEP: INSERISCI REGINE
+  // ============================
+
+  for (let row of shuffledRows) {
+
+    let hasQueen = false;
+
+    for (let col = 0; col < size; col++) {
+      if (cells[row * size + col].dataset.state === "queen") {
+        hasQueen = true;
+        break;
+      }
+    }
+
+    // se NON ha regina → inserisci quella corretta
+    if (!hasQueen) {
+
+      const correctCol = solution[row];
+
+      // 🔥 controlla se c'è una regina sbagliata nella stessa colonna
+      let removedRow = null;
+
+      for (let r = 0; r < size; r++) {
+        if (r === row) continue;
+
+        const cellCheck = cells[r * size + correctCol];
+
+        if (
+          cellCheck.dataset.state === "queen" &&
+          solution[r] !== correctCol
+        ) {
+          removeQueen(cellCheck, r, correctCol);
+          removedRow = r;
+        }
+      }
+
+      const targetCell = cells[row * size + correctCol];
+
+      targetCell.classList.remove("x");
+      placeQueen(targetCell, row, correctCol);
+
+      recomputeAutoX();
+
+      if (removedRow !== null) {
+        showFixedMessage(
+          `👑 Inserted correct Queen (row ${row + 1}) and fixed conflict (+60s)`,
+          "success"
+        );
+        applyHintPenalty("insert_remove");
+      } else {
+        showFixedMessage(
+          `👑 Inserted correct Queen (row ${row + 1}) (+45s)`,
+          "success"
+        );
+        applyHintPenalty("insert");
+      }
+
+      return;
+    }
+  }
 }
 async function applyHintPenalty(type) {
 let penalty = 45;
